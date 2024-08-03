@@ -21,5 +21,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'semi': ['error', 'always'], // Requerir punto y coma
+    'indent': ['error', 4, 2], // Padding de 4 espacios
   },
 };
