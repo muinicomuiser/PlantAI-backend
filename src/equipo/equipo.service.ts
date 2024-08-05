@@ -31,9 +31,10 @@ export class EquipoService {
     equipo: Equipo;
 
     constructor(){
+        /**Inicialización del equipo.*/
         this.equipo = new Equipo("Bulbasaur", borisSuazo, nicoLavanderos, [uxui, frontend, backend, mobile]);
     }
-
+    /**Prueba.  Retorna el equipo completo.*/
     obtenerEquipo(): Equipo{
         return this.equipo;
     }
