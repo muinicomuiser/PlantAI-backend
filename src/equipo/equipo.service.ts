@@ -29,9 +29,12 @@ let mobile: Area = new Area("Mobile", vicenteLabbe, [vicenteLabbe, cesarSandoval
 export class EquipoService {
 
     equipo: Equipo;
-    
+
     constructor(){
         this.equipo = new Equipo("Bulbasaur", borisSuazo, nicoLavanderos, [uxui, frontend, backend, mobile]);
     }
 
+    obtenerEquipo(): Equipo{
+        return this.equipo;
+    }
 }
