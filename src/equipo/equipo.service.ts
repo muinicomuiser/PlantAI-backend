@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Area } from 'src/models/area';
 import { Equipo } from 'src/models/equipo';
 import { Integrante } from 'src/models/integrante';
+import { textoGeneral } from 'src/models/textoGeneral';
 
 /**Integrantes*/
 let nicoLavanderos: Integrante = new Integrante("Nicolás Lavanderos", "UX/UI");
@@ -20,7 +21,7 @@ let vicenteLabbe: Integrante = new Integrante("Vicente Labbé", "Mobile");
 let cesarSandoval: Integrante = new Integrante("Cesar Sandoval", "Mobile");
 
 /**Áreas*/
-let uxui: Area = new Area("UX/UI", nicoLavanderos, [nicoLavanderos, danielAlfaro, vicenteDonoso, makaGarabito, jorgeSilva]);
+let uxui: Area = new Area("UXUI", nicoLavanderos, [nicoLavanderos, danielAlfaro, vicenteDonoso, makaGarabito, jorgeSilva]);
 let frontend: Area = new Area("Frontend", estefaniaPerez, [estefaniaPerez, nicoleVargas, karlaAcuna]);
 let backend: Area = new Area("Backend", nicoDonoso, [nicoDonoso, borisSuazo, nicoFernandez, lucianoVillagran]);
 let mobile: Area = new Area("Mobile", vicenteLabbe, [vicenteLabbe, cesarSandoval]);
@@ -29,13 +30,29 @@ let mobile: Area = new Area("Mobile", vicenteLabbe, [vicenteLabbe, cesarSandoval
 export class EquipoService {
 
     equipo: Equipo;
+    areas: Area[] = [];
 
-    constructor(){
+    constructor() {
         /**Inicialización del equipo.*/
         this.equipo = new Equipo("Bulbasaur", borisSuazo, nicoLavanderos, [uxui, frontend, backend, mobile]);
+        this.areas.push(uxui, frontend, backend, mobile);
     }
     /**Prueba.  Retorna el equipo completo.*/
-    obtenerEquipo(): Equipo{
+    obtenerEquipo(): Equipo {
         return this.equipo;
+    }
+
+    //Retorna equipo por área
+    obtenerEquipoporArea(area: string) {
+        for (let i of this.areas) {
+            if (i.nombre.toLocaleLowerCase() == area.toLocaleLowerCase()) {
+                return i;
+            }
+        }
+        return null;
+    }
+
+    obtenerInformacionGeneral(): string {
+        return textoGeneral;
     }
 }
