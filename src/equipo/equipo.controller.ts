@@ -24,7 +24,7 @@ export class EquipoController {
 
     /**Responde con información del área del equipo correspondiente al parámetro ingresado.*/
     @Get(':area')
-    obtenerEquipoporArea(@Param('area') area: string, @Res() response: Response): void {
+    obtenerEquipoPorArea(@Param('area') area: string, @Res() response: Response): void {
         const areaObtenida: Area = this.equipoService.obtenerEquipoPorArea(area);
         if(areaObtenida){
             response.status(200).send(areaObtenida)
