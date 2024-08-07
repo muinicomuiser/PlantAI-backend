@@ -1,24 +1,36 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { EquipoService } from './equipo.service';
 import { Equipo } from 'src/models/equipo';
+import { Response } from 'express';
+import { Area } from 'src/models/area';
 
 @Controller('equipo')
 export class EquipoController {
     constructor(private readonly equipoService: EquipoService) { }
 
-    /**Prueba.  Entrega todo el equipo.*/
+    /**Responde con toda la información del equipo.*/
     @Get()
-    obtenerEquipo(): Equipo {
-        return this.equipoService.obtenerEquipo()
+    obtenerEquipo(@Res() response: Response): void {
+        const equipo: Equipo = this.equipoService.obtenerEquipo();
+        response.status(200).send(equipo)
     }
 
+    /**Responde con un texto con información sobre el ecommerce.*/
+    @Get('cotiledon')
+    obtenerInformacionGeneral(@Res() response: Response): void {
+        const informacion: string = this.equipoService.obtenerInformacionGeneral();
+        response.status(200).send(informacion)
+    }
+
+    /**Responde con información del área del equipo correspondiente al parámetro ingresado.*/
     @Get(':area')
-    obtenerEquipoporArea(@Param('area') area: string) {
-        return this.equipoService.obtenerEquipoporArea(area);
-    }
-
-    @Get('informacion/cotiledon')
-    obtenerInformacionGeneral(): string {
-        return this.equipoService.obtenerInformacionGeneral();
+    obtenerEquipoporArea(@Param('area') area: string, @Res() response: Response): void {
+        const areaObtenida: Area = this.equipoService.obtenerEquipoPorArea(area);
+        if(areaObtenida){
+            response.status(200).send(areaObtenida)
+        }
+        else{
+            response.status(404).send('No existe un área con ese nombre.')
+        }
     }
 }

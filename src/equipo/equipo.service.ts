@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Area } from 'src/models/area';
 import { Equipo } from 'src/models/equipo';
 import { Integrante } from 'src/models/integrante';
-import { textoGeneral } from 'src/models/textoGeneral';
+import { TEXTOGENERAL } from 'src/models/textoGeneral';
 
 /**Integrantes*/
 let nicoLavanderos: Integrante = new Integrante("Nicolás Lavanderos", "UX/UI");
@@ -33,17 +33,18 @@ export class EquipoService {
     areas: Area[] = [];
 
     constructor() {
-        /**Inicialización del equipo.*/
+        /**Inicialización de equipo y arreglo de áreas.*/
         this.equipo = new Equipo("Bulbasaur", borisSuazo, nicoLavanderos, [uxui, frontend, backend, mobile]);
         this.areas.push(uxui, frontend, backend, mobile);
     }
-    /**Prueba.  Retorna el equipo completo.*/
+
+    /**Retorna el equipo completo.*/
     obtenerEquipo(): Equipo {
         return this.equipo;
     }
 
-    //Retorna equipo por área
-    obtenerEquipoporArea(area: string) {
+    /**Retorna un área del equipo.*/
+    obtenerEquipoPorArea(area: string): Area {
         for (let i of this.areas) {
             if (i.nombre.toLocaleLowerCase() == area.toLocaleLowerCase()) {
                 return i;
@@ -52,7 +53,8 @@ export class EquipoService {
         return null;
     }
 
+    /**Retorna un texto con la información general del ecommerce.*/
     obtenerInformacionGeneral(): string {
-        return textoGeneral;
+        return TEXTOGENERAL;
     }
 }
