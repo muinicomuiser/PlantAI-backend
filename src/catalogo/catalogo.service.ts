@@ -4,8 +4,7 @@ import { UpdateCatalogoDto } from './dto/update-catalogo.dto';
 
 @Injectable()
 export class CatalogoService {
-  
-  findAll() {
-    return `Visualización de catálogo de productos`;
-  }
+    findAll() {
+        return `Implementar una visualización de catálogo de productos`;
+    }
 }
