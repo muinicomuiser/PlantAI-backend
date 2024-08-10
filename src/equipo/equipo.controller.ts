@@ -3,6 +3,7 @@ import { EquipoService } from './equipo.service';
 import { Equipo } from 'src/models/equipo';
 import { Response } from 'express';
 import { Area } from 'src/models/area';
+import { ECommerce } from 'src/models/ecommerce';
 
 @Controller('equipo')
 export class EquipoController {
@@ -18,7 +19,7 @@ export class EquipoController {
     /**Responde con un texto con información sobre el ecommerce.*/
     @Get('cotiledon')
     obtenerInformacionGeneral(@Res() response: Response): void {
-        const informacion: string = this.equipoService.obtenerInformacionGeneral();
+        const informacion: ECommerce = this.equipoService.obtenerInformacionGeneral();
         response.status(200).send(informacion)
     }
 
@@ -26,10 +27,10 @@ export class EquipoController {
     @Get(':area')
     obtenerEquipoPorArea(@Param('area') area: string, @Res() response: Response): void {
         const areaObtenida: Area = this.equipoService.obtenerEquipoPorArea(area);
-        if(areaObtenida){
+        if (areaObtenida) {
             response.status(200).send(areaObtenida)
         }
-        else{
+        else {
             response.status(404).send('No existe un área con ese nombre.')
         }
     }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Area } from 'src/models/area';
+import { ECommerce } from 'src/models/ecommerce';
 import { Equipo } from 'src/models/equipo';
 import { Integrante } from 'src/models/integrante';
-import { TEXTOGENERAL } from 'src/models/textoGeneral';
 
 /**Integrantes*/
 let nicoLavanderos: Integrante = new Integrante("Nicolás Lavanderos", "UX/UI");
@@ -54,7 +54,15 @@ export class EquipoService {
     }
 
     /**Retorna un texto con la información general del ecommerce.*/
-    obtenerInformacionGeneral(): string {
-        return TEXTOGENERAL;
+    obtenerInformacionGeneral(): ECommerce {
+
+        const infoEcommerce: ECommerce = new ECommerce('Cotiledón', 'Un marketplace para conectar viveros productivos con clientes finales en un espacio valioso para la venta de plantas y productos relacionados.', 'C2C (Cliente a cliente)', 'Crear un e-commerce tipo Marketplace C2C para la venta de plantas y productos relacionados con la botánica, implementando un sistema de segmentación devivieros y clientes, que proporcione una experiencia de compra y venta fluida, intuitiva y accesible, donde se incluyan viveros y platnas de diversa naturaleza. Se propone una plataforma de navegación sencilla, buscando maximizar tanto la cantidad de viveros que publiquen en la plataforma, como las transacciones realizadas y la fidelización.', `- Desarrollar una plataforma accesible y fácil de usar.
+        - Ampliar la oferta de plantas y productos relacionados.
+    - Optimizar los procesos de Compra y Venta.
+    - Promover la fidelización de usuarios.
+    - Brindas soporte y asistencia al cliente.
+    - Minimizar asimetrías de información, tiepos y costos de transacción.`);
+        return infoEcommerce;
     }
 }
+
