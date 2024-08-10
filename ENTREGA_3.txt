@@ -1,0 +1,28 @@
+- 5 historias de usuario priorizadas:
+
+    Historia de Usuario 5: Publicación de Productos por Parte de los Vendedores
+        Prioridad: Media
+        Controlador: usuarios
+
+    Historia de Usuario 7: Búsqueda de Productos
+        Prioridad: Alta
+        Controlador: productos
+
+    Historia de Usuario 9: Añadir Productos al Carrito de Compras
+        Prioridad: Alta
+        Controlador: carro-compras
+    
+    Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos
+        Prioridad: Alta
+        Controlador: pedidos
+    
+    Historia de Usuario 12: Visualización del catálogo
+        Prioridad: Alta
+        Controlador: catalogo
+
+- Módulo "Equipo":
+
+    Gets
+    Path () -> Obtener la información completa del equipo.
+    Path ('cotiledon') -> Obtener la información del ecommerce.
+    Path (':area') -> Obtener información sobre áreas específicas del equipo (uxui, frontend, mobile, backend).

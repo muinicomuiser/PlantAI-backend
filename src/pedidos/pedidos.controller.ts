@@ -7,6 +7,7 @@ import { Response } from 'express';
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) {}
 
+  /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
   @Get()
   findAll(@Res() res: Response) {
     const result = this.pedidosService.findAll();

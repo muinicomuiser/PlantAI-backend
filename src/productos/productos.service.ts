@@ -4,6 +4,6 @@ import { Injectable } from '@nestjs/common';
 export class ProductosService {
 
   findAll() {
-    return `Busqueda de productos`;
+    return `Búsqueda de productos`;
   }
 }

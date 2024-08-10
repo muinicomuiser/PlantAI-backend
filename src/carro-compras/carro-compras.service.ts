@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class CarroComprasService {
 
   findAll() {
-    return `añadir productos carrito de compras`;
+    return `Añadir productos al carrito de compras`;
   }
 
 }

@@ -7,10 +7,10 @@ import { Response } from 'express';
 export class CarroComprasController {
   constructor(private readonly carroComprasService: CarroComprasService) {}
 
+  /**Historia de Usuario 9: Añadir Productos al Carrito de Compras*/
   @Get()
   findAll(@Res() res: Response) {
     const result = this.carroComprasService.findAll();
     res.json({ message: result });
   }
-
 }

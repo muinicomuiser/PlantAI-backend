@@ -6,6 +6,6 @@ import { UpdateCatalogoDto } from './dto/update-catalogo.dto';
 export class CatalogoService {
   
   findAll() {
-    return `visualizacion de catalogo de productos`;
+    return `Visualización de catálogo de productos`;
   }
 }

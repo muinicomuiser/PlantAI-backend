@@ -7,6 +7,7 @@ import { Response } from 'express';
 export class CatalogoController {
   constructor(private readonly catalogoService: CatalogoService) {}
 
+  /**Historia de Usuario 12: Visualización del catálogo*/
   @Get()
   findAll(@Res() res: Response) {
     const result = this.catalogoService.findAll();

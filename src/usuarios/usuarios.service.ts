@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class UsuariosService {
 
   findAll() {
-    return `Publicacion de productos por parte de usuarios`;
+    return `Publicación de productos por parte de usuarios`;
   }
 
 }

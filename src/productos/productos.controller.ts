@@ -7,6 +7,7 @@ export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
 
+  /**Historia de Usuario 7: Búsqueda de Productos*/
   @Get()
   findAll(@Res() res: Response) {
     const result = this.productosService.findAll();

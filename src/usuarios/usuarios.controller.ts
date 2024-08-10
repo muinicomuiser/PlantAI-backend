@@ -7,6 +7,7 @@ import { Response } from 'express';
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
+  /**Historia de Usuario 5: Publicación de Productos por Parte de los Vendedores*/
   @Get()
   findAll(@Res() res: Response) {
     const result = this.usuariosService.findAll();
