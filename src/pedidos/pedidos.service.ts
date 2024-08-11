@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-
 @Injectable()
 export class PedidosService {
-
-  findAll() {
-    return `Proceso de checkout y confirmación de pedidos`;
-  }
-
+    findAll() {
+        return `Implementar el proceso de checkout y procesamiento de pedidos`;
+    }
 }
