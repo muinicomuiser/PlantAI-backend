@@ -77,6 +77,11 @@ export class EquipoService {
         }
         return null;
     }
+    
+    /**Retorna un arreglo con todas las áreas del equipo.*/
+    obtenerAreas(): Area[] {
+        return this.areas;
+    }
 
     /**Retorna un texto con la información general del ecommerce.*/
     obtenerInformacionGeneral(): ECommerce {

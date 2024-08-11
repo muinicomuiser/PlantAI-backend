@@ -13,25 +13,31 @@ export class EquipoController {
     @Get()
     obtenerEquipo(@Res() response: Response): void {
         const equipo: Equipo = this.equipoService.obtenerEquipo();
-        response.status(200).send(equipo)
+        response.status(200).send(equipo);
     }
 
+    /**Responde con información del área del equipo correspondiente al parámetro ingresado.*/
+    @Get('area/:area')
+    obtenerEquipoPorArea(@Param('area') area: string, @Res() response: Response): void {
+        const areaObtenida: Area = this.equipoService.obtenerEquipoPorArea(area);
+        if (areaObtenida) {
+            response.status(200).send(areaObtenida);
+        }
+        else {
+            response.status(404).send('No existe un área con ese nombre.');
+        }
+    }
+    /**Responde con un arreglo de todas las áreas del equipo.*/
+    @Get('area')
+    obtenerAreas(@Res() response: Response): void {
+        const areas: Area[] = this.equipoService.obtenerAreas();
+        response.status(200).send(areas);
+    }
+        
     /**Responde con un texto con información sobre el ecommerce.*/
     @Get('cotiledon')
     obtenerInformacionGeneral(@Res() response: Response): void {
         const informacion: ECommerce = this.equipoService.obtenerInformacionGeneral();
-        response.status(200).send(informacion)
-    }
-
-    /**Responde con información del área del equipo correspondiente al parámetro ingresado.*/
-    @Get(':area')
-    obtenerEquipoPorArea(@Param('area') area: string, @Res() response: Response): void {
-        const areaObtenida: Area = this.equipoService.obtenerEquipoPorArea(area);
-        if (areaObtenida) {
-            response.status(200).send(areaObtenida)
-        }
-        else {
-            response.status(404).send('No existe un área con ese nombre.')
-        }
+        response.status(200).send(informacion);
     }
 }
