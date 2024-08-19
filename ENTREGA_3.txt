@@ -26,3 +26,31 @@
     Path () -> Obtener la información completa del equipo.
     Path ('cotiledon') -> Obtener la información del ecommerce.
     Path (':area') -> Obtener información sobre áreas específicas del equipo (uxui, frontend, mobile, backend).
+
+
+
+--- entrega 4 ----
+
+5. En el repositorio Backend:
+
+a. Tomar las primeras 5 historias priorizadas, identificar los servicios (endpoints)
+que se deben construir asociados a dichas historias.
+
+R: Controlador de cada accion y generar el servicio acorde ( que entrege un string )
+
+b. Con los servicios identificados, crear los controllers, services, DTOs de entrada
+y DTOs de salida (cuando aplique) correspondientes a esos endpoints. Cada
+componente debe estar en el módulo de NestJS que le corresponde.
+
+R: crear dto de entreda y salida
+
+c. Cada servicio debe entregar una respuesta genérica de acuerdo al tipo de
+salida identificado (DTO, string, number, etc). No se pide implementar la lógica
+de los servicios.
+
+R: generar un objeto ejemplo y retornarlo cuando corresponda 
+
+d. Documentar los endpoints identificados (swagger). Cada módulo debe tener su
+documentación por separado
+
+R: documentar endpoints
