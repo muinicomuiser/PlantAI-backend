@@ -47,7 +47,6 @@ export class ProductosController {
         const productos = this.productosService.obtenerPorFiltros(nombre, especie, fotoperiodo, tipoRiego, petFriendlyBoolean, color);
         response.status(200).send(productos);
     }
-
 }
 
 // Servicios
