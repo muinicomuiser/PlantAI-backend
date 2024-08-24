@@ -6,12 +6,13 @@ import { FotoPeriodo, TipoRiego } from './entities/categorias';
 import { ProductoSalidaDto } from './dto/producto-salida.dto';
 
 /**Historia de Usuario 7: Búsqueda de Productos*/
+@ApiTags('Búsqueda de productos')
 @Controller('productos')
 export class ProductosController {
     constructor(private readonly productosService: ProductosService) {}
     
     // Obtener por id
-    @ApiTags('Búsqueda de productos')
+    
     @ApiOperation({summary: 'Busca un producto por su id.'})
     @ApiResponse({status: 200, description: 'Retorna el producto que coincida con el id.', type: ProductoSalidaDto})
     @ApiResponse({status: 404, description: 'No se encuentra un producto registrado con ese id.'})
@@ -30,7 +31,6 @@ export class ProductosController {
 
     // Obtener todos los productos
     // Obtener por filtros (nombre, familia, fotoperiodo, tipoRiego, petFriendly, color)
-    @ApiTags('Búsqueda de productos')
     @ApiOperation({summary: 'Busca productos por filtros.'})
     @ApiResponse({status: 200, type: ProductoSalidaDto, description: 'Devuelve todos los productos que coincidan con los parámetros de búsqueda. Si no se definen parámetros, devuelve todos los productos.'})
     @ApiQuery({name: 'nombre', required: false})
