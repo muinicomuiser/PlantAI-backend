@@ -11,6 +11,7 @@ import { CarroComprasService } from './carro-compras.service';
 import { CreateCarroCompraDto } from './dto/create-carro-compra.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateCarroCompraDto } from './dto/update-carro-compra.dto';
+import { OutputCarroComprasDto } from './dto/output-carro-compras.dto';
 
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
@@ -25,7 +26,7 @@ export class CarroComprasController {
   }
 
   @ApiOperation({ summary: 'Busca un carro de compras por id' })
-  @ApiResponse({ status: 200, description: 'Carro encontrado' })
+  @ApiResponse({ status: 200, description: 'Carro encontrado', type: OutputCarroComprasDto })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get(':id')
   findByCarroId(@Param('id') id: number) {
@@ -33,7 +34,7 @@ export class CarroComprasController {
   }
 
   @ApiOperation({ summary: 'Busca un carro de compras por id de usuario' })
-  @ApiResponse({ status: 200, description: 'Carro encontrado' })
+  @ApiResponse({ status: 200, description: 'Carro encontrado', type: OutputCarroComprasDto })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get('user/:id')
   findByUserId(@Param('id') id: number) {

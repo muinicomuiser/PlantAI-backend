@@ -15,18 +15,20 @@ export class CarroComprasService {
   carrosCompra: CarroCompra[] = [];
   constructor() {
     const plantaUno: Producto = new Producto(
-      'Unila',
+      'Ciprés',
       5000,
-      'cotiledon.com/imagenes/unila.jpg',
+      'cotiledon.com/imagenes/cipres.jpg',
       'Producto ejemplo. Primera planta de la tienda',
       5,
-      'conifera',
+      'Conífera',
       FotoPeriodo.largo,
       TipoRiego.regadera,
       true,
       'verde',
     );
     plantaUno.id = 1;
+    plantaUno.puntuacion = 5;
+    plantaUno.unidadesVendidas = 5;
     const carroCompra: CarroCompra = {
       id: 1,
       idUsuario: 1,
