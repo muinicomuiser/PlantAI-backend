@@ -1,4 +1,4 @@
-// • especie			(string)
+// • familia			(string)
 // • petFriendly		(boolean)
 // • color			(string)
 
