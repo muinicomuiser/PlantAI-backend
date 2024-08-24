@@ -1,21 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCarroCompraDto } from './dto/create-carro-compra.dto';
+import { UpdateCarroCompraDto } from './dto/update-carro-compra.dto';
+import { OutputCarroComprasDto } from './dto/output-carro-compras.dto';
+import { CarroCompra } from './entities/carro-compra.entity';
+import { FotoPeriodo, TipoRiego } from 'src/productos/entities/categorias';
+import { Producto } from 'src/productos/entities/producto.entity';
 
 @Injectable()
 export class CarroComprasService {
-    createCarro(carro: CreateCarroCompraDto) {
-        return `crea carrito de compras`;
-    }
-    findByCarroId(id: number) {
-        return `busca carrito de compras por id de carro`;
-    }
-    findByUserId(id: number) {
-        return `busca carrito de compras por id de usuario`;
-    }
-    deleteCarro(id: number) {
-        return `borra carrito de compras`;
-    }
-    updateCarro(id: number, carro: CreateCarroCompraDto) {
-        return `actualiza carrito de compras`;
-    }
+  // Simulación de base de datos
+  // Se crea un arreglo de carros de compras - carrosCompra
+  // Se crea un producto de ejemplo - plantaUno
+  // Se crea un carro de compras de ejemplo - carroCompra
+  carrosCompra: CarroCompra[] = [];
+  constructor() {
+    const plantaUno: Producto = new Producto(
+      'Unila',
+      5000,
+      'cotiledon.com/imagenes/unila.jpg',
+      'Producto ejemplo. Primera planta de la tienda',
+      5,
+      'conifera',
+      FotoPeriodo.largo,
+      TipoRiego.regadera,
+      true,
+      'verde',
+    );
+    plantaUno.id = 1;
+    const carroCompra: CarroCompra = {
+      id: 1,
+      idUsuario: 1,
+      productos: [plantaUno],
+      precioTotal: plantaUno.precio,
+    };
+    this.carrosCompra.push(carroCompra);
+  }
+  //servicios de la clase CarroComprasService que se implementarán en el controlador CarroComprasController
+  // se ocuparon con un arreglo de carros de compras y un producto de ejemplo
+  // se implementaron los métodos createCarro, findByCarroId, findByUserId, deleteCarro y updateCarro
+
+  createCarro(carro: CreateCarroCompraDto): OutputCarroComprasDto {
+    return this.carrosCompra[0];
+  }
+
+  findByCarroId(id: number): OutputCarroComprasDto {
+    return this.carrosCompra[0];
+  }
+  findByUserId(id: number): OutputCarroComprasDto {
+    return this.carrosCompra[0];
+  }
+  deleteCarro(id: number): boolean {
+    return true;
+  }
+  updateCarro(id: number, carro: UpdateCarroCompraDto): OutputCarroComprasDto {
+    return this.carrosCompra[0];
+  }
 }

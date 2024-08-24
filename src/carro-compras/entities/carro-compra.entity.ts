@@ -1,15 +1,15 @@
-import { Producto } from "src/productos/entities/producto.entity";
+import { Producto } from 'src/productos/entities/producto.entity';
 
 export class CarroCompra {
   id: number;
   idUsuario: number;
-  productos: Producto[];  // pendiente de definir
+  productos: Producto[]; // pendiente de definir
   precioTotal: number;
   constructor(
     id: number,
     idUsuario: number,
     productos: Producto[],
-    precioTotal: number
+    precioTotal: number,
   ) {
     this.id = id;
     this.idUsuario = idUsuario;
