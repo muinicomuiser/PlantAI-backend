@@ -8,7 +8,7 @@ export class ProductoSalidaDto {
     @ApiProperty({example: 'Ciprés', description: 'Nombre público del producto.'})
     nombre: string;     
 
-    @ApiProperty({example: 1000, description: 'Precio de venta.'})
+    @ApiProperty({example: 5000, description: 'Precio de venta.'})
     precio: number;
 
     @ApiProperty({example: 'cotiledon.com/imagenes/cipres.jpg', description: 'URL de la imagen del producto.'})
@@ -17,7 +17,7 @@ export class ProductoSalidaDto {
     @ApiProperty({example: 'Producto ejemplo. Primera planta de la tienda.', description: 'Descripción del producto.'})
     descripcion: string;
 
-    @ApiProperty({example: 10, description: 'Número de unidades del producto en stock.'})
+    @ApiProperty({example: 5, description: 'Número de unidades del producto en stock.'})
     cantidad: number    //Stock
 
     @ApiProperty({example: 5, description: 'Número de unidades del producto vendidas.'})
@@ -29,13 +29,13 @@ export class ProductoSalidaDto {
     @ApiProperty({example: 'Conífera', description: 'Famila a la que pertenece la planta.'})
     familia: string;            //<-- enum Especie
 
-    @ApiProperty({example: FotoPeriodo.neutro, description: 'Fotoperíodo óptimo para la planta.', enum: FotoPeriodo})
+    @ApiProperty({example: FotoPeriodo.largo, description: 'Fotoperíodo óptimo para la planta.', enum: FotoPeriodo})
     fotoperiodo: FotoPeriodo;   //<-- enum FotoPeriodo
 
-    @ApiProperty({example: TipoRiego.inmersion, description: 'Tipo de riego óptimo para la planta.', enum: TipoRiego})
+    @ApiProperty({example: TipoRiego.regadera, description: 'Tipo de riego óptimo para la planta.', enum: TipoRiego})
     tipoRiego: TipoRiego;       //<-- enum TipoRiego
 
-    @ApiProperty({example: false, description: 'Boolean que describe si la planta es o no es Pet Friendly'})
+    @ApiProperty({example: true, description: 'Boolean que describe si la planta es o no es Pet Friendly'})
     petFriendly: boolean;
 
     @ApiProperty({example: 'verde', description: 'Color de la planta.'})
