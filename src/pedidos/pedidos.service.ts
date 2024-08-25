@@ -5,24 +5,24 @@ import { Pedido } from './entities/pedido.entity';
 
 @Injectable()
 export class PedidosService {
-    pedidos: Pedido[] = [];
+  pedidos: Pedido[] = [];
 
-    //servicio Crear Pedido
-    create() {
-        let pedido: Pedido = new Pedido();
-        return Pedido;
-    }
-    //entrega todos los pedidos
-    findAll() {
-        return [];
-    }
-    //entrega pedidos por id
-    findOne(id: number) {
-        return Pedido;
-    }
+  //servicio Crear Pedido
+  create() {
+    let pedido: Pedido = new Pedido();
+    return this.pedidos;
+  }
+  //entrega todos los pedidos
+  findAll() {
+    return this.pedidos;
+  }
+  //entrega pedidos por id
+  findOne(id: number) {
+    return this.pedidos;
+  }
 
-    //modificar un pedido
-    update(id: number, updatePedidoDto: UpdatePedidoDto) {
-        return Pedido;
-    }
+  //modificar un pedido
+  update(id: number, updatePedidoDto: UpdatePedidoDto) {
+    return this.pedidos;
+  }
 }
