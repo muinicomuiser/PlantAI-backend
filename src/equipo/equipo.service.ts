@@ -54,7 +54,7 @@ export class EquipoService {
 
     constructor() {
         /**Inicialización de equipo y arreglo de áreas.*/
-        this.equipo = new Equipo('Bulbasaur', borisSuazo, nicoLavanderos, [
+        this.equipo = new Equipo('Cotiledón', borisSuazo, nicoLavanderos, [
             uxui,
             frontend,
             backend,
@@ -86,7 +86,7 @@ export class EquipoService {
     /**Retorna un texto con la información general del ecommerce.*/
     obtenerInformacionGeneral(): ECommerce {
         const infoEcommerce: ECommerce = new ECommerce(
-            'Cotiledón',
+            'PlantAI',
             'Un E-commerce integrado con IA y AR para conectar a clientes con la naturaleza a través de recomendaciones personalizadas ',
             'B2C (Business 2 Client)',
             'Crear un e-commerce tipo Marketplace B2C para la venta de plantas y productos relacionados con la botánica, implementando un sistema de recomendación basado en IA y visualización en VR, que proporcione una experiencia de compra y venta fluida, intuitiva y accesible. Se propone una plataforma de navegación sencilla, buscando maximizar tanto la cantidad de viveros que publiquen en la plataforma, como las transacciones realizadas y la fidelización.',
