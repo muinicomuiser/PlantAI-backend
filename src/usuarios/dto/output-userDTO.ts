@@ -11,11 +11,11 @@ export class OutputUserDTO {
     @ApiProperty()
     public carrito: OutputCarroComprasDto;
     @ApiProperty()
-    public pedido: Pedido;
-    constructor(name: string, email: string, carrito: OutputCarroComprasDto, pedido: Pedido) {
+    public pedidos: Pedido[];
+    constructor(name: string, email: string, carrito: OutputCarroComprasDto, pedido: Pedido[]) {
         this.name = name;
         this.email = email;
         this.carrito = carrito;
-        this.pedido = pedido;
+        this.pedidos = pedido;
     }
 }

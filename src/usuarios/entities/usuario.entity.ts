@@ -8,15 +8,15 @@ export class Usuario {
     public password: string;
     public email: string;
     public carrito: CarroCompra;
-    public pedido: Pedido;
+    public pedidos: Pedido[];
     public medioPago: tipoPago;
 
-    constructor(id: number, name: string, password: string, email: string, carrito: CarroCompra, pedido: Pedido) {
+    constructor(id: number, name: string, password: string, email: string, carrito: CarroCompra, pedidos: Pedido[]) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.email = email;
         this.carrito = carrito;
-        this.pedido = pedido;
+        this.pedidos = pedidos;
     }
 }
