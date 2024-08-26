@@ -18,7 +18,7 @@ import { UpdatePedidoDto } from './dto/update-pedido.dto';
 @ApiTags('Carro de compras')
 @Controller('pedidos')
 export class PedidosController {
-  constructor(private readonly pedidosService: PedidosService) {}
+  constructor(private readonly pedidosService: PedidosService) { }
 
   /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
   //crear pedido

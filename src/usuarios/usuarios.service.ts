@@ -1,21 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { Usuario } from './entities/usuario.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
+import { OutputUserDTO } from './dto/output-userDTO';
+import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { tipoPago } from 'src/pedidos/entities/pago.enum';
 
 @Injectable()
 export class UsuariosService {
+
+    users: Usuario[] = [];
+    usersDTO: OutputUserDTO[] = [];
+    pedidos: Pedido[] = [];
+
+    constructor() {
+        this.users.push(new Usuario(1, 'User1', '1234', 'user1@gmail.com', new CarroCompra(1, 1, [], 0), undefined));
+        this.usersDTO.push(new OutputUserDTO(this.users[0].name, this.users[0].email, this.users[0].carrito, this.users[0].pedido))
+
+    }
+
     findAll() {
-        return `Implementar funcionalidad para la creación de usuarios`;
+        return this.usersDTO;
     }
 
     //Obtiene un usuario según su ID
     findOne(id: number) {
-        return 'Devuelve un usuario según el id';
+        return this.users[id - 1];
     }
 
     //Crear un usuario
     createUser(usuario: CreateUsuarioDto) {
-        return 'Usuario creado';
+        return usuario;
     }
 
     //Actualiza un usuario según el id
@@ -25,6 +42,22 @@ export class UsuariosService {
 
     //Elimina un usuario según el id
     deleteOne(id: number) {
-        return 'Usuario eliminado';
+        return this.users.splice(id - 1, 1);
+    }
+
+    updateCarro(idUsuario: number, carro: OutputCarroComprasDto) {
+        return carro;
+    }
+
+    findPedidos(idUsuario: number) {
+        return 'Retorna los pedidos del usuario según el ID';
+    }
+
+    addPedido(idUsuario: number, idPedido: number) {
+        return 'Agrega un pedido a un usuario';
+    }
+
+    updateMedioPago(idUsuario: number, medioPago: tipoPago) {
+        return 'Actualiza el Medio de Pago de un usuario';
     }
 }
