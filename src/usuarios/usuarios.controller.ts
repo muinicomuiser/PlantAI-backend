@@ -15,11 +15,14 @@ import { Response } from 'express';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
 import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';
+import { OutputUserDTO } from './dto/output-userDTO';
+import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 
+@ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
     constructor(private readonly usuariosService: UsuariosService) { }
@@ -27,7 +30,7 @@ export class UsuariosController {
     /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
     //Entrega los usuarios
     @ApiOperation({ summary: 'Obtiene los Usuarios' })
-    @ApiResponse({ status: 200, description: 'User found' })
+    @ApiResponse({ status: 200, description: 'User found', type: OutputUserDTO })
     @ApiResponse({ status: 404, description: 'Users not found' })
     @Get()
     findAll(@Res() res: Response) {
@@ -39,7 +42,7 @@ export class UsuariosController {
         }
     }
     @ApiOperation({ summary: 'Obtiene un Usuario según ID' })
-    @ApiResponse({ status: 200, description: 'User found' })
+    @ApiResponse({ status: 200, description: 'User found',  type: OutputUserDTO  })
     @ApiResponse({ status: 404, description: 'User not found' })
     //Obtiene un usuario según su ID
     @Get(':id')
@@ -62,8 +65,8 @@ export class UsuariosController {
         return this.usuariosService.createUser(usuario);
     }
 
-    @ApiOperation({ summary: 'Actualiza un usuario' })
-    @ApiResponse({ status: 201, description: 'Updated user' })
+    @ApiOperation({ summary: 'Actualiza un usuario'})
+    @ApiResponse({ status: 201, description: 'Updated user'})
     @ApiResponse({ status: 400, description: 'Error' })
     //Actualiza un usuario según el id
     @Put(':id')
@@ -114,7 +117,7 @@ export class UsuariosController {
     }
     //OBTENER PEDIDOS
     @ApiOperation({ summary: 'Obtiene los pedidos realizados según usuario' })
-    @ApiResponse({ status: 200, description: 'Pedidos list' })
+    @ApiResponse({ status: 200, description: 'Pedidos list' , type: OutputPedidoDto})
     @ApiResponse({ status: 404, description: 'Pedidos not found' })
     @Get('pedidos/:idUsuario')
     findPedidos(@Param('idUsuario') idUsuario: number, @Res() res: Response) {

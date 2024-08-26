@@ -15,7 +15,8 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { estadoPedido } from './entities/estado.enum';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-@ApiTags('Carro de compras')
+import { OutputPedidoDto } from './dto/output-pedido.dto';
+@ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) { }
@@ -31,7 +32,7 @@ export class PedidosController {
     if (result) {
       res.status(200).send(result);
     } else {
-      res.status(400).send({ error: 'error al crear pedido' });
+      res.status(400).send({ error: 'Error al crear pedido' });
     }
   }
 
@@ -40,17 +41,19 @@ export class PedidosController {
   })
   // Entrega todos los pedidos, permite filtrar por estado
   @ApiQuery({ name: 'Estado', enum: estadoPedido, required: false })
+  @ApiResponse({description: "Pedidos filtrados por estado o todos los pedidos", type: OutputPedidoDto})
   @Get()
   findAll(@Query('Estado') estado: estadoPedido, @Res() res: Response) {
     const result = this.pedidosService.findAll();
-    res.json({ message: result });
+    res.status(200).send(result);
   }
 
   //entrega pedidos por id pedidos
-  @ApiOperation({ summary: 'busca pedidos por id' })
-  @ApiResponse({ status: 200, description: 'pedido encotrado' })
-  @ApiResponse({ status: 404, description: 'pedido no encotrado' })
-  @Get('id')
+  @ApiOperation({ summary: 'Busca pedidos por id' })
+  @ApiResponse({ status: 200, description: 'Pedido encotrado', type: OutputPedidoDto })
+  @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
+
+  @Get(':id')
   findOne(@Param('id') id: number, @Res() res: Response) {
     const result = this.pedidosService.findOne(+id);
     if (result) {
@@ -59,11 +62,13 @@ export class PedidosController {
       res.status(404).send({ error: 'el pedido no existe' });
     }
   }
+
+
   //modifica un pedido
-  @ApiOperation({ summary: 'modifica pedidos por id' })
-  @ApiResponse({ status: 200, description: 'pedido modificado' })
-  @ApiResponse({ status: 404, description: 'pedido no encotrado' })
-  @Patch('id')
+  @ApiOperation({ summary: 'Modifica pedidos por id' })
+  @ApiResponse({ status: 200, description: 'Pedido modificado' })
+  @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
+  @Patch(':id')
   update(
     @Param('id') id: number,
     @Body() updatePedidoDto: UpdatePedidoDto,
@@ -73,7 +78,7 @@ export class PedidosController {
     if (result) {
       res.status(200).send(result);
     } else {
-      res.status(404).send({ error: 'el pedido no existe' });
+      res.status(404).send({ error: 'El pedido no existe' });
     }
   }
 }

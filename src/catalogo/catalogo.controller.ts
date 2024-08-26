@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { CatalogoService } from './catalogo.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-@ApiTags('Catalogo')
+@ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
   constructor(private readonly catalogoService: CatalogoService) {}
