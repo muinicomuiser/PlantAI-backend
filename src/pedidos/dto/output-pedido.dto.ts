@@ -5,21 +5,21 @@ import { tipoDespacho } from '../entities/despacho.enum';
 import { tipoPago } from '../entities/pago.enum';
 
 export class OutputPedidoDto {
-    @ApiProperty({})
+    @ApiProperty({example: 1})
     public id: number;
-    @ApiProperty()
+    @ApiProperty({example: 1})
     public idUsuario: number;
-    @ApiProperty()
+    @ApiProperty({example: new Date()})
     public fechaCreacion: Date;
-    @ApiProperty()
+    @ApiProperty({example: estadoPedido.CONFIRMADO})
     public estado: estadoPedido;
-    @ApiProperty()
+    @ApiProperty({example: tipoDespacho.RETIRO})
     public tipoDespacho: tipoDespacho;
-    @ApiProperty()
+    @ApiProperty({example: tipoPago.MERCADOPAGO})
     public tipoPago: tipoPago;
-    @ApiProperty()
+    @ApiProperty({})
     public carrito: CarroCompra;
-    @ApiProperty()
+    @ApiProperty({example: new Date()})
     public fechaEntrega: Date;
 
     constructor(idUsuario: number, estado: estadoPedido, tipoDespacho: tipoDespacho, tipoPago: tipoPago, carrito: CarroCompra){

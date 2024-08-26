@@ -3,10 +3,10 @@ import { CreateUsuarioDto } from './create-usuario.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
-    @ApiProperty({ default: '' })
+    @ApiProperty({ example: 'New Name' })
     public name?: string;
-    @ApiProperty({ default: '' })
+    @ApiProperty({ example: 'asdfg' })
     public password?: string;
-    @ApiProperty({ default: '' })
+    @ApiProperty({ example: 'updateduser@gmail.com' })
     public email?: string;
 }

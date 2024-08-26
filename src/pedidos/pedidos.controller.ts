@@ -30,7 +30,7 @@ export class PedidosController {
   create(@Body() createPedidoDTO: CreatePedidoDto, @Res() res: Response) {
     const result = this.pedidosService.create();
     if (result) {
-      res.status(200).send(result);
+      res.status(200).send({mensaje:  'Pedido creado con éxito' });
     } else {
       res.status(400).send({ error: 'Error al crear pedido' });
     }
@@ -76,7 +76,7 @@ export class PedidosController {
   ) {
     const result = this.pedidosService.update(+id, updatePedidoDto);
     if (result) {
-      res.status(200).send(result);
+      res.status(200).send({mensaje: 'Pedido modificado'});
     } else {
       res.status(404).send({ error: 'El pedido no existe' });
     }

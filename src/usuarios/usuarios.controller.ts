@@ -14,13 +14,12 @@ import { UsuariosService } from './usuarios.service';
 import { Response } from 'express';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { Usuario } from './entities/usuario.entity';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';
 import { OutputUserDTO } from './dto/output-userDTO';
 import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
+import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
+import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 
 @ApiTags('Usuarios')
 @Controller('usuarios')
@@ -82,7 +81,8 @@ export class UsuariosController {
     deleteOne(@Param('id') id: number, @Res() res: Response) {
         const deleted = this.usuariosService.deleteOne(id)
         if (deleted) {
-            res.status(200).send(deleted);
+            // res.status(200).send(deleted);
+            res.status(200).send({ message: 'Deleted user' });
         } else {
             res.status(400).send({ message: 'Error' });
         }
@@ -93,7 +93,7 @@ export class UsuariosController {
     //Actualizar o modificar carro de un usuario
     //LLAMAR A CARRO SERVICE
     @Patch('updateCarro/:idUsuario/')
-    updateCarro(@Param('idUsuario') idUsuario: number, @Body() carro: OutputCarroComprasDto, @Res() res: Response) {
+    updateCarro(@Param('idUsuario') idUsuario: number, @Body() carro: UpdateCarroCompraDto, @Res() res: Response) {
         const carrito = this.usuariosService.updateCarro(idUsuario, carro);
         if (carrito) {
             res.status(201).send(carrito);
@@ -106,9 +106,9 @@ export class UsuariosController {
     @ApiOperation({ summary: 'Agrega un pedido a un usuario' })
     @ApiResponse({ status: 201, description: 'Pedido añadido' })
     @ApiResponse({ status: 400, description: 'Error' })
-    @Post('addPedido')
-    addPedido(@Body() idUsuario: number, idPedido: number, @Res() res: Response) {
-        const pedidoAdded = this.usuariosService.addPedido(idUsuario, idPedido);
+    @Post('addPedido/:idUsuario')
+    addPedido(@Body() pedido: CreatePedidoDto, @Param('idUsuario') idUsuario: number, @Res() res: Response) {
+        const pedidoAdded = this.usuariosService.addPedido(idUsuario, pedido);
         if (pedidoAdded) {
             res.status(201).send(pedidoAdded);
         } else {

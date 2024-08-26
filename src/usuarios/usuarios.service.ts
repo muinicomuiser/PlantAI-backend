@@ -7,6 +7,8 @@ import { OutputUserDTO } from './dto/output-userDTO';
 import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';
+import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
+import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -27,7 +29,7 @@ export class UsuariosService {
 
     //Obtiene un usuario según su ID
     findOne(id: number) {
-        return this.users[id - 1];
+        return this.usersDTO[id - 1];
     }
 
     //Crear un usuario
@@ -45,7 +47,7 @@ export class UsuariosService {
         return this.users.splice(id - 1, 1);
     }
 
-    updateCarro(idUsuario: number, carro: OutputCarroComprasDto) {
+    updateCarro(idUsuario: number, carro: UpdateCarroCompraDto) {
         return carro;
     }
 
@@ -53,7 +55,7 @@ export class UsuariosService {
         return 'Retorna los pedidos del usuario según el ID';
     }
 
-    addPedido(idUsuario: number, idPedido: number) {
+    addPedido(idUsuario: number, pedido: CreatePedidoDto) {
         return 'Agrega un pedido a un usuario';
     }
 

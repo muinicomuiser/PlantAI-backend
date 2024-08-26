@@ -4,9 +4,9 @@ import { CarroCompra } from "src/carro-compras/entities/carro-compra.entity";
 import { Pedido } from "src/pedidos/entities/pedido.entity";
 
 export class OutputUserDTO {
-    @ApiProperty()
+    @ApiProperty({ example: 'New Name' })
     public name: string;
-    @ApiProperty()
+    @ApiProperty({ example: 'updateduser@gmail.com' })
     public email: string;
     @ApiProperty()
     public carrito: OutputCarroComprasDto;
