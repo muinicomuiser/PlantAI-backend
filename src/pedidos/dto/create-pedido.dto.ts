@@ -4,14 +4,14 @@ import { tipoDespacho } from '../entities/despacho.enum';
 import { tipoPago } from '../entities/pago.enum';
 
 export class CreatePedidoDto {
-    @ApiProperty()
+    @ApiProperty({example: 1})
     public idusuario: number;
-    @ApiProperty()
+    @ApiProperty({example: tipoDespacho.RETIRO})
     public tipoDespacho: tipoDespacho;
-    @ApiProperty()
+    @ApiProperty({example: tipoPago.MERCADOPAGO})
     public tipoPago: tipoPago;
-    @ApiProperty()
+    @ApiProperty({})
     public carrito: CarroCompra;
-    @ApiProperty()
+    @ApiProperty({example: new Date()})
     public fechaEntrega: Date;
 }

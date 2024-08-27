@@ -5,20 +5,12 @@ import { estadoPedido } from './estado.enum';
 import { tipoPago } from './pago.enum';
 
 export class Pedido {
-    @ApiProperty()
     public id: number;
-    @ApiProperty()
     public idUsuario: number;
-    @ApiProperty()
     public fechaCreacion: Date;
-    @ApiProperty()
     public estado: estadoPedido;
-    @ApiProperty()
     public tipoDespacho: tipoDespacho;
-    @ApiProperty()
     public tipoPago: tipoPago;
-    @ApiProperty()
     public carrito: CarroCompra;
-    @ApiProperty()
     public fechaEntrega: Date;
 }

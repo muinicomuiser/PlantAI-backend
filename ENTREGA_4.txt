@@ -21,12 +21,12 @@
         Controlador: catalogo
 
 - Módulo "Equipo":
+Controlador: "equipo"
 
-    Gets
+    Gets:
     Path () -> Obtener la información completa del equipo.
-    Path ('cotiledon') -> Obtener la información del ecommerce.
+    Path ('plantai') -> Obtener la información del ecommerce.
     Path (':area') -> Obtener información sobre áreas específicas del equipo (uxui, frontend, mobile, backend).
-
 
 
 --- entrega 4 ----

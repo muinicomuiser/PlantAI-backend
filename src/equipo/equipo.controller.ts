@@ -41,7 +41,7 @@ export class EquipoController {
         
     /**Responde con un texto con información sobre el ecommerce.*/
     @ApiOperation({ summary: 'Obtener información del ecommerce' })
-    @Get('cotiledon')
+    @Get('plantai')
     obtenerInformacionGeneral(@Res() response: Response): void {
         const informacion: ECommerce = this.equipoService.obtenerInformacionGeneral();
         response.status(200).send(informacion);
