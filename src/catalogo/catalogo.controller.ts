@@ -2,6 +2,7 @@ import { Controller, Get, Param, Res, Query } from '@nestjs/common';
 import { CatalogoService } from './catalogo.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { query, response } from 'express';
+import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
@@ -78,13 +79,14 @@ export class CatalogoController {
     return this.catalogoService.findRecommended(id);
   }
   //filtrar productos por cota de precios\
+  @ApiOperation({summary: 'Obtener productos por rango de precios'})
   @ApiResponse({
     status: 200,
-    description: 'Retorna los productos dentro del rango de precios',
+    description: 'Retorna los productos dentro del rango de precios', type: ProductoSalidaDto,
   })
   @ApiResponse({
     status: 404,
-    description: 'rangos de precios no válidos',
+    description: 'Rangos de precios no válidos',
   })
   @Get('filtro-precio')
   filterbyPrice(@Query('minPrice') minPrice: number, @Query('maxPrice') maxPrice: number, @Res() res) {
