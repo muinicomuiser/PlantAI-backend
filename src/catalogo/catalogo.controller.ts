@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Res, Query } from '@nestjs/common';
 import { CatalogoService } from './catalogo.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { query, response } from 'express';
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
@@ -75,5 +76,25 @@ export class CatalogoController {
   @Get('recomendados/:id')
   findRecommended(@Param('id') id: number) {
     return this.catalogoService.findRecommended(id);
+  }
+  //filtrar productos por cota de precios\
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna los productos dentro del rango de precios',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'rangos de precios no válidos',
+  })
+  @Get('filtro-precio')
+  filterbyPrice(@Query('minPrice') minPrice: number, @Query('maxPrice') maxPrice: number, @Res() res) {
+    const min = +minPrice
+    const max = +maxPrice
+    const result =  this.catalogoService.filterByPrice(min, max);
+    if (result){
+      res.status(200).send('Filtro por precio aplicado')
+    } else {
+      res.status(404).send('rango de precios no válido')
+    }
   }
 }

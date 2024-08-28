@@ -53,4 +53,7 @@ export class CatalogoService {
   findRecommended(id: number) {
     return this.productos;
   }
+  filterByPrice(min: number, max: number) {
+    return this.productos;
+  }
 }
