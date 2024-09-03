@@ -37,7 +37,12 @@ export class CatalogoService {
     plantaDosDto.id = 2;
     plantaDosDto.puntuacion = 5;
     plantaDosDto.unidadesVendidas = 10;
-    this.productos.push(plantaUnoDto, plantaDosDto);
+
+    const plantaNueveDto: ProductoSalidaDto = new ProductoSalidaDto('Buganvilla', 14000, 'plantAI.com/imagenes/buganvilla.jpg', 'Planta ejemplo. Novena planta de la tienda', 5, 'Nictagináceas', FotoPeriodo.neutro, TipoRiego.regadera, true, 'Lila');
+    plantaNueveDto.id = 9;
+    plantaNueveDto.puntuacion = 5;
+    plantaNueveDto.unidadesVendidas = 25;
+    this.productos.push(plantaUnoDto, plantaDosDto, plantaNueveDto);
   }
   findAll() {
     return this.productService.getAll();
