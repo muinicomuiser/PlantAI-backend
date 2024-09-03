@@ -44,7 +44,9 @@ export class CatalogoService {
     plantaNueveDto.unidadesVendidas = 25;
     this.productos.push(plantaUnoDto, plantaDosDto, plantaNueveDto);
   }
+
   findAll() {
+    console.log('hello');
     return this.productService.getAll();
   }
 

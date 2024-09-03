@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductosModule } from './productos/productos.module';
@@ -7,10 +7,17 @@ import { PedidosModule } from './pedidos/pedidos.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { EquipoModule } from './equipo/equipo.module';
+import { GlobalMiddleware } from './middleware-global/global.middleware';
 
 @Module({
   imports: [ProductosModule, CarroComprasModule, PedidosModule, CatalogoModule, UsuariosModule, EquipoModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(GlobalMiddleware)//MIDDLEWARE A APLICAR
+      .forRoutes('*'); //TODAS LAS RUTAS
+  }
+}
