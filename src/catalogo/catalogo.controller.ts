@@ -6,7 +6,7 @@ import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
-  constructor(private readonly catalogoService: CatalogoService) {}
+  constructor(private readonly catalogoService: CatalogoService) { }
 
   /**Historia de Usuario 12: Visualización del catálogo*/
 
@@ -16,6 +16,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos del catálogo',
+    type: ProductoSalidaDto,
   })
   @ApiResponse({ status: 404, description: 'No se encontraron los productos' })
   @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
@@ -24,10 +25,12 @@ export class CatalogoController {
     return this.catalogoService.findAll();
   }
 
+
   //obtener productos mas vendidos del catálogo
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos más vendidos',
+    type: ProductoSalidaDto
   })
   @ApiResponse({
     status: 404,
@@ -39,10 +42,12 @@ export class CatalogoController {
     return this.catalogoService.findBestSellers();
   }
 
+
   //obtener productos por puntuacion
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos con la puntuación especificada',
+    type: ProductoSalidaDto
   })
   @ApiResponse({
     status: 404,
@@ -59,10 +64,12 @@ export class CatalogoController {
     return this.catalogoService.findByRating(puntuacion);
   }
 
+
   //obtener recomendados por historial\
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos recomendados para el id entregado',
+    type: ProductoSalidaDto
   })
   @ApiResponse({
     status: 404,
@@ -78,11 +85,14 @@ export class CatalogoController {
   findRecommended(@Param('id') id: number) {
     return this.catalogoService.findRecommended(id);
   }
+
+
   //filtrar productos por cota de precios\
-  @ApiOperation({summary: 'Obtener productos por rango de precios'})
+  @ApiOperation({ summary: 'Obtener productos por rango de precios' })
   @ApiResponse({
     status: 200,
-    description: 'Retorna los productos dentro del rango de precios', type: ProductoSalidaDto,
+    description: 'Retorna los productos dentro del rango de precios',
+    type: ProductoSalidaDto,
   })
   @ApiResponse({
     status: 404,
@@ -92,8 +102,8 @@ export class CatalogoController {
   filterbyPrice(@Query('minPrice') minPrice: number, @Query('maxPrice') maxPrice: number, @Res() res) {
     const min = +minPrice
     const max = +maxPrice
-    const result =  this.catalogoService.filterByPrice(min, max);
-    if (result){
+    const result = this.catalogoService.filterByPrice(min, max);
+    if (result) {
       res.status(200).send('Filtro por precio aplicado')
     } else {
       res.status(404).send('rango de precios no válido')

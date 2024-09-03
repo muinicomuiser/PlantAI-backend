@@ -1,5 +1,8 @@
 - 5 historias de usuario priorizadas:
 
+    + Historia de Usuario 2: Autenticación y Gestión de Sesiones
+
+
     Historia de Usuario 5: Publicación de Productos por Parte de los Vendedores
         Prioridad: Media
         Controlador: usuarios
@@ -7,6 +10,9 @@
     Historia de Usuario 7: Búsqueda de Productos
         Prioridad: Alta
         Controlador: productos
+
+    + Historia de Usuario 8: Filtros Avanzados
+    
 
     Historia de Usuario 9: Añadir Productos al Carrito de Compras
         Prioridad: Alta
@@ -20,37 +26,44 @@
         Prioridad: Alta
         Controlador: catalogo
 
-- Módulo "Equipo":
-Controlador: "equipo"
 
-    Gets:
-    Path () -> Obtener la información completa del equipo.
-    Path ('plantai') -> Obtener la información del ecommerce.
-    Path (':area') -> Obtener información sobre áreas específicas del equipo (uxui, frontend, mobile, backend).
+    Módulo Equipo
+        Controlador: equipo
+        GET -> Path (), Path('plantai'), Path(':area')
 
+---------------------------------------------------------------------------------------------
 
---- entrega 4 ----
+Entrega 5
 
-5. En el repositorio Backend:
+En el repositorio Backend
 
-a. Tomar las primeras 5 historias priorizadas, identificar los servicios (endpoints)
-que se deben construir asociados a dichas historias.
+a. Se deben priorizar 2 nuevas historias de usuario. La primera historia es donde se muestra 
+al cliente el catálogo de productos. La segunda historia es el detalle del producto (donde se 
+muestra la información de un producto específico). Si algunas de estas 2 nuevas historias ya 
+estaban dentro de las 5 historias anteriores, se deben tomar otras historias hasta completar 7 
+HU (desde ahora se trabajará sobre 7 historias). 
 
-R: Controlador de cada accion y generar el servicio acorde ( que entrege un string )
+b. Sobre las nuevas 2 historias, implementar lo mismo que se solicitó anteriormente para las 
+primeras 5 historias. En resumen, identificar los servicios, crear controllers, services y DTOs 
+en los módulos que corresponda (utilizar los existentes o crear nuevos de ser necesario), 
+entregar una respuesta genérica y documentar en el swagger. La respuesta genérica debe ser 
+simulando una respuesta real de este servicio.
 
-b. Con los servicios identificados, crear los controllers, services, DTOs de entrada
-y DTOs de salida (cuando aplique) correspondientes a esos endpoints. Cada
-componente debe estar en el módulo de NestJS que le corresponde.
+c. Tomando los endpoints creados para las 7 historias priorizadas, identificar las validaciones 
+que se deben realizar sobre los campos de entrada (params, queries y body (DTO) - si aplica). 
 
-R: crear dto de entreda y salida
+d. Implementar las validaciones sobre los campos de entrada utilizando pipes. Las validaciones 
+realizadas deben ser coherentes con las restricciones indicadas en la documentación de swagger. 
 
-c. Cada servicio debe entregar una respuesta genérica de acuerdo al tipo de
-salida identificado (DTO, string, number, etc). No se pide implementar la lógica
-de los servicios.
+e. Por cada servicio, documentar en el swagger los códigos de error que apliquen para dicho servicio.
 
-R: generar un objeto ejemplo y retornarlo cuando corresponda 
+f. Crear un middleware y aplicarlo para todos los endpoints. Este middleware debe imprimir en 
+consola los siguientes datos: path, method (GET, POST, etc) y body (si aplica).
 
-d. Documentar los endpoints identificados (swagger). Cada módulo debe tener su
-documentación por separado
+g. Crear un interceptor y aplicarlo globalmente. Durante el flujo de salida, con la respuesta 
+exitosa, se debe imprimir el resultado del servicio en la consola.
 
-R: documentar endpoints
+h. Crear un filtro de excepciones que atrape las HttpException y aplicarlo de forma global. 
+Este filtro debe imprimir en la consola, el status http del error y el mensaje de la excepción.
+
+i. No se pide implementar la lógica de los servicios. 
