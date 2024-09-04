@@ -13,21 +13,24 @@ export class CatalogoController {
   //Entrega la descripción de la épica visualización
 
   //obtener todos los productos del catálogo
+  @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos del catálogo',
     type: ProductoSalidaDto,
   })
-  @ApiResponse({ status: 404, description: 'No se encontraron los productos' })
-  @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontraron los productos'
+  })
   @Get()
   findAll() {
-
     return this.catalogoService.findAll();
   }
 
 
   //obtener productos mas vendidos del catálogo
+  @ApiOperation({ summary: 'Obtener los productos más vendidos' })
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos más vendidos',
@@ -37,7 +40,6 @@ export class CatalogoController {
     status: 404,
     description: 'Productos más vendidos no encontrados',
   })
-  @ApiOperation({ summary: 'Obtener los productos más vendidos' })
   @Get('mas-vendidos')
   findBestSellers() {
     return this.catalogoService.findBestSellers();
@@ -45,6 +47,7 @@ export class CatalogoController {
 
 
   //obtener productos por puntuacion
+  @ApiOperation({ summary: 'Obtener productos por puntuación' })
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos con la puntuación especificada',
@@ -54,7 +57,6 @@ export class CatalogoController {
     status: 404,
     description: 'Productos con la puntuación especificada no encontrados',
   })
-  @ApiOperation({ summary: 'Obtener productos por puntuación' })
   @ApiParam({
     name: 'puntuacion',
     description: 'Puntuación del producto en una escala del 1 al 10',
@@ -67,6 +69,7 @@ export class CatalogoController {
 
 
   //obtener recomendados por historial\
+  @ApiOperation({ summary: 'Obtener productos recomendados por id usuario' })
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos recomendados para el id entregado',
@@ -76,7 +79,6 @@ export class CatalogoController {
     status: 404,
     description: 'Productos recomendados no encontrados',
   })
-  @ApiOperation({ summary: 'Obtener productos recomendados por id usuario' })
   @ApiParam({
     name: 'id',
     description: 'Identificador del usuario',
@@ -100,14 +102,9 @@ export class CatalogoController {
     description: 'Rangos de precios no válidos',
   })
   @Get('filtro-precio')
-  filterbyPrice(@Query('minPrice') minPrice: number, @Query('maxPrice') maxPrice: number, @Res() res) {
+  filterbyPrice(@Query('minPrice') minPrice: number, @Query('maxPrice') maxPrice: number) {
     const min = +minPrice
     const max = +maxPrice
-    const result = this.catalogoService.filterByPrice(min, max);
-    if (result) {
-      res.status(200).send('Filtro por precio aplicado')
-    } else {
-      res.status(404).send('rango de precios no válido')
-    }
+    return this.catalogoService.filterByPrice(min, max);
   }
 }
