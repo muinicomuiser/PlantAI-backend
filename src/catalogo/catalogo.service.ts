@@ -46,7 +46,6 @@ export class CatalogoService {
   }
 
   findAll() {
-    console.log('hello');
     return this.productService.getAll();
   }
 

@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Res, Query } from '@nestjs/common';
 import { CatalogoService } from './catalogo.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { query, response } from 'express';
+import { Request, query, response } from 'express';
 import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
 @ApiTags('Catálogo')
 @Controller('catalogo')
@@ -22,6 +22,7 @@ export class CatalogoController {
   @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
   @Get()
   findAll() {
+
     return this.catalogoService.findAll();
   }
 

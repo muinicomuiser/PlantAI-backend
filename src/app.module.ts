@@ -7,6 +7,9 @@ import { PedidosModule } from './pedidos/pedidos.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { EquipoModule } from './equipo/equipo.module';
+import { AuthModule } from './auth/auth.module';
+import { GlobalMiddleware } from './middleware-global/global.middleware';
+
 
 @Module({
   imports: [ProductosModule, CarroComprasModule, PedidosModule, CatalogoModule, UsuariosModule, EquipoModule, AuthModule],
