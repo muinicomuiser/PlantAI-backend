@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { InterceptorOkLogInterceptor } from './interceptor_ok_log/interceptor_ok_log.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalInterceptors(new InterceptorOkLogInterceptor());
   const config = new DocumentBuilder()
     .setTitle('API PlantAI')
     .setDescription('')

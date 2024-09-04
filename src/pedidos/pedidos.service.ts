@@ -17,8 +17,9 @@ export class PedidosService {
 
   //servicio Crear Pedido
   create() {
-    let pedido: Pedido = new Pedido();
-    return pedido;
+    // let pedido: Pedido = new Pedido();
+    // return pedido;
+    return { mensaje: 'Pedido creado' }
   }
   //entrega todos los pedidos
   findAll(): OutputPedidoDto[] {
@@ -31,7 +32,8 @@ export class PedidosService {
 
   //modificar un pedido
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
-    return new Pedido;
+    // return new Pedido;
+    return { mensaje: 'Pedido modificado' }
   }
 }
 

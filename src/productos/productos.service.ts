@@ -11,7 +11,7 @@ export class ProductosService {
     }
 
     /**Retorna el conjunto de productos que coincida con los filtros.*/
-    getByFilters(nombre: string, familia: string, fotoperiodo: FotoPeriodo, tipoRiego: TipoRiego, petFriendly: boolean, color: string): ProductoSalidaDto[] {
+    getByFilters(): ProductoSalidaDto[] {
         let filtrados: ProductoSalidaDto[] = [plantaUnoDto, plantaDosDto, plantaTresDto, plantaCuatroDto, plantaCincoDto, plantaSeisDto, plantaSieteDto, plantaOchoDto, plantaNueveDto, plantaDiezDto];
         return filtrados;
     }
