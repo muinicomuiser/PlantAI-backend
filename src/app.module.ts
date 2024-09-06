@@ -10,16 +10,23 @@ import { EquipoModule } from './equipo/equipo.module';
 import { AuthModule } from './auth/auth.module';
 import { GlobalMiddleware } from './middleware-global/global.middleware';
 
-
 @Module({
-  imports: [ProductosModule, CarroComprasModule, PedidosModule, CatalogoModule, UsuariosModule, EquipoModule, AuthModule],
+  imports: [
+    ProductosModule,
+    CarroComprasModule,
+    PedidosModule,
+    CatalogoModule,
+    UsuariosModule,
+    EquipoModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(GlobalMiddleware)//MIDDLEWARE A APLICAR
+      .apply(GlobalMiddleware) //MIDDLEWARE A APLICAR
       .forRoutes('*'); //TODAS LAS RUTAS
   }
 }

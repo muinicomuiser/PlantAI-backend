@@ -4,11 +4,11 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  register(createUser: CreateUsuarioDto){
-    return {message: 'Usuario creado'};
+  register(createUser: CreateUsuarioDto) {
+    return { message: 'Usuario creado' };
   }
 
-  login(loginDto: LoginDto){
-    return {message: 'Usuario logueado'};
+  login(loginDto: LoginDto) {
+    return { message: 'Usuario logueado' };
   }
 }
