@@ -1,17 +1,22 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { tipoDespacho } from '../entities/despacho.enum';
 import { estadoPedido } from '../entities/estado.enum';
 import { tipoPago } from '../entities/pago.enum';
-import { CreatePedidoDto } from './create-pedido.dto';
+import { IsEnum, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdatePedidoDto {
-    @ApiProperty()
-    public estado: estadoPedido;
-    @ApiProperty()
-    public tipoDespacho: tipoDespacho;
-    @ApiProperty()
-    public tipoPago: tipoPago;
-    @ApiProperty()
-    public fechaEntrega: Date;
+  @ApiProperty()
+  @IsEnum(estadoPedido, { message: 'El estado del pedido es incorrecto' })
+  public estado: estadoPedido;
+  @ApiProperty()
+  @IsEnum(tipoDespacho, { message: 'El tipo de despacho es incorrecto' })
+  public tipoDespacho: tipoDespacho;
+  @ApiProperty()
+  @IsEnum(tipoPago, { message: 'El tipo de pago es incorrecto' })
+  public tipoPago: tipoPago;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => Date)
+  public fechaEntrega: Date;
 }
