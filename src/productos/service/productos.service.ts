@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { FotoPeriodo, TipoRiego } from './entities/categorias';
-import { ProductoSalidaDto } from './dto/producto-salida.dto';
+import { ProductoSalidaDto } from '../dto/producto-salida.dto';
+import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+
 
 @Injectable()
 export class ProductosService {

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ProductosService } from './productos.service';
+
 import {
   ApiOperation,
   ApiParam,
@@ -7,8 +7,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { FotoPeriodo, TipoRiego } from './entities/categorias';
-import { ProductoSalidaDto } from './dto/producto-salida.dto';
+import { ProductosService } from '../service/productos.service';
+import { ProductoSalidaDto } from '../dto/producto-salida.dto';
+import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+
 
 /**Historia de Usuario 7: Búsqueda de Productos*/
 @ApiTags('Búsqueda de productos')
