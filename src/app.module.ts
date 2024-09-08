@@ -6,9 +6,9 @@ import { CarroComprasModule } from './carro-compras/carro-compras.module';
 import { PedidosModule } from './pedidos/pedidos.module';
 import { CatalogoModule } from './catalogo/catalogo.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
-import { EquipoModule } from './equipo/equipo.module';
+import { EquipoModule } from './commons/modelse3/equipo/equipo.module';
 import { AuthModule } from './auth/auth.module';
-import { GlobalMiddleware } from './middleware-global/global.middleware';
+import { GlobalMiddleware } from './commons/middleware/global.middleware';
 
 @Module({
   imports: [

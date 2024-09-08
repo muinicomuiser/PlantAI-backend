@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { Usuario } from './entities/usuario.entity';
+import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
+import { Usuario } from '../entities/usuario.entity';
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { OutputUserDTO } from './dto/output-userDTO';
+import { OutputUserDTO } from '../dto/output-userDTO';
 import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';

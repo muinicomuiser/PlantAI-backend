@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { Area } from 'src/models/area';
-import { ECommerce } from 'src/models/ecommerce';
-import { Equipo } from 'src/models/equipo';
-import { Integrante } from 'src/models/integrante';
+import { Injectable } from "@nestjs/common";
+import { Area } from "../area";
+import { Integrante } from "../integrante";
+import { Equipo } from "../equipo";
+import { ECommerce } from "../ecommerce";
+
 
 /**Integrantes*/
 let nicoLavanderos: Integrante = new Integrante('Nicolás Lavanderos', 'UX/UI');

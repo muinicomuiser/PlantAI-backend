@@ -9,12 +9,12 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import { UsuariosService } from './usuarios.service';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { UsuariosService } from '../service/usuarios.service';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
+import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';
-import { OutputUserDTO } from './dto/output-userDTO';
+import { OutputUserDTO } from '../dto/output-userDTO';
 import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';

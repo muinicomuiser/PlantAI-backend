@@ -14,3 +14,5 @@ export class Pedido {
     public carrito: CarroCompra;
     public fechaEntrega: Date;
 }
+
+//agregar dirección facturación.

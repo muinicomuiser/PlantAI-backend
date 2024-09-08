@@ -7,11 +7,11 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CarroComprasService } from './carro-compras.service';
-import { CreateCarroCompraDto } from './dto/create-carro-compra.dto';
+import { CarroComprasService } from '../service/carro-compras.service';
+import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UpdateCarroCompraDto } from './dto/update-carro-compra.dto';
-import { OutputCarroComprasDto } from './dto/output-carro-compras.dto';
+import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
+import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
 
 @ApiTags('Carro de compras')
 @Controller('carro-compras')

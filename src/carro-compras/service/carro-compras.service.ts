@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCarroCompraDto } from './dto/create-carro-compra.dto';
-import { UpdateCarroCompraDto } from './dto/update-carro-compra.dto';
-import { OutputCarroComprasDto } from './dto/output-carro-compras.dto';
-import { CarroCompra } from './entities/carro-compra.entity';
+import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
+import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
+import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
+import { CarroCompra } from '../entities/carro-compra.entity';
 import { FotoPeriodo, TipoRiego } from 'src/productos/entities/categorias';
 import { Producto } from 'src/productos/entities/producto.entity';
 

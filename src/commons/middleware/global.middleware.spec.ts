@@ -1,4 +1,4 @@
-import { GlobalMiddleware } from './global.middleware';
+import { GlobalMiddleware } from '../../middleware-global/global.middleware';
 
 describe('GlobalMiddleware', () => {
   it('should be defined', () => {

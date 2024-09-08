@@ -7,12 +7,12 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { PedidosService } from './pedidos.service';
-import { CreatePedidoDto } from './dto/create-pedido.dto';
+import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { estadoPedido } from './entities/estado.enum';
-import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import { OutputPedidoDto } from './dto/output-pedido.dto';
+import { estadoPedido } from '../entities/estado.enum';
+import { UpdatePedidoDto } from '../dto/update-pedido.dto';
+import { OutputPedidoDto } from '../dto/output-pedido.dto';
+import { PedidosService } from '../service/pedidos.service';
 @ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {

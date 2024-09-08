@@ -1,9 +1,9 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
 import { EquipoService } from './equipo.service';
-import { Equipo } from 'src/models/equipo';
+import { Equipo } from 'src/commons/modelse3/equipo';
 import { Response } from 'express';
-import { Area } from 'src/models/area';
-import { ECommerce } from 'src/models/ecommerce';
+import { Area } from 'src/commons/modelse3/area';
+import { ECommerce } from 'src/commons/modelse3/ecommerce';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Equipo')
