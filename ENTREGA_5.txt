@@ -12,7 +12,17 @@
         Controlador: productos
 
     + Historia de Usuario 8: Filtros Avanzados
-    
+        Lista de filtros:
+            Por rango de precio
+            Por puntuación
+            Por más vendidos
+            Recomendados al usuario (según su id)
+            Por nombre
+            Por familia
+            Por fotoperiodo
+            Por tipo de riego
+            Por pet friendly
+            Por color
 
     Historia de Usuario 9: Añadir Productos al Carrito de Compras
         Prioridad: Alta

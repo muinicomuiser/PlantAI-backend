@@ -1,7 +1,5 @@
-import { Controller, Get, Param, Res, Query } from '@nestjs/common';
-
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request, query, response } from 'express';
 import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
 import { CatalogoService } from '../service/catalogo.service';
 @ApiTags('Catálogo')
