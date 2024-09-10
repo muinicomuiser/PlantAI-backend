@@ -4,7 +4,7 @@ import { Pedido } from "src/pedidos/entities/pedido.entity";
 
 export class Usuario {
     public id: number;
-    public name: string;
+    public username: string;
     public password: string;
     public email: string;
     public carrito: CarroCompra;
@@ -13,7 +13,7 @@ export class Usuario {
 
     constructor(id: number, name: string, password: string, email: string, carrito: CarroCompra, pedidos: Pedido[]) {
         this.id = id;
-        this.name = name;
+        this.username = name;
         this.password = password;
         this.email = email;
         this.carrito = carrito;

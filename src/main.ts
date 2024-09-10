@@ -3,6 +3,7 @@ import { AppModule } from "./app.module";
 import { InterceptorOkLogInterceptor } from "./commons/interceptor/interceptor_ok_log.interceptor";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { HttpExceptionFilter } from "./commons/filter/httpexception.filter";
 
 async function bootstrap() {
   // Create the app
@@ -19,6 +20,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  // add exception filter
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Swagger config
   const config = new DocumentBuilder()

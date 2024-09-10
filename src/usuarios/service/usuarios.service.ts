@@ -19,7 +19,7 @@ export class UsuariosService {
 
     constructor() {
         this.users.push(new Usuario(1, 'User1', '1234', 'user1@gmail.com', new CarroCompra(1, 1, [], 0), undefined));
-        this.usersDTO.push(new OutputUserDTO(this.users[0].name, this.users[0].email, this.users[0].carrito, this.users[0].pedidos))
+        this.usersDTO.push(new OutputUserDTO(this.users[0].username, this.users[0].email, this.users[0].carrito, this.users[0].pedidos))
 
     }
 
