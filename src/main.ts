@@ -1,9 +1,9 @@
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { InterceptorOkLogInterceptor } from "./commons/interceptor/interceptor_ok_log.interceptor";
-import { ValidationPipe } from "@nestjs/common";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { HttpExceptionFilter } from "./commons/filter/httpexception.filter";
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { InterceptorOkLogInterceptor } from './commons/interceptor/interceptor_ok_log.interceptor';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './commons/filter/httpexception.filter';
 
 async function bootstrap() {
   // Create the app
@@ -16,7 +16,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true,
+      whitelist: false,
       forbidNonWhitelisted: true,
     }),
   );
