@@ -19,14 +19,6 @@ export class InterceptorOkLogInterceptor implements NestInterceptor {
         console.log('------------------------------------');
         return valor;
       }),
-      catchError((err) => {
-        console.log('------------------------------------');
-        console.log('Inicio Interceptor. para respuestas de error servicio:');
-        console.log('401 usuario no Autorizado');
-        console.log('Fin Interceptor');
-        console.log('------------------------------------');
-        throw err;
-      }),
     );
   }
 }
