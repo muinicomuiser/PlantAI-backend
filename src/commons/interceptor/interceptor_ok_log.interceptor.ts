@@ -19,10 +19,6 @@ export class InterceptorOkLogInterceptor implements NestInterceptor {
         console.log('------------------------------------');
         return valor;
       }),
-      catchError((err) => {
-        console.log('Error');
-        throw err;
-      }),
     );
   }
 }

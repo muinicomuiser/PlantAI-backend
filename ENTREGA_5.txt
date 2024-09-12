@@ -1,9 +1,9 @@
 - 5 historias de usuario priorizadas:
 
     + Historia de Usuario 2: Autenticación y Gestión de Sesiones
+        Controlador: auth
 
-
-    Historia de Usuario 5: Publicación de Productos por Parte de los Vendedores
+    Historia de Usuario 3: Creación y Edición de Perfiles de Usuarios
         Prioridad: Media
         Controlador: usuarios
 

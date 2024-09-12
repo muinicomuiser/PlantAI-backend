@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 import { Producto } from 'src/productos/entities/producto.entity';
 
 export class CarroCompra {
