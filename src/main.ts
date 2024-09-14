@@ -37,6 +37,9 @@ async function bootstrap() {
     yamlDocumentUrl: 'swagger/yaml',
   });
 
+  // habilitar cors de manera global
+  app.enableCors();
+
   // Start the app on port 3000
   await app.listen(3000);
 }
