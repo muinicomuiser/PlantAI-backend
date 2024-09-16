@@ -1,0 +1,9 @@
+## compose de prueba se deben generar los correctos
+
+services:
+  cotiledon:
+    image: entorno:latest
+    environment:
+      - AMBIENTE=production
+    ports:
+      - "3000:8080"
