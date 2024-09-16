@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { InterceptorOkLogInterceptor } from './commons/interceptor/interceptor_ok_log.interceptor';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './commons/filter/httpexception.filter';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   // Create the app
@@ -40,9 +41,15 @@ async function bootstrap() {
   // habilitar cors de manera global
   app.enableCors();
 
+  // Get the port from the ConfigService
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('PORT');
+
+  //logger port
+  const logger = new Logger('Main Bootstrap');
+  logger.log(`Server running on http://localhost:${port}`);
+
   // Start the app on port 3000
-  await app.listen(3000);
+  await app.listen(port);
 }
 bootstrap();
-
-//prueba de sincro
