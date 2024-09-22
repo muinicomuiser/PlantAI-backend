@@ -1,0 +1,9 @@
+## compose de prueba 
+
+services:
+  cotiledon-prod:
+    image: cotiledonprod:v1
+    environment:
+      - AMBIENTE=production
+    ports:
+      - "8080:8080"

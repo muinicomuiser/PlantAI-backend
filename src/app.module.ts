@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.AMBIENTE}` || '.env.desarrollo',
+      envFilePath: `.env.${process.env.AMBIENTE}` || `.env.dev`,
     }),
     ProductosModule,
     CarroComprasModule,

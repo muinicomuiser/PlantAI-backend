@@ -1,9 +1,13 @@
-## compose de prueba se deben generar los correctos
+## compose de prueba 
 
 services:
-  cotiledon:
-    image: entorno:latest
+  cotiledon-dev:
+    image: node:22-alpine3.19
+    working_dir: /usr/src/app
     environment:
-      - AMBIENTE=production
+      - AMBIENTE=dev
+    volumes:
+      - ./:/usr/src/app
     ports:
-      - "3000:8080"
+      - "3000:3000"
+    command: sh -c "npm install -g && npm run start:dev"

@@ -44,6 +44,7 @@ async function bootstrap() {
   // Get the port from the ConfigService
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT');
+  console.log('PUERTO: ', port);
 
   //logger port
   const logger = new Logger('Main Bootstrap');
