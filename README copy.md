@@ -1,29 +1,64 @@
-<p align="center">
+<p align="left">
   <!-- <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a> -->
   <img src="arbol.png" width="450" alt="PlantAI BACKEND"/>
 </p>
-  <p align="center"><span style="font-size:1.8em; font-weight: 700;">PlantAI  -</span><span style="font-size:1.8em; font-weight: 100;">  BACKEND</span></p>
+  <!-- <p align="center"><span style="font-size:1.8em; font-weight: 700;">PlantAI</span></p> -->
 
 
-## Integrantes
+# PlantAI Store API
+Este proyecto es un API RESTful desarrollada con NestJS
+que permite manejar la base de datos y la lógica de los recursos estructurales del e-commerce PlantAI.
 
-Boris Suazo     
-Luciano Villagrán     
-Nicolás Donoso      
-Nicolás Fernandez     
+## Contenidos
+1. [Requisitos Previos](#requisitos-previos)
+2. [Instalación](#instalacion)
+3. [Configuración](#configuracion)
+4. [Ejecución - Desarrollo](#ejecucion-desarrollo)
+5. [Ejecución - Producción](#ejecucion-produccion)
+6. [Estructura del Proyecto](#estructura-del-proyecto)
+7. [Documentación de la API](#documentacion-api)
+8. [Flujo de Trabajo](#flujo-trabajo)
+9. [Contacto](#contacto)
 
+## 1. Requisitos Previos
+Antes de ejecutar el proyecto, asegúrate de tener
+instalados los siguientes componentes:
+- **Node.js**: >= v?.?.?
+- **NestJS CLI**: `npm install -g @nestjs/cli`
+- **Otras Aplicaciones**: Links para descargar
 
+## 2. Instalación
+1. Clona el repositorio:
+```bash
+git clone https://github.com/bootcamp-uchile-2024/grupo-3-backend.git
+```
+2. Entra en el directorio del proyecto:
+```bash
+cd grupo-3-backend
+```
+3. Instala las dependencias:
+```bash
+npm install
+```
 
+## 3. Configuración
+1. Se deben completar las siguientes variables de
+entorno:
+- EJEMPLO: Colocar alguno de estos valores 1 o 2.
+- EJEMPLO2: Indicar el nombre.
+2. Completar el archivo .env en la raíz del proyecto,
+configurando las siguientes variables de entorno:
+- EJEMPLO3: Ruta del xxxxxxx.
+- EJEMPLO4: Valor para yyyyyyyyyyyyyyyyy.
+3. En caso que se ejecute en ambiente productivo,
+adicionalmente se debe modificar WWWWW.
 
-
-
-
-
-
-
-
-
-
+## 4. Ejecución - Producción
+Para ejecutar el proyecto en modo producción, usa el
+siguiente comando:
+```bash
+npm run start:prod
+```
 
 
 
