@@ -9,9 +9,9 @@ COPY .env.production /home/node/app/.env.production
 
 WORKDIR /home/node/app
 
-RUN npm install --production
+RUN yarn install --production
 
-CMD ["npm", "run", "start:prod"]
+CMD ["yarn", "start:prod"]
 
 # se debe asignar una variable de entorno para que el contenedor sepa que es un contenedor de producción y no de desarrollo la variable se llama AMBIENTE=production
 

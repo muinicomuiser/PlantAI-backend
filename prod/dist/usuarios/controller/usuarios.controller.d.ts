@@ -12,7 +12,9 @@ export declare class UsuariosController {
     findOne(id: number): OutputUserDTO;
     createUser(usuario: CreateUsuarioDto): CreateUsuarioDto;
     updateOne(id: number, usuario: UpdateUsuarioDto): string;
-    deleteOne(id: number): import("../entities/usuario.entity").Usuario[];
+    deleteOne(id: number): {
+        mensaje: string;
+    };
     updateCarro(idUsuario: number, carro: UpdateCarroCompraDto): UpdateCarroCompraDto;
     addPedido(pedido: CreatePedidoDto, idUsuario: number): string;
     findPedidos(idUsuario: number): string;

@@ -24,11 +24,32 @@ async function bootstrap() {
   // add exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  // habilitar cors de manera global
+  app.enableCors();
+
+  // Get the port from the ConfigService
+  const configService: ConfigService = app.get(ConfigService);
+  const port = configService.get<number>('PORT');
+  console.log('PUERTO: ', port);
+
+  //Get information of package.json
+  const name = configService.get("npm_package_name");
+  const description = configService.get("npm_package_description");
+  const version = configService.get("npm_package_version");
+  const authorName = configService.get("npm_package_author_name");
+  const authorUrl = configService.get("npm_package_author_url")
+  const authorEmail = configService.get("npm_package_author_email");
+  const license = configService.get("npm_package_license");
+  const ambiente = configService.get('AMBIENTE');
+  console.log(ambiente);
+
   // Swagger config
   const config = new DocumentBuilder()
-    .setTitle('API PlantAI')
-    .setDescription('')
-    .setVersion('1.0.0')
+    .setTitle(`${name} - ${ambiente}`)
+    .setDescription(description)
+    .setVersion(version)
+    .setContact(authorName, authorUrl, authorEmail)
+    .setLicense(license, '')
     .addTag('PlantAI-store-api')
     .build();
 
@@ -37,14 +58,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document, {
     yamlDocumentUrl: 'swagger/yaml',
   });
-
-  // habilitar cors de manera global
-  app.enableCors();
-
-  // Get the port from the ConfigService
-  const configService: ConfigService = app.get(ConfigService);
-  const port = configService.get<number>('PORT');
-  console.log('PUERTO: ', port);
 
   //logger port
   const logger = new Logger('Main Bootstrap');

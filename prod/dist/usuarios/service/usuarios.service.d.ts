@@ -15,7 +15,9 @@ export declare class UsuariosService {
     findOne(id: number): OutputUserDTO;
     createUser(usuario: CreateUsuarioDto): CreateUsuarioDto;
     updateOne(id: number, usuario: UpdateUsuarioDto): string;
-    deleteOne(id: number): Usuario[];
+    deleteOne(id: number): {
+        mensaje: string;
+    };
     updateCarro(idUsuario: number, carro: UpdateCarroCompraDto): UpdateCarroCompraDto;
     findPedidos(idUsuario: number): string;
     addPedido(idUsuario: number, pedido: CreatePedidoDto): string;

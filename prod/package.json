@@ -1,8 +1,12 @@
 {
-  "name": "cotiledon-backend",
+  "name": "PlantAI",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Proyecto bootcamp 2024 - Backend",
+  "author": {
+    "name": "Grupo 3",
+    "email": "plantai-backend@cotiledon.com",
+    "url": "https://cotiledon-backend.com"
+  },
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

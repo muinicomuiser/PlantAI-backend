@@ -16,19 +16,31 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
     }));
     app.useGlobalFilters(new httpexception_filter_1.HttpExceptionFilter());
+    app.enableCors();
+    const configService = app.get(config_1.ConfigService);
+    const port = configService.get('PORT');
+    console.log('PUERTO: ', port);
+    const name = configService.get("npm_package_name");
+    const description = configService.get("npm_package_description");
+    const version = configService.get("npm_package_version");
+    const authorName = configService.get("npm_package_author_name");
+    const authorUrl = configService.get("npm_package_author_url");
+    const authorEmail = configService.get("npm_package_author_email");
+    const license = configService.get("npm_package_license");
+    const ambiente = configService.get('AMBIENTE');
+    console.log(ambiente);
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('API PlantAI')
-        .setDescription('')
-        .setVersion('1.0.0')
+        .setTitle(`${name} - ${ambiente}`)
+        .setDescription(description)
+        .setVersion(version)
+        .setContact(authorName, authorUrl, authorEmail)
+        .setLicense(license, '')
         .addTag('PlantAI-store-api')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, document, {
         yamlDocumentUrl: 'swagger/yaml',
     });
-    app.enableCors();
-    const configService = app.get(config_1.ConfigService);
-    const port = configService.get('PORT');
     const logger = new common_1.Logger('Main Bootstrap');
     logger.log(`Server running on http://localhost:${port}`);
     await app.listen(port);

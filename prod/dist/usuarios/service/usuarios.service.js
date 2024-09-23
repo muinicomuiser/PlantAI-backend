@@ -35,7 +35,7 @@ let UsuariosService = class UsuariosService {
         return 'Usuario actualizado';
     }
     deleteOne(id) {
-        return this.users.splice(id - 1, 1);
+        return { mensaje: 'Usuario eliminado' };
     }
     updateCarro(idUsuario, carro) {
         return carro;

@@ -32,7 +32,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                envFilePath: `.env.${process.env.AMBIENTE}` || '.env.desarrollo',
+                envFilePath: `.env.${process.env.AMBIENTE}` || `.env.dev`,
             }),
             productos_module_1.ProductosModule,
             carro_compras_module_1.CarroComprasModule,

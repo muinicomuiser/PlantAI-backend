@@ -2,8 +2,12 @@
 
 services:
   cotiledon-prod:
-    image: cotiledonprod:v1
+    build:
+      context: .
+      dockerfile: 'dockerfile'
     environment:
       - AMBIENTE=production
     ports:
       - "8080:8080"
+
+## docker compose --build para generar, en el contenedor, nueva imagen a partir del dockerfile

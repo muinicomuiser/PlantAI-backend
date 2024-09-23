@@ -11,38 +11,37 @@ const common_1 = require("@nestjs/common");
 const producto_salida_dto_1 = require("../dto/producto-salida.dto");
 const categorias_1 = require("../entities/categorias");
 let ProductosService = class ProductosService {
+    constructor() {
+        this.productosSalida = [
+            plantaUnoDto,
+            plantaDosDto,
+            plantaTresDto,
+            plantaCuatroDto,
+            plantaCincoDto,
+            plantaSeisDto,
+            plantaSieteDto,
+            plantaOchoDto,
+            plantaNueveDto,
+            plantaDiezDto,
+        ];
+    }
     getById(id) {
         return plantaUnoDto;
     }
     getByFilters() {
-        const filtrados = [
-            plantaUnoDto,
-            plantaDosDto,
-            plantaTresDto,
-            plantaCuatroDto,
-            plantaCincoDto,
-            plantaSeisDto,
-            plantaSieteDto,
-            plantaOchoDto,
-            plantaNueveDto,
-            plantaDiezDto,
-        ];
-        return filtrados;
+        return this.productosSalida;
     }
     getAll() {
-        const productos = [
-            plantaUnoDto,
-            plantaDosDto,
-            plantaTresDto,
-            plantaCuatroDto,
-            plantaCincoDto,
-            plantaSeisDto,
-            plantaSieteDto,
-            plantaOchoDto,
-            plantaNueveDto,
-            plantaDiezDto,
-        ];
-        return productos;
+        return this.productosSalida;
+    }
+    create() {
+        return { mensaje: 'Producto creado' };
+    }
+    update() {
+        return { mensaje: 'Producto actualizado' };
+    }
+    deleteOne(id) {
+        return { mensaje: 'Producto eliminado' };
     }
 };
 exports.ProductosService = ProductosService;
