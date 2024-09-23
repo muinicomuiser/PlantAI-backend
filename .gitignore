@@ -3,7 +3,7 @@
 /node_modules
 /build
 .vscode
-
+/prod/node_modules
 
 # Logs
 logs
