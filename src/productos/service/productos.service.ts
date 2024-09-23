@@ -1,10 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { ProductoSalidaDto } from '../dto/producto-salida.dto';
 import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { CreateProductoDto } from 'prod/dist/productos/dto/create-producto.dto';
 
 
 @Injectable()
 export class ProductosService {
+  productosSalida: ProductoSalidaDto[] = [
+    plantaUnoDto,
+    plantaDosDto,
+    plantaTresDto,
+    plantaCuatroDto,
+    plantaCincoDto,
+    plantaSeisDto,
+    plantaSieteDto,
+    plantaOchoDto,
+    plantaNueveDto,
+    plantaDiezDto,
+  ]
   /**Retorna el producto cuyo id coincida con el ingresado.*/
   getById(id: number): ProductoSalidaDto {
     return plantaUnoDto;
@@ -12,36 +25,21 @@ export class ProductosService {
 
   /**Retorna el conjunto de productos que coincida con los filtros.*/
   getByFilters(): ProductoSalidaDto[] {
-    const filtrados: ProductoSalidaDto[] = [
-      plantaUnoDto,
-      plantaDosDto,
-      plantaTresDto,
-      plantaCuatroDto,
-      plantaCincoDto,
-      plantaSeisDto,
-      plantaSieteDto,
-      plantaOchoDto,
-      plantaNueveDto,
-      plantaDiezDto,
-    ];
-    return filtrados;
+    return this.productosSalida
   }
 
   /**Retorna todos los productos registrados.*/
   getAll(): ProductoSalidaDto[] {
-    const productos: ProductoSalidaDto[] = [
-      plantaUnoDto,
-      plantaDosDto,
-      plantaTresDto,
-      plantaCuatroDto,
-      plantaCincoDto,
-      plantaSeisDto,
-      plantaSieteDto,
-      plantaOchoDto,
-      plantaNueveDto,
-      plantaDiezDto,
-    ];
-    return productos;
+    return this.productosSalida
+  }
+  create() {
+    return { mensaje: 'Producto creado' };
+  }
+  update() {
+    return { mensaje: 'Producto actualizado' };
+  }
+  deleteOne(id: number) {
+    return { mensaje: 'Producto eliminado' };
   }
 }
 

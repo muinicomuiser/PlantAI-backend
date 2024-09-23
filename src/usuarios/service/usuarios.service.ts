@@ -44,7 +44,7 @@ export class UsuariosService {
 
     //Elimina un usuario según el id
     deleteOne(id: number) {
-        return this.users.splice(id - 1, 1);
+        return { mensaje: 'Usuario eliminado' };
     }
 
     updateCarro(idUsuario: number, carro: UpdateCarroCompraDto) {
