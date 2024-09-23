@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 
 import {
   ApiOperation,
@@ -10,13 +10,15 @@ import {
 import { ProductosService } from '../service/productos.service';
 import { ProductoSalidaDto } from '../dto/producto-salida.dto';
 import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { CreateProductoDto } from '../dto/create-producto.dto';
+import { UpdateProductoDto } from '../dto/update-producto.dto';
 
 
 /**Historia de Usuario 7: Búsqueda de Productos*/
-@ApiTags('Búsqueda de productos')
+@ApiTags('Productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
 
   // Obtener por id
   @ApiOperation({ summary: 'Busca un producto por su id' })
@@ -61,7 +63,53 @@ export class ProductosController {
   ) {
     return this.productosService.getByFilters();
   }
+
+  @ApiOperation({ summary: 'Crea un producto.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Agrega un producto al sistema.'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'No ha sido posible crear el producto',
+  })
+  @Post()
+  createProduct(@Body() createProductoDto: CreateProductoDto) {
+    return this.productosService.create()
+  }
+
+  @ApiOperation({ summary: 'Actualiza un producto.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Actualiza un producto.'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se ha encontrado un producto con ese id.',
+  })
+  @ApiParam({ name: 'id', type: Number })
+  @Patch(':id')
+  updateProduct(@Param('id') id: number, @Body() updateProductoDto: UpdateProductoDto) {
+    return this.productosService.update()
+  }
+
+  @ApiOperation({ summary: 'Elimina un producto según su id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Producto eliminado'
+  })
+  //Elimina un usuario según el id
+  @ApiResponse({
+    status: 404,
+    description: 'No existe un producto con ese id'
+  })
+  @Delete(':id')
+  deleteOne(@Param('id') id: number) {
+    return this.productosService.deleteOne(id)
+  }
 }
+
+
 
 // Servicios
 // Obtener todos los productos
