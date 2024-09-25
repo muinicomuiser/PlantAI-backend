@@ -216,13 +216,13 @@ Una vez realizada la aprovación se realizará el merge.
 Si tienes alguna pregunta, puedes contactarnos a través
 de:
 
-- Boris Suazo - Email: b.asuazo@gmail.com - GitHub:
+- Boris Suazo - Email: boris@cotiledon-backend.com - GitHub:
   [basuazo](https://github.com/basuazo)
-- Luciano Villagrán - Email: desarrolador2@example.com -
+- Luciano Villagrán - Email: luciano@cotiledon-backend.com -
   GitHub: [luccianovr](https://github.com/luccianovr)
-- Nicolas Fernandez - Email: b.asuazo@gmail.com - GitHub:
+- Nicolas Fernandez - Email: nicolas.f@cotiledon-backend.com - GitHub:
   [NicolasFernandezR](https://github.com/NicolasFernandezR)
-- Nicolás Donoso - Email: desarrolador2@example.com -
+- Nicolás Donoso - Email: nicolas.d@cotiledon-backend.com -
   GitHub: [muinicomuiser](https://github.com/muinicomuiser)
 
 ```
