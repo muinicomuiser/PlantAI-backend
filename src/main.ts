@@ -40,12 +40,12 @@ async function bootstrap() {
   console.log('PUERTO: ', port);
 
   //Get information of package.json
-  const name = configService.get("npm_package_name");
-  const description = configService.get("npm_package_description");
-  const version = configService.get("npm_package_version");
-  const authorName = configService.get("npm_package_author_name");
-  const authorUrl = configService.get("npm_package_author_url")
-  const authorEmail = configService.get("npm_package_author_email");
+  const name = configService.get('npm_package_name');
+  const description = configService.get('npm_package_description');
+  const version = configService.get('npm_package_version');
+  const authorName = configService.get('npm_package_author_name');
+  const authorUrl = configService.get('npm_package_author_url');
+  const authorEmail = configService.get('npm_package_author_email');
   const license = configService.get('npm_package_license');
   const ambiente = configService.get('AMBIENTE');
   console.log(ambiente);
@@ -53,14 +53,16 @@ async function bootstrap() {
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle(`${name} - ${ambiente}`)
-    .setDescription(description
-      + '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n'
-      + '\n Módulo Catálogo: api/catalogo\n'
-      + '\n Módulo Pedidos: api/pedidos\n'
-      + '\n Módulo Productos: api/productos\n'
-      + '\n Módulo Usuarios: api/usuarios\n'
-      + '\n Módulo Equipo: api/equipo\n'
-      + '\n Módulo Autenticación: api/aut')
+    .setDescription(
+      description +
+        '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
+        '\n Módulo Catálogo: api/catalogo\n' +
+        '\n Módulo Pedidos: api/pedidos\n' +
+        '\n Módulo Productos: api/productos\n' +
+        '\n Módulo Usuarios: api/usuarios\n' +
+        '\n Módulo Equipo: api/equipo\n' +
+        '\n Módulo Autenticación: api/aut',
+    )
 
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
@@ -124,14 +126,30 @@ async function bootstrap() {
     .build();
 
   //Swagger setup
-  const document = SwaggerModule.createDocument(app, config, { include: [AppModule] });
-  const documentCarro = SwaggerModule.createDocument(app, configCarro, { include: [CarroComprasModule] });
-  const documentCatalogo = SwaggerModule.createDocument(app, configCatalogo, { include: [CatalogoModule] });
-  const documentPedidos = SwaggerModule.createDocument(app, configPedidos, { include: [PedidosModule] });
-  const documentProductos = SwaggerModule.createDocument(app, configProductos, { include: [ProductosModule] });
-  const documentUsuarios = SwaggerModule.createDocument(app, configUsuarios, { include: [UsuariosModule] });
-  const documentEquipo = SwaggerModule.createDocument(app, configEquipo, { include: [EquipoModule] });
-  const documentAut = SwaggerModule.createDocument(app, configAut, { include: [AuthModule] });
+  const document = SwaggerModule.createDocument(app, config, {
+    include: [AppModule],
+  });
+  const documentCarro = SwaggerModule.createDocument(app, configCarro, {
+    include: [CarroComprasModule],
+  });
+  const documentCatalogo = SwaggerModule.createDocument(app, configCatalogo, {
+    include: [CatalogoModule],
+  });
+  const documentPedidos = SwaggerModule.createDocument(app, configPedidos, {
+    include: [PedidosModule],
+  });
+  const documentProductos = SwaggerModule.createDocument(app, configProductos, {
+    include: [ProductosModule],
+  });
+  const documentUsuarios = SwaggerModule.createDocument(app, configUsuarios, {
+    include: [UsuariosModule],
+  });
+  const documentEquipo = SwaggerModule.createDocument(app, configEquipo, {
+    include: [EquipoModule],
+  });
+  const documentAut = SwaggerModule.createDocument(app, configAut, {
+    include: [AuthModule],
+  });
 
   SwaggerModule.setup('api', app, document, {
     yamlDocumentUrl: 'swagger/yaml',
@@ -158,11 +176,11 @@ async function bootstrap() {
     yamlDocumentUrl: 'swagger/yaml',
   });
 
+  // Start the app on port 3000
+  await app.listen(port);
+
   //logger port
   const logger = new Logger('Main Bootstrap');
   logger.log(`Server running on http://localhost:${port}`);
-
-  // Start the app on port 3000
-  await app.listen(port);
 }
 bootstrap();
