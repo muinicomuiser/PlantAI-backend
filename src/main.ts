@@ -50,7 +50,13 @@ async function bootstrap() {
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
     .setLicense(license, '')
-    .addTag('PlantAI-store-api')
+    .addTag('Carro de compras')
+    .addTag('Catálogo')
+    .addTag('Pedidos')
+    .addTag('Productos')
+    .addTag('Usuarios')
+    .addTag('Equipo')
+    .addTag('Autenticación')
     .build();
 
   // Swagger setup
