@@ -46,7 +46,6 @@ async function bootstrap() {
   const authorName = configService.get("npm_package_author_name");
   const authorUrl = configService.get("npm_package_author_url")
   const authorEmail = configService.get("npm_package_author_email");
-  // const license = configService.get("npm_package_license");
   const license = configService.get('npm_package_license');
   const ambiente = configService.get('AMBIENTE');
   console.log(ambiente);
@@ -54,17 +53,18 @@ async function bootstrap() {
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle(`${name} - ${ambiente}`)
-    .setDescription(description)
+    .setDescription(description
+      + '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n'
+      + '\n Módulo Catálogo: api/catalogo\n'
+      + '\n Módulo Pedidos: api/pedidos\n'
+      + '\n Módulo Productos: api/productos\n'
+      + '\n Módulo Usuarios: api/usuarios\n'
+      + '\n Módulo Equipo: api/equipo\n'
+      + '\n Módulo Autenticación: api/aut')
+
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
     .setLicense(license, '')
-    // .addTag('Carro de compras')
-    // .addTag('Catálogo')
-    // .addTag('Pedidos')
-    // .addTag('Productos')
-    // .addTag('Usuarios')
-    // .addTag('Equipo')
-    // .addTag('Autenticación')
     .build();
   const configCarro = new DocumentBuilder()
     .setTitle(`${name} - ${ambiente}`)
