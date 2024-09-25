@@ -67,7 +67,7 @@ npm install
 - PORT: Número del puerto.
 - AMBIENTE: Indicar el nombre.
 
-## 5. Ejecución - Desarrollo
+## 4. Ejecución - Desarrollo
 
 Para ejecutar el proyecto en modo desarrollo, usa el
 siguiente comando, desde la ruta grupo-3-backend:

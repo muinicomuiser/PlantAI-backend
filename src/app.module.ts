@@ -16,6 +16,8 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.AMBIENTE}` || `.env.dev`,
+
+
       // envFilePath:`.env.dev`,
     }),
     ProductosModule,
