@@ -54,18 +54,18 @@ npm install
    entorno:
 
 - PORT: Número del puerto.
-- AMBIENTE: Indicar el nombre.
+- AMBIENTE: Indicar el nombre del ambiente de trabajo.
 
 2. Completar el archivo .env en la raíz del proyecto,
    configurando las siguientes variables de entorno (tomar el archivo .env.example como referencia):
 
-- PORT: Número del puerto.
-- AMBIENTE: Indicar el nombre.
+- PORT: 3000
+- AMBIENTE: dev
 
 3. En caso que se ejecute en ambiente productivo:
 
-- PORT: Número del puerto.
-- AMBIENTE: Indicar el nombre.
+- PORT: 8080
+- AMBIENTE: production
 
 ## 4. Ejecución - Desarrollo
 
