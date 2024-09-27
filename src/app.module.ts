@@ -9,9 +9,18 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { EquipoModule } from './commons/modelse3/equipo/equipo.module';
 import { AuthModule } from './auth/auth.module';
 import { GlobalMiddleware } from './commons/middleware/global.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      // envFilePath: `.env.${process.env.AMBIENTE}` || `.env.dev`,
+      envFilePath: process.env.AMBIENTE != undefined ? `.env.${process.env.AMBIENTE}` : `.env.dev`,
+
+
+      // envFilePath:`.env.dev`,
+    }),
     ProductosModule,
     CarroComprasModule,
     PedidosModule,
