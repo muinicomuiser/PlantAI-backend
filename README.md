@@ -88,7 +88,7 @@ docker compose up -d
 
 ## 6. Estructura del Proyecto
 
-````bash
+```bash
 src/
 │
 ├── app.module.ts # Módulo raíz de la aplicación
@@ -172,7 +172,7 @@ servidor.
 1. Inicia el proyecto:
 ```bash
 comando npm run start:dev
-````
+```
 
 2. Accede a Swagger en tu navegador:
    http://localhost:3000/api
