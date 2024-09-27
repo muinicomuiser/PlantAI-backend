@@ -169,9 +169,9 @@ src/
 Swagger está habilitado en este proyecto. Puedes acceder
 a la documentación de la API después de iniciar el
 servidor.
-1. Inicia el proyecto:
+1. Inicia el proyecto con el comando:
 ```bash
-comando npm run start:dev
+npm run start:dev
 ```
 
 2. Accede a Swagger en tu navegador:
