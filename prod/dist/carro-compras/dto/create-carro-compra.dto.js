@@ -13,7 +13,7 @@ exports.CreateCarroCompraDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-const producto_entity_1 = require("../../productos/entities/producto.entity");
+const producto_salida_dto_1 = require("../../productos/dto/producto-salida.dto");
 class CreateCarroCompraDto {
 }
 exports.CreateCarroCompraDto = CreateCarroCompraDto;
@@ -31,25 +31,10 @@ __decorate([
     (0, swagger_1.ApiProperty)({
         name: 'productos',
         description: 'Productos del carro de compras',
-        type: [producto_entity_1.Producto],
-        example: {
-            nombre: 'Ciprés',
-            precio: 5000,
-            imagen: 'cotiledon.com/imagenes/cipres.jpg',
-            descripcion: 'Producto ejemplo. Primera planta de la tienda',
-            cantidad: 5,
-            unidadesVendidas: 5,
-            puntuacion: 5,
-            familia: 'Conífera',
-            fotoperiodo: 'dia largo',
-            tipoRiego: 'regadera',
-            petFriendly: true,
-            color: 'verde',
-            id: 1,
-        },
+        type: [producto_salida_dto_1.ProductoSalidaDto],
     }),
     (0, class_validator_1.ValidateNested)(),
-    (0, class_transformer_1.Type)(() => producto_entity_1.Producto),
+    (0, class_transformer_1.Type)(() => producto_salida_dto_1.ProductoSalidaDto),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], CreateCarroCompraDto.prototype, "productos", void 0);
