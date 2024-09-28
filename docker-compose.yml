@@ -1,4 +1,4 @@
-## compose de prueba 
+## compose de prueba
 
 services:
   cotiledon-dev:
@@ -9,5 +9,5 @@ services:
     volumes:
       - ./:/usr/src/app
     ports:
-      - "3000:3000"
-    command: "yarn start:dev"
+      - '3000:3000'
+    command: 'yarn start:dev'

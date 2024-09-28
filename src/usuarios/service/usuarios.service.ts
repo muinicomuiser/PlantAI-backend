@@ -12,54 +12,68 @@ import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 
 @Injectable()
 export class UsuariosService {
+  users: Usuario[] = [];
+  usersDTO: OutputUserDTO[] = [];
+  pedidos: Pedido[] = [];
 
-    users: Usuario[] = [];
-    usersDTO: OutputUserDTO[] = [];
-    pedidos: Pedido[] = [];
+  constructor() {
+    this.users.push(
+      new Usuario(
+        1,
+        'User1',
+        '1234',
+        'user1@gmail.com',
+        new CarroCompra(1, 1, [], 0),
+        undefined,
+      ),
+    );
+    this.usersDTO.push(
+      new OutputUserDTO(
+        this.users[0].username,
+        this.users[0].email,
+        this.users[0].carrito,
+        this.users[0].pedidos,
+      ),
+    );
+  }
 
-    constructor() {
-        this.users.push(new Usuario(1, 'User1', '1234', 'user1@gmail.com', new CarroCompra(1, 1, [], 0), undefined));
-        this.usersDTO.push(new OutputUserDTO(this.users[0].username, this.users[0].email, this.users[0].carrito, this.users[0].pedidos))
+  findAll() {
+    return this.usersDTO;
+  }
 
-    }
+  //Obtiene un usuario según su ID
+  findOne(id: number) {
+    return this.usersDTO[id - 1];
+  }
 
-    findAll() {
-        return this.usersDTO;
-    }
+  //Crear un usuario
+  createUser(usuario: CreateUsuarioDto) {
+    return usuario;
+  }
 
-    //Obtiene un usuario según su ID
-    findOne(id: number) {
-        return this.usersDTO[id - 1];
-    }
+  //Actualiza un usuario según el id
+  updateOne(id: number, usuario: UpdateUsuarioDto) {
+    return 'Usuario actualizado';
+  }
 
-    //Crear un usuario
-    createUser(usuario: CreateUsuarioDto) {
-        return usuario;
-    }
+  //Elimina un usuario según el id
+  deleteOne(id: number) {
+    return { mensaje: 'Usuario eliminado' };
+  }
 
-    //Actualiza un usuario según el id
-    updateOne(id: number, usuario: UpdateUsuarioDto) {
-        return 'Usuario actualizado';
-    }
+  updateCarro(idUsuario: number, carro: UpdateCarroCompraDto) {
+    return carro;
+  }
 
-    //Elimina un usuario según el id
-    deleteOne(id: number) {
-        return { mensaje: 'Usuario eliminado' };
-    }
+  findPedidos(idUsuario: number) {
+    return 'Retorna los pedidos del usuario según el ID';
+  }
 
-    updateCarro(idUsuario: number, carro: UpdateCarroCompraDto) {
-        return carro;
-    }
+  addPedido(idUsuario: number, pedido: CreatePedidoDto) {
+    return 'Agrega un pedido a un usuario';
+  }
 
-    findPedidos(idUsuario: number) {
-        return 'Retorna los pedidos del usuario según el ID';
-    }
-
-    addPedido(idUsuario: number, pedido: CreatePedidoDto) {
-        return 'Agrega un pedido a un usuario';
-    }
-
-    updateMedioPago(idUsuario: number, medioPago: tipoPago) {
-        return 'Actualiza el Medio de Pago de un usuario';
-    }
+  updateMedioPago(idUsuario: number, medioPago: tipoPago) {
+    return 'Actualiza el Medio de Pago de un usuario';
+  }
 }

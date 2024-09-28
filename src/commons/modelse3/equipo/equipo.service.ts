@@ -1,9 +1,8 @@
-import { Injectable } from "@nestjs/common";
-import { Area } from "../area";
-import { Integrante } from "../integrante";
-import { Equipo } from "../equipo";
-import { ECommerce } from "../ecommerce";
-
+import { Injectable } from '@nestjs/common';
+import { Area } from '../area';
+import { Integrante } from '../integrante';
+import { Equipo } from '../equipo';
+import { ECommerce } from '../ecommerce';
 
 /**Integrantes*/
 let nicoLavanderos: Integrante = new Integrante('Nicolás Lavanderos', 'UX/UI');
@@ -18,85 +17,85 @@ let nicoDonoso: Integrante = new Integrante('Nicolás Donoso', 'Backend');
 let borisSuazo: Integrante = new Integrante('Boris Suazo', 'Backend');
 let nicoFernandez: Integrante = new Integrante('Nicolás Fernandez', 'Backend');
 let lucianoVillagran: Integrante = new Integrante(
-    'Luciano Villagrán',
-    'Backend',
+  'Luciano Villagrán',
+  'Backend',
 );
 let vicenteLabbe: Integrante = new Integrante('Vicente Labbé', 'Mobile');
 let cesarSandoval: Integrante = new Integrante('Cesar Sandoval', 'Mobile');
 
 /**Áreas*/
 let uxui: Area = new Area('UXUI', nicoLavanderos, [
-    nicoLavanderos,
-    danielAlfaro,
-    vicenteDonoso,
-    makaGarabito,
-    jorgeSilva,
+  nicoLavanderos,
+  danielAlfaro,
+  vicenteDonoso,
+  makaGarabito,
+  jorgeSilva,
 ]);
 let frontend: Area = new Area('Frontend', estefaniaPerez, [
-    estefaniaPerez,
-    nicoleVargas,
-    karlaAcuna,
+  estefaniaPerez,
+  nicoleVargas,
+  karlaAcuna,
 ]);
 let backend: Area = new Area('Backend', nicoDonoso, [
-    nicoDonoso,
-    borisSuazo,
-    nicoFernandez,
-    lucianoVillagran,
+  nicoDonoso,
+  borisSuazo,
+  nicoFernandez,
+  lucianoVillagran,
 ]);
 let mobile: Area = new Area('Mobile', vicenteLabbe, [
-    vicenteLabbe,
-    cesarSandoval,
+  vicenteLabbe,
+  cesarSandoval,
 ]);
 
 @Injectable()
 export class EquipoService {
-    equipo: Equipo;
-    areas: Area[] = [];
+  equipo: Equipo;
+  areas: Area[] = [];
 
-    constructor() {
-        /**Inicialización de equipo y arreglo de áreas.*/
-        this.equipo = new Equipo('Cotiledón', borisSuazo, nicoLavanderos, [
-            uxui,
-            frontend,
-            backend,
-            mobile,
-        ]);
-        this.areas.push(uxui, frontend, backend, mobile);
-    }
+  constructor() {
+    /**Inicialización de equipo y arreglo de áreas.*/
+    this.equipo = new Equipo('Cotiledón', borisSuazo, nicoLavanderos, [
+      uxui,
+      frontend,
+      backend,
+      mobile,
+    ]);
+    this.areas.push(uxui, frontend, backend, mobile);
+  }
 
-    /**Retorna el equipo completo.*/
-    obtenerEquipo(): Equipo {
-        return this.equipo;
-    }
+  /**Retorna el equipo completo.*/
+  obtenerEquipo(): Equipo {
+    return this.equipo;
+  }
 
-    /**Retorna un área del equipo.*/
-    obtenerEquipoPorArea(area: string): Area {
-        for (let i of this.areas) {
-            if (i.nombre.toLocaleLowerCase() == area.toLocaleLowerCase()) {
-                return i;
-            }
-        }
-        return null;
+  /**Retorna un área del equipo.*/
+  obtenerEquipoPorArea(area: string): Area {
+    for (let i of this.areas) {
+      if (i.nombre.toLocaleLowerCase() == area.toLocaleLowerCase()) {
+        return i;
+      }
     }
-    
-    /**Retorna un arreglo con todas las áreas del equipo.*/
-    obtenerAreas(): Area[] {
-        return this.areas;
-    }
+    return null;
+  }
 
-    /**Retorna un texto con la información general del ecommerce.*/
-    obtenerInformacionGeneral(): ECommerce {
-        const infoEcommerce: ECommerce = new ECommerce(
-            'PlantAI',
-            'Un E-commerce integrado con IA y AR para conectar a clientes con la naturaleza a través de recomendaciones personalizadas ',
-            'B2C (Business 2 Client)',
-            'Crear un e-commerce tipo Marketplace B2C para la venta de plantas y productos relacionados con la botánica, implementando un sistema de recomendación basado en IA y visualización en VR, que proporcione una experiencia de compra y venta fluida, intuitiva y accesible. Se propone una plataforma de navegación sencilla, buscando maximizar tanto la cantidad de viveros que publiquen en la plataforma, como las transacciones realizadas y la fidelización.',
-            `- Desarrollar una plataforma accesible y fácil de usar.
+  /**Retorna un arreglo con todas las áreas del equipo.*/
+  obtenerAreas(): Area[] {
+    return this.areas;
+  }
+
+  /**Retorna un texto con la información general del ecommerce.*/
+  obtenerInformacionGeneral(): ECommerce {
+    const infoEcommerce: ECommerce = new ECommerce(
+      'PlantAI',
+      'Un E-commerce integrado con IA y AR para conectar a clientes con la naturaleza a través de recomendaciones personalizadas ',
+      'B2C (Business 2 Client)',
+      'Crear un e-commerce tipo Marketplace B2C para la venta de plantas y productos relacionados con la botánica, implementando un sistema de recomendación basado en IA y visualización en VR, que proporcione una experiencia de compra y venta fluida, intuitiva y accesible. Se propone una plataforma de navegación sencilla, buscando maximizar tanto la cantidad de viveros que publiquen en la plataforma, como las transacciones realizadas y la fidelización.',
+      `- Desarrollar una plataforma accesible y fácil de usar.
         - Ampliar la oferta de plantas y productos relacionados.
     - Optimizar los procesos de Compra y Venta.
     - Promover la fidelización de usuarios.
     - Brindar soporte y asistencia al cliente.`,
-        );
-        return infoEcommerce;
-    }
+    );
+    return infoEcommerce;
+  }
 }

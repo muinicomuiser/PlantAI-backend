@@ -7,29 +7,29 @@ import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { isClassDeclaration, isClassElement, isClassLike } from 'typescript';
 
 export class Pedido {
-    @ApiProperty()
-    @IsNumber()
-    id: number;
-    @ApiProperty()
-    @IsString()
-     idUsuario: number;
-     @ApiProperty()
-     @IsDate()
-    fechaCreacion: Date;
-    @ApiProperty()
-    @IsEnum(estadoPedido)
-    public estado: estadoPedido;
-    @ApiProperty()
-    @IsEnum(tipoDespacho)
-    public tipoDespacho: tipoDespacho;
-    @ApiProperty()
-    @IsEnum(tipoPago)
-    public tipoPago: tipoPago;
-    @ApiProperty()
-    public carrito: CarroCompra;
-    @ApiProperty()
-    @IsDate()
-    public fechaEntrega: Date;
+  @ApiProperty()
+  @IsNumber()
+  id: number;
+  @ApiProperty()
+  @IsString()
+  idUsuario: number;
+  @ApiProperty()
+  @IsDate()
+  fechaCreacion: Date;
+  @ApiProperty()
+  @IsEnum(estadoPedido)
+  public estado: estadoPedido;
+  @ApiProperty()
+  @IsEnum(tipoDespacho)
+  public tipoDespacho: tipoDespacho;
+  @ApiProperty()
+  @IsEnum(tipoPago)
+  public tipoPago: tipoPago;
+  @ApiProperty()
+  public carrito: CarroCompra;
+  @ApiProperty()
+  @IsDate()
+  public fechaEntrega: Date;
 }
 
 //agregar dirección facturación.

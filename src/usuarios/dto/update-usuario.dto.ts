@@ -10,7 +10,7 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
   @ApiProperty({ example: 'asdfg' })
   @IsString()
   public password?: string;
-  
+
   @ApiProperty({ example: 'updateduser@gmail.com' })
   @IsEmail()
   public email?: string;

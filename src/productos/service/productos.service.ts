@@ -3,7 +3,6 @@ import { ProductoSalidaDto } from '../dto/producto-salida.dto';
 import { FotoPeriodo, TipoRiego } from '../entities/categorias';
 import { CreateProductoDto } from 'prod/dist/productos/dto/create-producto.dto';
 
-
 @Injectable()
 export class ProductosService {
   productosSalida: ProductoSalidaDto[] = [
@@ -17,7 +16,7 @@ export class ProductosService {
     plantaOchoDto,
     plantaNueveDto,
     plantaDiezDto,
-  ]
+  ];
   /**Retorna el producto cuyo id coincida con el ingresado.*/
   getById(id: number): ProductoSalidaDto {
     return plantaUnoDto;
@@ -25,12 +24,12 @@ export class ProductosService {
 
   /**Retorna el conjunto de productos que coincida con los filtros.*/
   getByFilters(): ProductoSalidaDto[] {
-    return this.productosSalida
+    return this.productosSalida;
   }
 
   /**Retorna todos los productos registrados.*/
   getAll(): ProductoSalidaDto[] {
-    return this.productosSalida
+    return this.productosSalida;
   }
   create() {
     return { mensaje: 'Producto creado' };

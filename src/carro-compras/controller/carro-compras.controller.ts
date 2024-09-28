@@ -16,8 +16,7 @@ import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) { }
-
+  constructor(private readonly carroComprasService: CarroComprasService) {}
 
   @ApiOperation({ summary: 'Crea un carro de compras' })
   @ApiResponse({ status: 201, description: 'Carro creado' })
@@ -27,24 +26,29 @@ export class CarroComprasController {
     return this.carroComprasService.createCarro(carro);
   }
 
-
   @ApiOperation({ summary: 'Busca un carro de compras por id' })
-  @ApiResponse({ status: 200, description: 'Carro encontrado', type: OutputCarroComprasDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Carro encontrado',
+    type: OutputCarroComprasDto,
+  })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get(':id')
   findByCarroId(@Param('id') id: number) {
     return this.carroComprasService.findByCarroId(id);
   }
 
-
   @ApiOperation({ summary: 'Busca un carro de compras por id de usuario' })
-  @ApiResponse({ status: 200, description: 'Carro encontrado', type: OutputCarroComprasDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Carro encontrado',
+    type: OutputCarroComprasDto,
+  })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get('user/:id')
   findByUserId(@Param('id') id: number) {
     return this.carroComprasService.findByUserId(id);
   }
-
 
   @ApiOperation({ summary: 'Borra un carro de compras' })
   @ApiResponse({ status: 200, description: 'Carro borrado' })
@@ -53,7 +57,6 @@ export class CarroComprasController {
   deleteCarro(@Param('id') id: number) {
     return this.carroComprasService.deleteCarro(id);
   }
-
 
   @ApiOperation({ summary: 'Actualiza un carro de compras' })
   @ApiResponse({ status: 200, description: 'Carro actualizado' })

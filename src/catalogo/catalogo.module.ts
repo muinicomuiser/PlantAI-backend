@@ -6,6 +6,6 @@ import { CatalogoController } from './controller/catalogo.controller';
 @Module({
   controllers: [CatalogoController],
   providers: [CatalogoService],
-  imports: [ProductosModule]
+  imports: [ProductosModule],
 })
-export class CatalogoModule { }
+export class CatalogoModule {}
