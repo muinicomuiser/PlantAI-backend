@@ -1,8 +1,6 @@
 services:
   cotiledon-prod:
-    build:
-      context: .
-      dockerfile: 'dockerfile'
+    image: nicolasf1/cotiledonapp:1.0.0
     environment:
       - AMBIENTE=production
     ports:
