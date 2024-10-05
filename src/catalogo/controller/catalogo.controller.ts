@@ -2,16 +2,15 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
 import { CatalogoService } from '../service/catalogo.service';
+
+/**Historia de Usuario 12: Visualización del catálogo*/
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
-  constructor(private readonly catalogoService: CatalogoService) {}
+  constructor(private readonly catalogoService: CatalogoService) { }
 
-  /**Historia de Usuario 12: Visualización del catálogo*/
 
-  //Entrega la descripción de la épica visualización
-
-  //obtener todos los productos del catálogo
+  // Obtener todos los productos
   @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
   @ApiResponse({
     status: 200,
@@ -27,7 +26,7 @@ export class CatalogoController {
     return this.catalogoService.findAll();
   }
 
-  //obtener productos mas vendidos del catálogo
+  // Obtener productos mas vendidos
   @ApiOperation({ summary: 'Obtener los productos más vendidos' })
   @ApiResponse({
     status: 200,
@@ -43,7 +42,7 @@ export class CatalogoController {
     return this.catalogoService.findBestSellers();
   }
 
-  //obtener productos por puntuacion
+  // Obtener productos por puntuacion
   @ApiOperation({ summary: 'Obtener productos por puntuación' })
   @ApiResponse({
     status: 200,
@@ -64,7 +63,7 @@ export class CatalogoController {
     return this.catalogoService.findByRating(puntuacion);
   }
 
-  //obtener recomendados por historial\
+  // Obtener recomendados por historial
   @ApiOperation({ summary: 'Obtener productos recomendados por id usuario' })
   @ApiResponse({
     status: 200,
@@ -85,7 +84,7 @@ export class CatalogoController {
     return this.catalogoService.findRecommended(id);
   }
 
-  //filtrar productos por cota de precios\
+  //Filtrar productos por cota de precios
   @ApiOperation({ summary: 'Obtener productos por rango de precios' })
   @ApiResponse({
     status: 200,

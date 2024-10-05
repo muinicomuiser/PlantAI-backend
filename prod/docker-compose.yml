@@ -1,5 +1,3 @@
-## compose de prueba
-
 services:
   cotiledon-prod:
     build:
@@ -9,4 +7,3 @@ services:
       - AMBIENTE=production
     ports:
       - '8080:8080'
-## docker compose --build para generar, en el contenedor, nueva imagen a partir del dockerfile

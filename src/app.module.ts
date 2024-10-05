@@ -15,13 +15,10 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: `.env.${process.env.AMBIENTE}` || `.env.dev`,
       envFilePath:
         process.env.AMBIENTE != undefined
           ? `.env.${process.env.AMBIENTE}`
           : `.env.dev`,
-
-      // envFilePath:`.env.dev`,
     }),
     ProductosModule,
     CarroComprasModule,
@@ -37,7 +34,7 @@ import { ConfigModule } from '@nestjs/config';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(GlobalMiddleware) //MIDDLEWARE A APLICAR
-      .forRoutes('*'); //TODAS LAS RUTAS
+      .apply(GlobalMiddleware)
+      .forRoutes('*');
   }
 }
