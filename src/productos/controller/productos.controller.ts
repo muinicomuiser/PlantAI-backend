@@ -24,7 +24,7 @@ import { UpdateProductoDto } from '../dto/update-producto.dto';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
-@ApiTags('Productos')
+@ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) { }
