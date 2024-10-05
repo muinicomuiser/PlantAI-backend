@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module'; // Importa el archivo de configuración
+import { AppModule } from './app.module';
 import { InterceptorOkLogInterceptor } from './commons/interceptor/interceptor_ok_log.interceptor';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './commons/filter/httpexception.filter';

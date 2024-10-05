@@ -19,14 +19,14 @@ import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 
+/**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
-  /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 
-  //Entrega los usuarios
+  // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
   @ApiResponse({
     status: 200,
@@ -42,7 +42,7 @@ export class UsuariosController {
     return this.usuariosService.findAll();
   }
 
-  //Obtiene un usuario según su ID
+  // Obtener un usuario según su ID
   @ApiOperation({ summary: 'Obtiene un Usuario según ID' })
   @ApiResponse({
     status: 200,
@@ -58,7 +58,7 @@ export class UsuariosController {
     return this.usuariosService.findOne(id);
   }
 
-  //Crear un usuario
+  // Crear un usuario
   @ApiOperation({ summary: 'Crea un usuario' })
   @ApiResponse({
     status: 201,
@@ -73,7 +73,7 @@ export class UsuariosController {
     return this.usuariosService.createUser(usuario);
   }
 
-  //Actualiza un usuario según el id
+  // Actualizar un usuario según el id
   @ApiOperation({ summary: 'Actualiza un usuario' })
   @ApiResponse({
     status: 201,
@@ -88,7 +88,7 @@ export class UsuariosController {
     return this.usuariosService.updateOne(id, usuario);
   }
 
-  //Elimina un usuario según el id
+  // Eliminar un usuario según el id
   @ApiOperation({ summary: 'Elimina un usuario según su id' })
   @ApiResponse({
     status: 200,
@@ -103,8 +103,7 @@ export class UsuariosController {
     return this.usuariosService.deleteOne(id);
   }
 
-  //Actualizar o modificar carro de un usuario
-  //LLAMAR A CARRO SERVICE
+  // Actualizar o modificar carro de un usuario
   @ApiOperation({ summary: 'Actualiza el carro de un usuario' })
   @ApiResponse({
     status: 201,
@@ -122,7 +121,7 @@ export class UsuariosController {
     return this.usuariosService.updateCarro(idUsuario, carro);
   }
 
-  //AGREGAR PEDIDO
+  // Agregar un pedido
   @ApiOperation({ summary: 'Agrega un pedido a un usuario' })
   @ApiResponse({
     status: 201,
@@ -140,7 +139,7 @@ export class UsuariosController {
     return this.usuariosService.addPedido(idUsuario, pedido);
   }
 
-  //OBTENER PEDIDOS
+  //Obtener pedidos de usuario
   @ApiOperation({ summary: 'Obtiene los pedidos realizados según usuario' })
   @ApiResponse({
     status: 200,
@@ -156,7 +155,7 @@ export class UsuariosController {
     return this.usuariosService.findPedidos(idUsuario);
   }
 
-  //MODIFICAR MEDIO DE PAGO
+  // Modificar medio de pago
   @ApiOperation({ summary: 'Modifica el medio de pago de un usuario' })
   @ApiResponse({
     status: 201,

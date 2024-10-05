@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProductoSalidaDto } from '../dto/producto-salida.dto';
 import { FotoPeriodo, TipoRiego } from '../entities/categorias';
-import { CreateProductoDto } from 'prod/dist/productos/dto/create-producto.dto';
 
 @Injectable()
 export class ProductosService {
@@ -17,6 +16,7 @@ export class ProductosService {
     plantaNueveDto,
     plantaDiezDto,
   ];
+
   /**Retorna el producto cuyo id coincida con el ingresado.*/
   getById(id: number): ProductoSalidaDto {
     return plantaUnoDto;
@@ -31,12 +31,16 @@ export class ProductosService {
   getAll(): ProductoSalidaDto[] {
     return this.productosSalida;
   }
+
   create() {
     return { mensaje: 'Producto creado' };
   }
+
   update() {
     return { mensaje: 'Producto actualizado' };
   }
+
+  /**Elimina un producto según su id */
   deleteOne(id: number) {
     return { mensaje: 'Producto eliminado' };
   }

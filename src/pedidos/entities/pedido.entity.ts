@@ -4,7 +4,6 @@ import { tipoDespacho } from './despacho.enum';
 import { estadoPedido } from './estado.enum';
 import { tipoPago } from './pago.enum';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
-import { isClassDeclaration, isClassElement, isClassLike } from 'typescript';
 
 export class Pedido {
   @ApiProperty()
@@ -31,5 +30,3 @@ export class Pedido {
   @IsDate()
   public fechaEntrega: Date;
 }
-
-//agregar dirección facturación.

@@ -35,11 +35,11 @@ export class Producto {
     this.descripcion = descripcion;
     this.cantidad = cantidad;
 
-    //Seguimiento
+    //Atributos de inventario
     this.unidadesVendidas = 0;
     this.puntuacion = 0;
 
-    //Categorías
+    //Atributos de categorías
     this.familia = familia;
     this.fotoperiodo = fotoperiodo;
     this.tipoRiego = tipoRiego;

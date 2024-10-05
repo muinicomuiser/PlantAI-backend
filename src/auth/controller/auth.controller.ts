@@ -6,11 +6,13 @@ import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { LoginDto } from '../dto/login.dto';
 
+/**Historia de Usuario 2: Autenticación y Gestión de Sesiones */
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
+  // Registrar un usuario
   @ApiOperation({ summary: 'Registro de usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente' })
   @ApiResponse({ status: 404, description: 'Error al registrar el usuario' })
@@ -19,6 +21,7 @@ export class AuthController {
     return this.authService.register(createUser);
   }
 
+  // Loguear un usuario
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({ status: 201, description: 'Usuario logueado exitosamente' })
   @ApiResponse({ status: 404, description: 'Error al loguear el usuario' })

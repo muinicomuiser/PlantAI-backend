@@ -6,7 +6,6 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
@@ -34,7 +33,7 @@ export class UpdateProductoDto extends PartialType(CreateProductoDto) {
   @ApiProperty({ required: false, example: 'plantAI.com/imagenes/agatea.jpg' })
   @IsUrl()
   @IsOptional()
-  imagen?: string; //URL
+  imagen?: string;
 
   @ApiProperty({
     required: false,
@@ -54,17 +53,17 @@ export class UpdateProductoDto extends PartialType(CreateProductoDto) {
   @ApiProperty({ required: false, example: 'Aesteraceae' })
   @IsString()
   @IsOptional()
-  familia?: string; //<-- enum familia
+  familia?: string;
 
   @ApiProperty({ required: false, example: 'neutral' })
   @IsEnum(FotoPeriodo)
   @IsOptional()
-  fotoperiodo?: FotoPeriodo; //<-- enum FotoPeriodo
+  fotoperiodo?: FotoPeriodo;
 
   @ApiProperty({ required: false, example: 'regadera' })
   @IsEnum(TipoRiego)
   @IsOptional()
-  tipoRiego?: TipoRiego; //<-- enum TipoRiego
+  tipoRiego?: TipoRiego;
 
   @ApiProperty({ required: false, example: true })
   @IsBoolean()
