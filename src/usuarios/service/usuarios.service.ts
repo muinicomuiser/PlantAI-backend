@@ -4,7 +4,6 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { Usuario } from '../entities/usuario.entity';
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
 import { OutputUserDTO } from '../dto/output-userDTO';
-import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';

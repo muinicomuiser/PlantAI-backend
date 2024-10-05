@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { CarroComprasModule } from 'src/carro-compras/carro-compras.module';
-import { CatalogoModule } from 'src/catalogo/catalogo.module';
 import { PedidosModule } from 'src/pedidos/pedidos.module';
 import { ProductosModule } from 'src/productos/productos.module';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
@@ -26,7 +25,6 @@ export function setupSwagger(app: INestApplication) {
     .setDescription(
       description +
       '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
-      '\n Módulo Catálogo: api/catalogo\n' +
       '\n Módulo Pedidos: api/pedidos\n' +
       '\n Módulo Productos: api/productos\n' +
       '\n Módulo Usuarios: api/usuarios\n' +
@@ -41,7 +39,6 @@ export function setupSwagger(app: INestApplication) {
   const document = SwaggerModule.createDocument(app, config, {
     include: [
       CarroComprasModule,
-      CatalogoModule,
       PedidosModule,
       ProductosModule,
       UsuariosModule,
@@ -56,7 +53,6 @@ export function setupSwagger(app: INestApplication) {
 
   const configs = [
     { module: CarroComprasModule, path: 'api/carro', tag: 'Carro de compras' },
-    { module: CatalogoModule, path: 'api/catalogo', tag: 'Catálogo' },
     { module: PedidosModule, path: 'api/pedidos', tag: 'Pedidos' },
     { module: ProductosModule, path: 'api/productos', tag: 'Productos' },
     { module: UsuariosModule, path: 'api/usuarios', tag: 'Usuarios' },
@@ -71,7 +67,7 @@ export function setupSwagger(app: INestApplication) {
       .setVersion(version)
       .setContact(authorName, authorUrl, authorEmail)
       .setLicense(license, '')
-      .addTag(tag)
+      // .addTag(tag)
       .build();
 
     const modDocument = SwaggerModule.createDocument(app, modConfig, {

@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ProductosModule } from './productos/productos.module';
 import { CarroComprasModule } from './carro-compras/carro-compras.module';
 import { PedidosModule } from './pedidos/pedidos.module';
-import { CatalogoModule } from './catalogo/catalogo.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { EquipoModule } from './commons/modelse3/equipo/equipo.module';
 import { AuthModule } from './auth/auth.module';
@@ -23,7 +22,6 @@ import { ConfigModule } from '@nestjs/config';
     ProductosModule,
     CarroComprasModule,
     PedidosModule,
-    CatalogoModule,
     UsuariosModule,
     EquipoModule,
     AuthModule,
