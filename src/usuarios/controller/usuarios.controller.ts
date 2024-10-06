@@ -23,8 +23,7 @@ import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) { }
-
+  constructor(private readonly usuariosService: UsuariosService) {}
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })

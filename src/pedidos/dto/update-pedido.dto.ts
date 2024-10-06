@@ -6,7 +6,6 @@ import { IsEnum, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdatePedidoDto {
-
   @ApiProperty()
   @IsEnum(estadoPedido, { message: 'El estado del pedido es incorrecto' })
   public estado: estadoPedido;

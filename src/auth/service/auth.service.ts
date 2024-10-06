@@ -4,7 +4,6 @@ import { LoginDto } from '../dto/login.dto';
 
 @Injectable()
 export class AuthService {
-
   register(createUser: CreateUsuarioDto) {
     return { message: 'Usuario creado' };
   }

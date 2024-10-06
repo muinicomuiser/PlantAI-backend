@@ -31,8 +31,6 @@ import { ConfigModule } from '@nestjs/config';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(GlobalMiddleware)
-      .forRoutes('*');
+    consumer.apply(GlobalMiddleware).forRoutes('*');
   }
 }

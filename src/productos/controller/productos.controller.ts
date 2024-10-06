@@ -27,7 +27,7 @@ import { UpdateProductoDto } from '../dto/update-producto.dto';
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) { }
+  constructor(private readonly productosService: ProductosService) {}
 
   // Obtener producto por id
   @ApiOperation({ summary: 'Busca un producto por su id' })

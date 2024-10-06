@@ -1,6 +1,6 @@
-/**corto = "día corto",   
- * largo = "día largo",   
- * neutro = "neutral"   
+/**corto = "día corto",
+ * largo = "día largo",
+ * neutro = "neutral"
  */
 export enum FotoPeriodo {
   corto = 'dia corto',
@@ -8,9 +8,9 @@ export enum FotoPeriodo {
   neutro = 'neutral',
 }
 
-/**inmersion = "inmersión",   
- * regadera = "regadera",   
- * goteo = "goteo",   
+/**inmersion = "inmersión",
+ * regadera = "regadera",
+ * goteo = "goteo",
  */
 export enum TipoRiego {
   inmersion = 'inmersión',

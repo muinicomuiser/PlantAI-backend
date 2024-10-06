@@ -5,7 +5,6 @@ import { tipoDespacho } from '../entities/despacho.enum';
 import { tipoPago } from '../entities/pago.enum';
 
 export class OutputPedidoDto {
-
   @ApiProperty({ example: 1 })
   public id: number;
 

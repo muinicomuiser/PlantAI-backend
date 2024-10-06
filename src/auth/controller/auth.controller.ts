@@ -10,7 +10,7 @@ import { LoginDto } from '../dto/login.dto';
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   // Registrar un usuario
   @ApiOperation({ summary: 'Registro de usuario' })

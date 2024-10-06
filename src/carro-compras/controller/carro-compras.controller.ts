@@ -17,7 +17,7 @@ import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) { }
+  constructor(private readonly carroComprasService: CarroComprasService) {}
 
   // Crear carro de compras
   @ApiOperation({ summary: 'Crea un carro de compras' })

@@ -17,7 +17,6 @@ PedidoSalidaEjemplo.id = 1;
 
 @Injectable()
 export class PedidosService {
-
   create() {
     return { mensaje: 'Pedido creado' };
   }

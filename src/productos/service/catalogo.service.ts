@@ -6,7 +6,7 @@ import { ProductsDtoExamples } from '../examples/productsDTO.examples';
 @Injectable()
 export class CatalogoService {
   productos: ProductoSalidaDto[] = [...ProductsDtoExamples];
-  constructor(private readonly productService: ProductosService) { }
+  constructor(private readonly productService: ProductosService) {}
 
   /**Retorna todos los productos */
   findAll() {

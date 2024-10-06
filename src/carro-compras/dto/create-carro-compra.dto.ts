@@ -21,7 +21,7 @@ export class CreateCarroCompraDto {
   @ApiProperty({
     name: 'productos',
     description: 'Productos del carro de compras',
-    type: [ProductoSalidaDto]
+    type: [ProductoSalidaDto],
   })
   @ValidateNested()
   @Type(() => ProductoSalidaDto)
