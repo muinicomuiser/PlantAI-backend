@@ -5,44 +5,53 @@ import { Equipo } from '../equipo';
 import { ECommerce } from '../ecommerce';
 
 /**Integrantes*/
-let nicoLavanderos: Integrante = new Integrante('Nicolás Lavanderos', 'UX/UI');
-let danielAlfaro: Integrante = new Integrante('Daniel Alfaro', 'UX/UI');
-let vicenteDonoso: Integrante = new Integrante('Vicente Donoso', 'UX/UI');
-let makaGarabito: Integrante = new Integrante('Makarena Garabito', 'UX/UI');
-let jorgeSilva: Integrante = new Integrante('Jorge Silva', 'UX/UI');
-let estefaniaPerez: Integrante = new Integrante('Estefanía Pérez', 'Frontend');
-let nicoleVargas: Integrante = new Integrante('Nicole Vargas', 'Frontend');
-let karlaAcuna: Integrante = new Integrante('Karla Acuña', 'Frontend');
-let nicoDonoso: Integrante = new Integrante('Nicolás Donoso', 'Backend');
-let borisSuazo: Integrante = new Integrante('Boris Suazo', 'Backend');
-let nicoFernandez: Integrante = new Integrante('Nicolás Fernandez', 'Backend');
-let lucianoVillagran: Integrante = new Integrante(
+const nicoLavanderos: Integrante = new Integrante(
+  'Nicolás Lavanderos',
+  'UX/UI',
+);
+const danielAlfaro: Integrante = new Integrante('Daniel Alfaro', 'UX/UI');
+const vicenteDonoso: Integrante = new Integrante('Vicente Donoso', 'UX/UI');
+const makaGarabito: Integrante = new Integrante('Makarena Garabito', 'UX/UI');
+const jorgeSilva: Integrante = new Integrante('Jorge Silva', 'UX/UI');
+const estefaniaPerez: Integrante = new Integrante(
+  'Estefanía Pérez',
+  'Frontend',
+);
+const nicoleVargas: Integrante = new Integrante('Nicole Vargas', 'Frontend');
+const karlaAcuna: Integrante = new Integrante('Karla Acuña', 'Frontend');
+const nicoDonoso: Integrante = new Integrante('Nicolás Donoso', 'Backend');
+const borisSuazo: Integrante = new Integrante('Boris Suazo', 'Backend');
+const nicoFernandez: Integrante = new Integrante(
+  'Nicolás Fernandez',
+  'Backend',
+);
+const lucianoVillagran: Integrante = new Integrante(
   'Luciano Villagrán',
   'Backend',
 );
-let vicenteLabbe: Integrante = new Integrante('Vicente Labbé', 'Mobile');
-let cesarSandoval: Integrante = new Integrante('Cesar Sandoval', 'Mobile');
+const vicenteLabbe: Integrante = new Integrante('Vicente Labbé', 'Mobile');
+const cesarSandoval: Integrante = new Integrante('Cesar Sandoval', 'Mobile');
 
 /**Áreas*/
-let uxui: Area = new Area('UXUI', nicoLavanderos, [
+const uxui: Area = new Area('UXUI', nicoLavanderos, [
   nicoLavanderos,
   danielAlfaro,
   vicenteDonoso,
   makaGarabito,
   jorgeSilva,
 ]);
-let frontend: Area = new Area('Frontend', estefaniaPerez, [
+const frontend: Area = new Area('Frontend', estefaniaPerez, [
   estefaniaPerez,
   nicoleVargas,
   karlaAcuna,
 ]);
-let backend: Area = new Area('Backend', nicoDonoso, [
+const backend: Area = new Area('Backend', nicoDonoso, [
   nicoDonoso,
   borisSuazo,
   nicoFernandez,
   lucianoVillagran,
 ]);
-let mobile: Area = new Area('Mobile', vicenteLabbe, [
+const mobile: Area = new Area('Mobile', vicenteLabbe, [
   vicenteLabbe,
   cesarSandoval,
 ]);
@@ -70,7 +79,7 @@ export class EquipoService {
 
   /**Retorna un área del equipo.*/
   obtenerEquipoPorArea(area: string): Area {
-    for (let i of this.areas) {
+    for (const i of this.areas) {
       if (i.nombre.toLocaleLowerCase() == area.toLocaleLowerCase()) {
         return i;
       }
