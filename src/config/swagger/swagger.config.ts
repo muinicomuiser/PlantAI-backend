@@ -24,12 +24,12 @@ export function setupSwagger(app: INestApplication) {
     .setTitle(`${name} - ${ambiente}`)
     .setDescription(
       description +
-        '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
-        '\n Módulo Pedidos: api/pedidos\n' +
-        '\n Módulo Productos: api/productos\n' +
-        '\n Módulo Usuarios: api/usuarios\n' +
-        '\n Módulo Equipo: api/equipo\n' +
-        '\n Módulo Autenticación: api/aut',
+      '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
+      '\n Módulo Pedidos: api/pedidos\n' +
+      '\n Módulo Productos: api/productos\n' +
+      '\n Módulo Usuarios: api/usuarios\n' +
+      '\n Módulo Equipo: api/equipo\n' +
+      '\n Módulo Autenticación: api/aut',
     )
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
@@ -37,14 +37,7 @@ export function setupSwagger(app: INestApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [
-      CarroComprasModule,
-      PedidosModule,
-      ProductosModule,
-      UsuariosModule,
-      EquipoModule,
-      AuthModule,
-    ],
+    include: [null],
   });
 
   SwaggerModule.setup('api', app, document, {
@@ -52,22 +45,21 @@ export function setupSwagger(app: INestApplication) {
   });
 
   const configs = [
-    { module: CarroComprasModule, path: 'api/carro', tag: 'Carro de compras' },
-    { module: PedidosModule, path: 'api/pedidos', tag: 'Pedidos' },
-    { module: ProductosModule, path: 'api/productos', tag: 'Productos' },
-    { module: UsuariosModule, path: 'api/usuarios', tag: 'Usuarios' },
-    { module: EquipoModule, path: 'api/equipo', tag: 'Equipo' },
-    { module: AuthModule, path: 'api/aut', tag: 'Autenticación' },
+    { module: CarroComprasModule, path: 'api/carro' },
+    { module: PedidosModule, path: 'api/pedidos' },
+    { module: ProductosModule, path: 'api/productos' },
+    { module: UsuariosModule, path: 'api/usuarios' },
+    { module: EquipoModule, path: 'api/equipo' },
+    { module: AuthModule, path: 'api/aut' },
   ];
 
-  configs.forEach(({ module, path, tag }) => {
+  configs.forEach(({ module, path }) => {
     const modConfig = new DocumentBuilder()
       .setTitle(`${name} - ${ambiente}`)
       .setDescription(description)
       .setVersion(version)
       .setContact(authorName, authorUrl, authorEmail)
       .setLicense(license, '')
-      .addTag(tag)
       .build();
 
     const modDocument = SwaggerModule.createDocument(app, modConfig, {
