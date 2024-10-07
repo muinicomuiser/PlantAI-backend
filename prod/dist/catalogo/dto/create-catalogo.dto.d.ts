@@ -1,2 +1,1 @@
-export declare class CreateCatalogoDto {
-}
+export declare class CreateCatalogoDto {}

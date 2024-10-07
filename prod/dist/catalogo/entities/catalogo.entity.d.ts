@@ -1,2 +1,1 @@
-export declare class Catalogo {
-}
+export declare class Catalogo {}

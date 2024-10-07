@@ -22,7 +22,7 @@ export class OutputCarroComprasDto {
     description: 'Productos del carro de compras',
     example: ['producto1', 'producto2'],
   })
-  productos: Producto[]; // pendiente de definir
+  productos: Producto[];
 
   @ApiProperty({
     name: 'precioTotal',

@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ProductosModule } from './productos/productos.module';
 import { CarroComprasModule } from './carro-compras/carro-compras.module';
 import { PedidosModule } from './pedidos/pedidos.module';
-import { CatalogoModule } from './catalogo/catalogo.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { EquipoModule } from './commons/modelse3/equipo/equipo.module';
 import { AuthModule } from './auth/auth.module';
@@ -15,16 +14,14 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: `.env.${process.env.AMBIENTE}` || `.env.dev`,
-      envFilePath: process.env.AMBIENTE != undefined ? `.env.${process.env.AMBIENTE}` : `.env.dev`,
-
-
-      // envFilePath:`.env.dev`,
+      envFilePath:
+        process.env.AMBIENTE != undefined
+          ? `.env.${process.env.AMBIENTE}`
+          : `.env.dev`,
     }),
     ProductosModule,
     CarroComprasModule,
     PedidosModule,
-    CatalogoModule,
     UsuariosModule,
     EquipoModule,
     AuthModule,
@@ -34,8 +31,6 @@ import { ConfigModule } from '@nestjs/config';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(GlobalMiddleware) //MIDDLEWARE A APLICAR
-      .forRoutes('*'); //TODAS LAS RUTAS
+    consumer.apply(GlobalMiddleware).forRoutes('*');
   }
 }

@@ -1,13 +1,7 @@
-## compose de prueba 
-
 services:
   cotiledon-prod:
-    build:
-      context: .
-      dockerfile: 'dockerfile'
+    image: nicolasf1/cotiledonapp:1.0.0
     environment:
       - AMBIENTE=production
     ports:
-      - "8080:8080"
-
-## docker compose --build para generar, en el contenedor, nueva imagen a partir del dockerfile
+      - '8080:8080'

@@ -6,7 +6,7 @@ export class ProductoSalidaDto {
     example: 1,
     description: 'Generado automáticamente en el servidor.',
   })
-  id: number; //Identificador generado automáticamente
+  id: number;
 
   @ApiProperty({
     example: 'Ciprés',
@@ -21,7 +21,7 @@ export class ProductoSalidaDto {
     example: 'cotiledon.com/imagenes/cipres.jpg',
     description: 'URL de la imagen del producto.',
   })
-  imagen: string; //URL
+  imagen: string;
 
   @ApiProperty({
     example: 'Producto ejemplo. Primera planta de la tienda.',
@@ -52,21 +52,21 @@ export class ProductoSalidaDto {
     example: 'Conífera',
     description: 'Famila a la que pertenece la planta.',
   })
-  familia: string; //<-- enum Especie
+  familia: string;
 
   @ApiProperty({
     example: FotoPeriodo.largo,
     description: 'Fotoperíodo óptimo para la planta.',
     enum: FotoPeriodo,
   })
-  fotoperiodo: FotoPeriodo; //<-- enum FotoPeriodo
+  fotoperiodo: FotoPeriodo;
 
   @ApiProperty({
     example: TipoRiego.regadera,
     description: 'Tipo de riego óptimo para la planta.',
     enum: TipoRiego,
   })
-  tipoRiego: TipoRiego; //<-- enum TipoRiego
+  tipoRiego: TipoRiego;
 
   @ApiProperty({
     example: true,
@@ -96,11 +96,11 @@ export class ProductoSalidaDto {
     this.descripcion = descripcion;
     this.cantidad = cantidad;
 
-    //Seguimiento
+    //Atributos de inventario
     this.unidadesVendidas = 0;
     this.puntuacion = 0;
 
-    //Categorías
+    //Atributos de categorías
     this.familia = familia;
     this.fotoperiodo = fotoperiodo;
     this.tipoRiego = tipoRiego;

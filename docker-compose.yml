@@ -1,5 +1,3 @@
-## compose de prueba 
-
 services:
   cotiledon-dev:
     image: node:22-alpine3.19
@@ -9,5 +7,5 @@ services:
     volumes:
       - ./:/usr/src/app
     ports:
-      - "3000:3000"
-    command: "yarn start:dev"
+      - '3000:3000'
+    command: 'yarn start:dev'

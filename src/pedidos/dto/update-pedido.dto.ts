@@ -9,12 +9,15 @@ export class UpdatePedidoDto {
   @ApiProperty()
   @IsEnum(estadoPedido, { message: 'El estado del pedido es incorrecto' })
   public estado: estadoPedido;
+
   @ApiProperty()
   @IsEnum(tipoDespacho, { message: 'El tipo de despacho es incorrecto' })
   public tipoDespacho: tipoDespacho;
+
   @ApiProperty()
   @IsEnum(tipoPago, { message: 'El tipo de pago es incorrecto' })
   public tipoPago: tipoPago;
+
   @ApiProperty()
   @ValidateNested()
   @Type(() => Date)

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
 import { tipoPago } from '../entities/pago.enum';
 import { tipoDespacho } from '../entities/despacho.enum';
@@ -18,24 +17,22 @@ PedidoSalidaEjemplo.id = 1;
 
 @Injectable()
 export class PedidosService {
-  //servicio Crear Pedido
   create() {
-    // let pedido: Pedido = new Pedido();
-    // return pedido;
     return { mensaje: 'Pedido creado' };
   }
-  //entrega todos los pedidos
+
+  /**Retorna todos los pedidos */
   findAll(): OutputPedidoDto[] {
     return [PedidoSalidaEjemplo];
   }
-  //entrega pedidos por id
+
+  /**Retorna un pedido según su id */
   findOne(id: number): OutputPedidoDto {
     return PedidoSalidaEjemplo;
   }
 
-  //modificar un pedido
+  /**Modifica un pedido según su id */
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
-    // return new Pedido;
     return { mensaje: 'Pedido modificado' };
   }
 }

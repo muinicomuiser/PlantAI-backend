@@ -13,13 +13,14 @@ import { estadoPedido } from '../entities/estado.enum';
 import { UpdatePedidoDto } from '../dto/update-pedido.dto';
 import { OutputPedidoDto } from '../dto/output-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
+
+/**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
 @ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) {}
 
-  /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
-  //crear pedido
+  // Crear pedido
   @ApiOperation({ summary: 'Crea un pedido' })
   @ApiResponse({ status: 200, description: 'Pedido creado con éxito' })
   @ApiResponse({ status: 400, description: 'Problemas para crear el pedido' })
@@ -28,7 +29,8 @@ export class PedidosController {
     return this.pedidosService.create();
   }
 
-  // Entrega todos los pedidos, permite filtrar por estado
+  // Obtener todos los pedidos
+  // Filtrar por estado
   @ApiOperation({
     summary: 'Filtra pedidos por estado o entrega todos los pedidos',
   })
@@ -42,7 +44,7 @@ export class PedidosController {
     return this.pedidosService.findAll();
   }
 
-  //entrega pedidos por id pedidos
+  // Obtener pedidos por id
   @ApiOperation({ summary: 'Busca pedidos por id' })
   @ApiResponse({
     status: 200,
@@ -55,7 +57,7 @@ export class PedidosController {
     return this.pedidosService.findOne(+id);
   }
 
-  //modifica un pedido
+  // Modificar un pedido
   @ApiOperation({ summary: 'Modifica pedidos por id' })
   @ApiResponse({ status: 200, description: 'Pedido modificado' })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })

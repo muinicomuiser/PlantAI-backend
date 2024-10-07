@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 
 import {
   ApiOperation,
@@ -13,14 +22,14 @@ import { FotoPeriodo, TipoRiego } from '../entities/categorias';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
 
-
-/**Historia de Usuario 7: Búsqueda de Productos*/
-@ApiTags('Productos')
+/**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
+/**Historia de Usuario 7: Búsqueda de Productos */
+@ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) { }
+  constructor(private readonly productosService: ProductosService) {}
 
-  // Obtener por id
+  // Obtener producto por id
   @ApiOperation({ summary: 'Busca un producto por su id' })
   @ApiResponse({
     status: 200,
@@ -38,7 +47,7 @@ export class ProductosController {
   }
 
   // Obtener todos los productos
-  // Obtener por filtros (nombre, familia, fotoperiodo, tipoRiego, petFriendly, color)
+  // Filtrar por (nombre, familia, fotoperiodo, tipoRiego, petFriendly, color)
   @ApiOperation({ summary: 'Busca productos por filtros.' })
   @ApiResponse({
     status: 200,
@@ -64,10 +73,11 @@ export class ProductosController {
     return this.productosService.getByFilters();
   }
 
+  // Crear un producto
   @ApiOperation({ summary: 'Crea un producto.' })
   @ApiResponse({
     status: 200,
-    description: 'Agrega un producto al sistema.'
+    description: 'Agrega un producto al sistema.',
   })
   @ApiResponse({
     status: 400,
@@ -75,13 +85,14 @@ export class ProductosController {
   })
   @Post()
   createProduct(@Body() createProductoDto: CreateProductoDto) {
-    return this.productosService.create()
+    return this.productosService.create();
   }
 
+  // Actualizar un producto
   @ApiOperation({ summary: 'Actualiza un producto.' })
   @ApiResponse({
     status: 200,
-    description: 'Actualiza un producto.'
+    description: 'Actualiza un producto.',
   })
   @ApiResponse({
     status: 404,
@@ -89,29 +100,25 @@ export class ProductosController {
   })
   @ApiParam({ name: 'id', type: Number })
   @Patch(':id')
-  updateProduct(@Param('id') id: number, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.update()
+  updateProduct(
+    @Param('id') id: number,
+    @Body() updateProductoDto: UpdateProductoDto,
+  ) {
+    return this.productosService.update();
   }
 
+  // Eliminar un producto
   @ApiOperation({ summary: 'Elimina un producto según su id' })
   @ApiResponse({
     status: 200,
-    description: 'Producto eliminado'
+    description: 'Producto eliminado',
   })
-  //Elimina un usuario según el id
   @ApiResponse({
     status: 404,
-    description: 'No existe un producto con ese id'
+    description: 'No existe un producto con ese id',
   })
   @Delete(':id')
   deleteOne(@Param('id') id: number) {
-    return this.productosService.deleteOne(id)
+    return this.productosService.deleteOne(id);
   }
 }
-
-
-
-// Servicios
-// Obtener todos los productos
-// Obtener por id
-// Obtener por filtros (nombre, familia, fotoperiodo, tipoRiego, petFriendly, color)
