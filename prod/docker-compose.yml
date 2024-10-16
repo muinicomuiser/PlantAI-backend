@@ -5,3 +5,11 @@ services:
       - AMBIENTE=production
     ports:
       - '8080:8080'
+  database-prod:
+    image: mysql:9-oracle
+    volumes:
+      - ./db/data_prod:/usr/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=clave123
+    ports:
+      - "3306:3306"

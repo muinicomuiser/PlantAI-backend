@@ -9,3 +9,11 @@ services:
     ports:
       - '3000:3000'
     command: 'yarn start:dev'
+  database-dev:
+    image: mysql:9-oracle
+    volumes:
+      - ./db/data_dev:/usr/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=clave123
+    ports:
+      - "5001:3306"
