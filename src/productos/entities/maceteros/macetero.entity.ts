@@ -1,6 +1,8 @@
 import { Producto } from '../producto.entity';
 import { TipoMacetero } from './tipo_macetero.entity';
+import { Entity } from "typeorm";
 
+@Entity({ name: 'maceteros' })
 export class Macetero {
   material: string;
   forma: string;

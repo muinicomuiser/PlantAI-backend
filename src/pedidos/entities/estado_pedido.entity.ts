@@ -1,14 +1,6 @@
-// export enum estadoPedido {
-//   CONFIRMADO = 'Confirmado',
-//   PAGADO = 'Pagado',
-//   PREPARADO = 'Preparado',
-//   DESPACHADO = 'Despachado',
-//   ENTREGADO = 'Entregado',
-//   CERRADO = 'Cerrado',
-//   CANCELADO = 'Cancelado',
-//   PROBLEMA = 'Problema',
-// }
+import { Entity } from "typeorm";
 
+@Entity({ name: 'estados_pedido' })
 export class EstadoPedido {
   id: number;
   estado: string;

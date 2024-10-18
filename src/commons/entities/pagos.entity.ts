@@ -1,6 +1,8 @@
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { MedioPago } from './medio_pago.entity';
+import { Entity } from "typeorm";
 
+@Entity({ name: 'pagos' })
 export class Pago {
   id: number;
 

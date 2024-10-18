@@ -1,6 +1,8 @@
+import { Entity } from 'typeorm';
 import { Categoria } from './categoria.entity';
 import { Etiqueta } from './etiqueta.entity';
 
+@Entity({ name: 'productos' })
 export class Producto {
   id: number;
   SKU: string;

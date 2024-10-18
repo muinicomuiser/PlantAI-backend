@@ -1,3 +1,6 @@
+import { Entity } from "typeorm";
+
+@Entity({ name: 'direcciones' })
 export class Direccion {
   id: number;
   comuna: string;

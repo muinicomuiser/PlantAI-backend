@@ -4,7 +4,9 @@ import { Especie } from './especie.entity';
 import { TipoRiego } from './tipo_riego.entity';
 import { Fotoperiodo } from './fotoperiodo.entity';
 import { HabitoCrecimiento } from './habito_crecimiento.entity';
+import { Entity } from 'typeorm';
 
+@Entity({ name: 'plantas' })
 export class Planta {
   pet_friendly: boolean;
   tolerancia_temperatura: number;

@@ -1,10 +1,11 @@
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
 import { TipoUsuario } from './tipo_usuario.entity';
-import { MedioPago } from 'src/commons/entities/medio_pago.entity';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
+import { Entity } from 'typeorm';
 
+@Entity({ name: 'usuarios' })
 export class Usuario {
   public id: number;
   public contrasena: string;

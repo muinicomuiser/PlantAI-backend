@@ -2,7 +2,9 @@ import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { EstadoPedido } from './estado_pedido.entity';
 import { TipoDespacho } from './tipo_despacho.entity';
+import { Entity } from "typeorm";
 
+@Entity({ name: 'pedidos' })
 export class Pedido {
   id: number;
   id_usuario: number;

@@ -1,7 +1,9 @@
 import { Marca } from 'src/commons/entities/marca.entity';
 import { Producto } from '../producto.entity';
 import { TipoInsumo } from './tipo_insumo.entity';
+import { Entity } from "typeorm";
 
+@Entity({ name: 'insumos' })
 export class Insumo {
   /**One to One */
   producto: Producto; // Por id_producto
