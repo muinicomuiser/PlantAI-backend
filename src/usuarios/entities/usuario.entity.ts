@@ -1,29 +1,34 @@
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { tipoPago } from 'src/pedidos/entities/pago.enum';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { CarroCompra } from "src/carro-compras/entities/carro-compra.entity";
+import { Direccion } from "./direccion.entity";
+import { TipoUsuario } from "./tipo_usuario.entity";
+import { MedioPago } from "src/commons/entities/medio_pago.entity";
+import { Pedido } from "src/pedidos/entities/pedido.entity";
+import { UsuarioMedioPago } from "./usuarios_medio_pago.entity";
 
 export class Usuario {
   public id: number;
-  public username: string;
-  public password: string;
+  public contrasena: string;
+  public nombre: string;
+  public apellido: string;
+  public nombre_usuario: string;
   public email: string;
-  public carrito: CarroCompra;
-  public pedidos: Pedido[];
-  public medioPago: tipoPago;
+  public telefono: string;
+  public genero: string;
+  public rut: string;
+  public fecha_nacimiento: string;
 
-  constructor(
-    id: number,
-    name: string,
-    password: string,
-    email: string,
-    carrito: CarroCompra,
-    pedidos: Pedido[],
-  ) {
-    this.id = id;
-    this.username = name;
-    this.password = password;
-    this.email = email;
-    this.carrito = carrito;
-    this.pedidos = pedidos;
-  }
+  /**One to Many */
+  public direccion: Direccion[];
+
+  /**Many to One*/
+  public tipo_usuario: TipoUsuario; //  a través de: id_tipo_usuario;
+
+  /* One to Many */
+  public medio_pago: UsuarioMedioPago[];
+
+  /**One to Many */
+  public carros: CarroCompra[];
+
+  /**One to Many */
+  public pedidos: Pedido[];
 }

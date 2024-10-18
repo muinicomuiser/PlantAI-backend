@@ -13,7 +13,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 
 export class UpdateProductoDto extends PartialType(CreateProductoDto) {
   @ApiProperty({ required: false, example: 'Agatea Verde' })

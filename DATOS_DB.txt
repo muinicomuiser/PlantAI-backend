@@ -1,4 +1,4 @@
-export enum estadoPedido {
+estadoPedido {
   CONFIRMADO = 'Confirmado',
   PAGADO = 'Pagado',
   PREPARADO = 'Preparado',
@@ -7,4 +7,9 @@ export enum estadoPedido {
   CERRADO = 'Cerrado',
   CANCELADO = 'Cancelado',
   PROBLEMA = 'Problema',
+}
+
+tipoDespacho {
+  RETIRO = 'Retiro en tienda',
+  CHILEXPRESS = 'ChileExpress',
 }

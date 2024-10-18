@@ -1,49 +1,24 @@
-import { FotoPeriodo, TipoRiego } from './categorias';
+import { Categoria } from './categoria.entity';
+import { Etiqueta } from './etiqueta.entity';
 
 export class Producto {
-  id: number; //Identificador generado automáticamente
-  // SKU: string;        //string, porque tiene números y guiones. Lo postergué.
+  id: number;
+  SKU: string;
   nombre: string;
   precio: number;
-  imagen: string; //URL
   descripcion: string;
-  cantidad: number; //Stock
-  unidadesVendidas: number;
+  imagen: string;
+  cantidad: number;
+  unidades_vendidas: number;
   puntuacion: number;
-  familia: string; //<-- enum familia
-  fotoperiodo: FotoPeriodo; //<-- enum FotoPeriodo
-  tipoRiego: TipoRiego; //<-- enum TipoRiego
-  petFriendly: boolean;
-  color: string;
+  ancho: number;
+  alto: number;
+  largo: number;
+  peso: number;
 
-  constructor(
-    nombre: string,
-    precio: number,
-    imagen: string = '',
-    descripcion: string = '',
-    cantidad: number = 0,
-    familia: string = '',
-    fotoperiodo: FotoPeriodo = undefined,
-    tipoRiego: TipoRiego = undefined,
-    petFriendly: boolean = false,
-    color: string = '',
-  ) {
-    //Propiedades
-    this.nombre = nombre;
-    this.precio = precio;
-    this.imagen = imagen;
-    this.descripcion = descripcion;
-    this.cantidad = cantidad;
+  /**Many to One */
+  categoria: Categoria; // Por Id_categoria
 
-    //Atributos de inventario
-    this.unidadesVendidas = 0;
-    this.puntuacion = 0;
-
-    //Atributos de categorías
-    this.familia = familia;
-    this.fotoperiodo = fotoperiodo;
-    this.tipoRiego = tipoRiego;
-    this.petFriendly = petFriendly;
-    this.color = color;
-  }
+  /**Many to Many */
+  etiquetas: Etiqueta[]
 }

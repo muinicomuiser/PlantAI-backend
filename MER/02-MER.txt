@@ -39,6 +39,7 @@ Table usuarios_medios_pagos{
 
 Table productos{
   id integer [primary key]
+  SKU varchar
   nombre varchar
   id_categoria integer
   precio integer
@@ -125,11 +126,13 @@ Table carros_productos{
   cantidad_producto integer
 }
 
-
+Table marcas{
+  id integer [primary key]
+  nombre varchar
+}
 //Atributos de categorias
 Table plantas{
   id_producto integer [primary key]  
-  id_color integer
   id_especie integer
   pet_friendly bool
   id_tipo_riego integer
@@ -138,7 +141,7 @@ Table plantas{
   ciclo bool
   altura varchar
   id_habito_crecimiento integer
-  SKU varchar
+  id_color integer
 }
 Table plantas_especies{
   id integer [primary key]
@@ -164,26 +167,37 @@ Table plantas_habito_crecimiento{
 
 Table maceteros{
   id_producto integer [primary key]
+  id_marca integer
   id_tipo_macetero integer
   material varchar
   forma varchar
   diametro integer
 }
+Table tipo_maceteros{
+  id integer [primary key]
+  tipo varchar
+}
+
 Table insumos{
   id_producto integer [primary key]
   id_tipo_insumo integer
-  opcion_atributo varchar
-  marca varchar
+  id_marca varchar
 }
 Table tipo_insumos{
   id_tipo_insumo integer [primary key]
   tipo_insumo varchar
 }
+
 Table accesorios{
   id_producto integer [primary key]
+  id_marca integer
   id_tipo_accesorio integer
+  id_color integer
 }
-
+Table tipo_accesorios{
+  id integer [primary key]
+  tipo varchar
+}
 
 
 //Usuarios
@@ -198,8 +212,8 @@ Ref: pedidos.id_tipo_despacho > tipo_despacho.id
 Ref: pedidos.id_medio_pago > medio_pago.id
 Ref: pedidos.id_carro - carros.id
 
-Ref: carros.id > carros_productos.id_carro
-Ref: productos.id > carros_productos.id_producto
+Ref: carros.id < carros_productos.id_carro
+Ref: productos.id < carros_productos.id_producto
 Ref: productos.id_categoria > categorias.id
 
 Ref: pagos.id_pedido - pedidos.id
@@ -222,5 +236,15 @@ Ref: plantas.id_fotoperiodo > plantas_fotoperiodo.id
 Ref: plantas.id_tipo_riego > plantas_tipo_riego.id
 Ref: plantas.id_habito_crecimiento > plantas_habito_crecimiento.id
 
+//Atributos Accesorios
+Ref: marcas.id < accesorios.id_marca
+Ref: tipo_accesorios.id < accesorios.id_tipo_accesorio
+Ref: colores_productos.id < accesorios.id_color
+
 //Atributos Insumos
 Ref: tipo_insumos.id_tipo_insumo < insumos.id_tipo_insumo
+Ref: marcas.id < insumos.id_marca
+
+//Atributos Maceteros
+Ref: marcas.id < maceteros.id_marca
+Ref: tipo_maceteros.id < maceteros.id_tipo_macetero

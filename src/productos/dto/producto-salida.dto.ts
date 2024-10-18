@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 
 export class ProductoSalidaDto {
   @ApiProperty({

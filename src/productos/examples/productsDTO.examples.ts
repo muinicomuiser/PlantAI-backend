@@ -1,5 +1,5 @@
 import { ProductoSalidaDto } from '../dto/producto-salida.dto';
-import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 
 // Instancias de productos Dto de ejemplo.
 const plantaUnoDto: ProductoSalidaDto = new ProductoSalidaDto(

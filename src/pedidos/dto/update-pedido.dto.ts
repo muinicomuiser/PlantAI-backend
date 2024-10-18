@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { tipoDespacho } from '../entities/despacho.enum';
-import { estadoPedido } from '../entities/estado.enum';
+import { tipoDespacho } from '../entities/tipo_despacho.entity';
+import { estadoPedido } from '../entities/estado_pedido.entity';
 import { tipoPago } from '../entities/pago.enum';
 import { IsEnum, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
