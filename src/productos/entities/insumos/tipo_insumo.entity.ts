@@ -1,4 +1,4 @@
 export class TipoInsumo {
-    id: number;
-    tipo: string;
+  id: number;
+  tipo: string;
 }

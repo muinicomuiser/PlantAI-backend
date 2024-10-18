@@ -1,4 +1,4 @@
 export class Etiqueta {
-    id: number;
-    etiqueta: string;
+  id: number;
+  etiqueta: string;
 }

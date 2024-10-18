@@ -1,4 +1,4 @@
 export class TipoMacetero {
-    id: number;
-    tipo: string;
+  id: number;
+  tipo: string;
 }

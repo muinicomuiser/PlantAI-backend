@@ -20,5 +20,5 @@ export class Producto {
   categoria: Categoria; // Por Id_categoria
 
   /**Many to Many */
-  etiquetas: Etiqueta[]
+  etiquetas: Etiqueta[];
 }

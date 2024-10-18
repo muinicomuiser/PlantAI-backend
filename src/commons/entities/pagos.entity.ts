@@ -1,16 +1,16 @@
-import { Pedido } from "src/pedidos/entities/pedido.entity";
-import { MedioPago } from "./medio_pago.entity";
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { MedioPago } from './medio_pago.entity';
 
 export class Pago {
-    id: number;
+  id: number;
 
-    fecha: Date;
+  fecha: Date;
 
-    monto: number;
+  monto: number;
 
-    /**Many to One */
-    medio_pago: MedioPago; // Por id_medio_pago
+  /**Many to One */
+  medio_pago: MedioPago; // Por id_medio_pago
 
-    /**One to One */
-    pedido: Pedido; // Por id_pedido
+  /**One to One */
+  pedido: Pedido; // Por id_pedido
 }

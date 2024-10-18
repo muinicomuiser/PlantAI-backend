@@ -1,4 +1,4 @@
 export class HabitoCrecimiento {
-    id: number;
-    crecimiento: string;
+  id: number;
+  crecimiento: string;
 }

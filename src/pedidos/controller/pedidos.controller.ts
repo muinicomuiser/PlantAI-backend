@@ -18,7 +18,7 @@ import { PedidosService } from '../service/pedidos.service';
 @ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {
-  constructor(private readonly pedidosService: PedidosService) { }
+  constructor(private readonly pedidosService: PedidosService) {}
 
   // Crear pedido
   @ApiOperation({ summary: 'Crea un pedido' })

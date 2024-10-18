@@ -1,9 +1,9 @@
-import { Usuario } from "./usuario.entity";
+import { Usuario } from './usuario.entity';
 
 export class TipoUsuario {
-    id: number;
-    tipo: string;
+  id: number;
+  tipo: string;
 
-    /**One to Many*/
-    usuario: Usuario[]
+  /**One to Many*/
+  usuario: Usuario[];
 }

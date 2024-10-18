@@ -14,7 +14,7 @@ export class CarroCompra {
   usuario: Usuario; // Por id_usuario
 
   /**One to Many*/
-  productos_carro: ProductosCarro[]
+  productos_carro: ProductosCarro[];
 
   /**One to One */
   pedido: Pedido;

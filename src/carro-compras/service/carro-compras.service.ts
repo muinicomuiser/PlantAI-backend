@@ -3,13 +3,16 @@ import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
 import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
 import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
 import { CarroCompra } from '../entities/carro-compra.entity';
-import { FotoPeriodo, TipoRiego } from 'src/productos/entities/categoria.entity';
+import {
+  FotoPeriodo,
+  TipoRiego,
+} from 'src/productos/entities/categoria.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 
 @Injectable()
 export class CarroComprasService {
   carrosCompra: CarroCompra[] = [carroCompra];
-  constructor() { }
+  constructor() {}
 
   createCarro(carro: CreateCarroCompraDto): OutputCarroComprasDto {
     return this.carrosCompra[0];

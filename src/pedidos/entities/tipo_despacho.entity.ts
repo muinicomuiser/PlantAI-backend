@@ -3,9 +3,7 @@ export class TipoDespacho {
   tipo: string;
 }
 
-
 // export enum tipoDespacho {
 //   RETIRO = 'Retiro en tienda',
 //   CHILEXPRESS = 'ChileExpress',
 // }
-

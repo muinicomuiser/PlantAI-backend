@@ -1,4 +1,4 @@
 export class TipoAccesorio {
-    id: number;
-    tipo: string;
+  id: number;
+  tipo: string;
 }
