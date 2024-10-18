@@ -1,10 +1,10 @@
 Table usuarios{
   id integer [primary key]
-  password varchar
+  contrasena varchar
   id_tipo_usuario integer
-  user_name varchar
-  name varchar
-  surname varchar
+  nombre varchar
+  apellido varchar
+  nombre_usuario varchar
   email varchar
   telefono varchar
   genero varchar
@@ -177,7 +177,7 @@ Table insumos{
 }
 Table tipo_insumos{
   id_tipo_insumo integer [primary key]
-  tipoInsumo varchar
+  tipo_insumo varchar
 }
 Table accesorios{
   id_producto integer [primary key]
@@ -206,21 +206,21 @@ Ref: pagos.id_pedido - pedidos.id
 Ref: pagos.id_medio_pago > medio_pago.id
 Ref: medio_pago.id < usuarios_medios_pagos.id_medio_pago
 //Etiquetas
-Ref: "productos"."id" < "productos_etiquetas"."id_producto"
-Ref: "etiquetas"."id_etiqueta" < "productos_etiquetas"."id_etiqueta"
+Ref: productos.id < productos_etiquetas.id_producto
+Ref: etiquetas.id_etiqueta < productos_etiquetas.id_etiqueta
 
 //Categorías
-Ref: "accesorios"."id_producto" - "productos"."id"
-Ref: "maceteros"."id_producto" - "productos"."id"
-Ref: "plantas"."id_producto" - "productos"."id"
-Ref: "insumos"."id_producto" - "productos"."id"
+Ref: accesorios.id_producto - productos.id
+Ref: maceteros.id_producto - productos.id
+Ref: plantas.id_producto - productos.id
+Ref: insumos.id_producto - productos.id
 
 //Atributos Plantas
-Ref: "plantas"."id_color" > "colores_productos"."id"
-Ref: "plantas"."id_especie" > "plantas_especies"."id" 
-Ref: "plantas"."id_fotoperiodo" > "plantas_fotoperiodo"."id"
-Ref: "plantas"."id_tipo_riego" > "plantas_tipo_riego"."id"
-Ref: "plantas"."id_habito_crecimiento" > "plantas_habito_crecimiento"."id"
+Ref: plantas.id_color > colores_productos.id
+Ref: plantas.id_especie > plantas_especies.id 
+Ref: plantas.id_fotoperiodo > plantas_fotoperiodo.id
+Ref: plantas.id_tipo_riego > plantas_tipo_riego.id
+Ref: plantas.id_habito_crecimiento > plantas_habito_crecimiento.id
 
 //Atributos Insumos
-Ref: "tipo_insumos"."id_tipo_insumo" < "insumos"."id_tipo_insumo"
+Ref: tipo_insumos.id_tipo_insumo < insumos.id_tipo_insumo
