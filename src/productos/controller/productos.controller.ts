@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { ProductoSalidaDto } from '../dto/producto-salida.dto';
-import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
 

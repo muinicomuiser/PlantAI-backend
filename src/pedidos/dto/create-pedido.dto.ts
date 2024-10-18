@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { tipoDespacho } from '../entities/despacho.enum';
+import { tipoDespacho } from '../entities/tipo_despacho.entity';
 import { tipoPago } from '../entities/pago.enum';
 import { IsEnum, IsNumber, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';

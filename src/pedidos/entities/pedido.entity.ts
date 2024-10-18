@@ -1,32 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { tipoDespacho } from './despacho.enum';
-import { estadoPedido } from './estado.enum';
-import { tipoPago } from './pago.enum';
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { EstadoPedido } from './estado_pedido.entity';
+import { TipoDespacho } from './tipo_despacho.entity';
 
 export class Pedido {
-  @ApiProperty()
-  @IsNumber()
   id: number;
-  @ApiProperty()
-  @IsString()
-  idUsuario: number;
-  @ApiProperty()
-  @IsDate()
-  fechaCreacion: Date;
-  @ApiProperty()
-  @IsEnum(estadoPedido)
-  public estado: estadoPedido;
-  @ApiProperty()
-  @IsEnum(tipoDespacho)
-  public tipoDespacho: tipoDespacho;
-  @ApiProperty()
-  @IsEnum(tipoPago)
-  public tipoPago: tipoPago;
-  @ApiProperty()
-  public carrito: CarroCompra;
-  @ApiProperty()
-  @IsDate()
-  public fechaEntrega: Date;
+  id_usuario: number;
+  fecha_creacion: Date;
+
+  /**Many to One */
+  public medio_pago: MedioPago; // Por id_medio_pago
+
+  /**Many to One*/
+  public estado_pedido: EstadoPedido; // Por id_estado
+
+  /**Many to One*/
+  public tipo_despacho: TipoDespacho; // Por id_tipo_despacho
+
+  /**One to One */
+  public carro: CarroCompra; // Por id_carro
+
+  public fecha_entrega: Date;
 }

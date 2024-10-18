@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { estadoPedido } from '../entities/estado.enum';
+import { estadoPedido } from '../entities/estado_pedido.entity';
 import { UpdatePedidoDto } from '../dto/update-pedido.dto';
 import { OutputPedidoDto } from '../dto/output-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
