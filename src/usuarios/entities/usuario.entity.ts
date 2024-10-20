@@ -3,33 +3,58 @@ import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
 import { TipoUsuario } from './tipo_usuario.entity';
 import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
-import { Entity } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'usuarios' })
 export class Usuario {
-  public id: number;
-  public contrasena: string;
-  public nombre: string;
-  public apellido: string;
-  public nombre_usuario: string;
-  public email: string;
-  public telefono: string;
-  public genero: string;
-  public rut: string;
-  public fecha_nacimiento: string;
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column()
+  contrasena: string;
+  @Column()
+  nombre: string;
+  @Column()
+  apellido: string;
+  @Column({ name: 'nombre_usuario' })
+  nombreUsuario: string;
+  @Column()
+  email: string;
+  @Column()
+  telefono: string;
+  @Column()
+  genero: string;
+  @Column()
+  rut: string;
+  @Column({ name: 'fecha_nacimiento' })
+  fechaNacimiento: Date;
 
   /**One to Many */
-  public direccion: Direccion[];
+  @OneToMany(() => Direccion, (direccion) => direccion.usuario)
+  direccion: Direccion[];
 
   /**Many to One*/
-  public tipo_usuario: TipoUsuario; //  a través de: id_tipo_usuario;
+  @ManyToOne(() => TipoUsuario)
+  @JoinColumn({ name: 'id' })
+  tipoUsuario: TipoUsuario; //  a través de: id_tipo_usuario;
 
   /* One to Many */
-  public medio_pago: UsuarioMedioPago[];
+  @OneToMany(
+    () => UsuarioMedioPago,
+    (usuarioMedioPago) => usuarioMedioPago.usuario,
+  )
+  usuarioMedioPago: UsuarioMedioPago[];
 
   /**One to Many */
-  public carros: CarroCompra[];
+  carros: CarroCompra[];
 
   /**One to Many */
-  public pedidos: Pedido[];
+  @OneToMany(() => Pedido, (pedido) => pedido.usuario)
+  pedidos: Pedido[];
 }
