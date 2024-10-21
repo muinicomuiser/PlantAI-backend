@@ -14,7 +14,7 @@ Table usuarios{
 
 
 Table direcciones{
-  id integer
+  id integer [primary key]
   id_usuario integer
   comuna varchar
   calle varchar
@@ -25,7 +25,7 @@ Table direcciones{
 
 
 Table tipo_usuarios{
-  id integer
+  id integer [primary key]
   tipo varchar
 }
 
@@ -115,7 +115,7 @@ Table estados_pedido{
 
 
 Table categorias{
-  id integer
+  id integer [primary key]
   categoria varchar
 }
 
