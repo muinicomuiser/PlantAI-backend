@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
 import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
 import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
-import { CarroCompra } from '../entities/carro-compra.entity';
+import { CarroCompra } from '../entities/carros.entity';
 import {
   FotoPeriodo,
   TipoRiego,

@@ -1,4 +1,4 @@
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
 import { TipoUsuario } from './tipo_usuario.entity';
@@ -52,6 +52,7 @@ export class Usuario {
   usuarioMedioPago: UsuarioMedioPago[];
 
   /**One to Many */
+  @OneToMany(() => CarroCompra, (carro) => carro.usuario)
   carros: CarroCompra[];
 
   /**One to Many */

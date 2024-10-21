@@ -1,16 +1,38 @@
 import { Marca } from 'src/commons/entities/marca.entity';
 import { Producto } from '../producto.entity';
 import { TipoInsumo } from './tipo_insumo.entity';
-import { Entity } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity({ name: 'insumos' })
 export class Insumo {
-  /**One to One */
-  producto: Producto; // Por id_producto
+  @PrimaryColumn({ name: 'id_producto' })
+  idProducto: number;
 
-  /**Many to One */
-  tipo_insumo: TipoInsumo; // Por id_tipo_insumo
+  @Column({ name: 'id_tipo_insumo' })
+  idTipoInsumo: number;
 
-  /**Many to One */
-  marca: Marca; // por id_marca
+  @Column({ name: 'id_marca' })
+  idMarca: number;
+
+  // Relación Muchos a Uno con Producto
+  @OneToOne(() => Producto)
+  @JoinColumn({ name: 'id_producto' })
+  producto: Producto;
+
+  // Relación Muchos a Uno con Marca
+  @ManyToOne(() => Marca)
+  @JoinColumn({ name: 'id_marca' })
+  marca: Marca;
+
+  // Relación Muchos a Uno con TipoInsumo
+  @ManyToOne(() => TipoInsumo)
+  @JoinColumn({ name: 'id_tipo_insumo' })
+  tipoInsumo: TipoInsumo;
 }

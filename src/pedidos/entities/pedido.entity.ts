@@ -1,4 +1,4 @@
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { EstadoPedido } from './estado_pedido.entity';
 import { TipoDespacho } from './tipo_despacho.entity';
@@ -53,6 +53,8 @@ export class Pedido {
   tipoDespacho: TipoDespacho; // Por id_tipo_despacho
 
   /**One to One */
+  @OneToOne(() => CarroCompra)
+  @JoinColumn({ name: 'id_carro' })
   carro: CarroCompra; // Por id_carro
 
   /**One to One */

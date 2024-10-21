@@ -1,18 +1,38 @@
 import { Marca } from 'src/commons/entities/marca.entity';
 import { Producto } from '../producto.entity';
 import { TipoAccesorio } from './tipo_accesorio.entity';
-import { Entity } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity({ name: 'accesorios' })
 export class Accesorio {
-  SKU: string;
+  @PrimaryColumn({ name: 'id_producto' })
+  idProducto: number;
 
-  /**Many to One */
-  marca: Marca; // Por id_marca
+  @Column({ name: 'id_marca' })
+  idMarca: number;
 
-  /**Many to One */
-  tipo_accesorio: TipoAccesorio; // Por id_tipo_accesorio
+  @Column({ name: 'id_tipo_accesorio' })
+  idTipoAccesorio: number;
 
-  /**One to One */
-  producto: Producto; // Por id_producto
+  // Relación Uno a Uno con Producto
+  @OneToOne(() => Producto)
+  @JoinColumn({ name: 'id_producto' })
+  producto: Producto;
+
+  // Relación Muchos a Uno con Marca
+  @ManyToOne(() => Marca)
+  @JoinColumn({ name: 'id_marca' })
+  marca: Marca;
+
+  // Relación Muchos a Uno con TipoAccesorio
+  @ManyToOne(() => TipoAccesorio)
+  @JoinColumn({ name: 'id_tipo_accesorio' })
+  tipoAccesorio: TipoAccesorio;
 }

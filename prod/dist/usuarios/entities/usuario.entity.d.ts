@@ -1,4 +1,4 @@
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { tipoPago } from 'src/pedidos/entities/pago.enum';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 export declare class Usuario {

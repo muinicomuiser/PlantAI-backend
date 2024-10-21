@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { tipoPago } from '../entities/pago.enum';
 import { tipoDespacho } from '../entities/tipo_despacho.entity';
 import { estadoPedido } from '../entities/estado_pedido.entity';
