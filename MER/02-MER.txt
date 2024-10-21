@@ -56,7 +56,7 @@ Table productos{
 
 
 Table etiquetas{
-  id_etiqueta integer [primary key]
+  id integer [primary key]
   etiqueta varchar
 }
 
@@ -181,10 +181,10 @@ Table tipo_maceteros{
 Table insumos{
   id_producto integer [primary key]
   id_tipo_insumo integer
-  id_marca varchar
+  id_marca integer
 }
 Table tipo_insumos{
-  id_tipo_insumo integer [primary key]
+  id integer [primary key]
   tipo_insumo varchar
 }
 
@@ -221,7 +221,7 @@ Ref: pagos.id_medio_pago > medio_pago.id
 Ref: medio_pago.id < usuarios_medios_pagos.id_medio_pago
 //Etiquetas
 Ref: productos.id < productos_etiquetas.id_producto
-Ref: etiquetas.id_etiqueta < productos_etiquetas.id_etiqueta
+Ref: etiquetas.id < productos_etiquetas.id_etiqueta
 
 //Categorías
 Ref: accesorios.id_producto - productos.id
@@ -242,7 +242,7 @@ Ref: tipo_accesorios.id < accesorios.id_tipo_accesorio
 Ref: colores_productos.id < accesorios.id_color
 
 //Atributos Insumos
-Ref: tipo_insumos.id_tipo_insumo < insumos.id_tipo_insumo
+Ref: tipo_insumos.id < insumos.id_tipo_insumo
 Ref: marcas.id < insumos.id_marca
 
 //Atributos Maceteros
