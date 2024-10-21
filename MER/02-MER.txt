@@ -9,7 +9,7 @@ Table usuarios{
   telefono varchar
   genero varchar
   rut varchar
-  fecha_nacimiento varchar
+  fecha_nacimiento date
 }
 
 
@@ -109,7 +109,7 @@ Table tipo_despacho{
 
 
 Table estados_pedido{
-  id intger [primary key]
+  id integer [primary key]
   estado varchar
 }
 
