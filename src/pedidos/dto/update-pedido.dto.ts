@@ -1,22 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { tipoDespacho } from '../entities/tipo_despacho.entity';
-import { estadoPedido } from '../entities/estado_pedido.entity';
-import { tipoPago } from '../entities/pago.enum';
-import { IsEnum, ValidateNested } from 'class-validator';
+import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdatePedidoDto {
   @ApiProperty()
-  @IsEnum(estadoPedido, { message: 'El estado del pedido es incorrecto' })
-  public estado: estadoPedido;
+  public estado: string;
 
   @ApiProperty()
-  @IsEnum(tipoDespacho, { message: 'El tipo de despacho es incorrecto' })
-  public tipoDespacho: tipoDespacho;
+  public tipoDespacho: string;
 
   @ApiProperty()
-  @IsEnum(tipoPago, { message: 'El tipo de pago es incorrecto' })
-  public tipoPago: tipoPago;
+  public tipoPago: string;
 
   @ApiProperty()
   @ValidateNested()

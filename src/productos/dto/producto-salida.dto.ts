@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 
 export class ProductoSalidaDto {
   @ApiProperty({
@@ -55,18 +54,14 @@ export class ProductoSalidaDto {
   familia: string;
 
   @ApiProperty({
-    example: FotoPeriodo.largo,
     description: 'Fotoperíodo óptimo para la planta.',
-    enum: FotoPeriodo,
   })
-  fotoperiodo: FotoPeriodo;
+  fotoperiodo: string;
 
   @ApiProperty({
-    example: TipoRiego.regadera,
     description: 'Tipo de riego óptimo para la planta.',
-    enum: TipoRiego,
   })
-  tipoRiego: TipoRiego;
+  tipoRiego: string;
 
   @ApiProperty({
     example: true,
@@ -84,8 +79,8 @@ export class ProductoSalidaDto {
     descripcion: string = '',
     cantidad: number = 0,
     familia: string = '',
-    fotoperiodo: FotoPeriodo = undefined,
-    tipoRiego: TipoRiego = undefined,
+    fotoperiodo: string = undefined,
+    tipoRiego: string = undefined,
     petFriendly: boolean = false,
     color: string = '',
   ) {

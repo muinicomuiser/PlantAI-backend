@@ -14,5 +14,5 @@ export class UpdateCarroCompraDto extends PartialType(CreateCarroCompraDto) {
   @ValidateNested()
   @Type(() => Producto)
   @IsNotEmpty()
-  productos: Producto[];
+  producto: string[];
 }

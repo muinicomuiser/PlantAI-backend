@@ -13,7 +13,6 @@ import { UsuariosService } from '../service/usuarios.service';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { tipoPago } from 'src/pedidos/entities/pago.enum';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
@@ -164,11 +163,11 @@ export class UsuariosController {
     status: 400,
     description: 'Error al modificar el medio de pago',
   })
-  @ApiQuery({ name: 'Tipo de Pago', enum: tipoPago })
+  @ApiQuery({ name: 'Tipo de Pago' })
   @Patch('updateMedioPago/:idUsuario')
   updateMedioPago(
     @Param('idUsuario') idUsuario: number,
-    @Query() medioPago: tipoPago,
+    @Query() medioPago: string,
   ) {
     return this.usuariosService.updateMedioPago(idUsuario, medioPago);
   }

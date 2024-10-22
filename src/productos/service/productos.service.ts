@@ -1,24 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { ProductoSalidaDto } from '../dto/producto-salida.dto';
-import { ProductsDtoExamples } from '../examples/productsDTO.examples';
 
 @Injectable()
 export class ProductosService {
-  productosSalida: ProductoSalidaDto[] = [...ProductsDtoExamples];
-
   /**Retorna el producto cuyo id coincida con el ingresado.*/
-  getById(id: number): ProductoSalidaDto {
-    return this.productosSalida[0];
+  getById(id: number) {
+    return null;
   }
 
   /**Retorna el conjunto de productos que coincida con los filtros.*/
-  getByFilters(): ProductoSalidaDto[] {
-    return this.productosSalida;
+  getByFilters() {
+    return null;
   }
 
   /**Retorna todos los productos registrados.*/
-  getAll(): ProductoSalidaDto[] {
-    return this.productosSalida;
+  getAll() {
+    return null;
   }
 
   create() {

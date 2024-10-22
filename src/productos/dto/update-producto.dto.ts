@@ -3,7 +3,6 @@ import { CreateProductoDto } from './create-producto.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -13,7 +12,6 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 
 export class UpdateProductoDto extends PartialType(CreateProductoDto) {
   @ApiProperty({ required: false, example: 'Agatea Verde' })
@@ -56,14 +54,12 @@ export class UpdateProductoDto extends PartialType(CreateProductoDto) {
   familia?: string;
 
   @ApiProperty({ required: false, example: 'neutral' })
-  @IsEnum(FotoPeriodo)
   @IsOptional()
-  fotoperiodo?: FotoPeriodo;
+  fotoperiodo?: string;
 
   @ApiProperty({ required: false, example: 'regadera' })
-  @IsEnum(TipoRiego)
   @IsOptional()
-  tipoRiego?: TipoRiego;
+  tipoRiego?: string;
 
   @ApiProperty({ required: false, example: true })
   @IsBoolean()

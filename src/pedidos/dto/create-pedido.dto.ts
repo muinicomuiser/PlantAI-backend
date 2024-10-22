@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
-import { tipoDespacho } from '../entities/tipo_despacho.entity';
-import { tipoPago } from '../entities/pago.enum';
-import { IsEnum, IsNumber, ValidateNested } from 'class-validator';
+import { IsNumber, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreatePedidoDto {
@@ -10,13 +8,11 @@ export class CreatePedidoDto {
   @IsNumber()
   public idusuario: number;
 
-  @ApiProperty({ example: tipoDespacho.RETIRO })
-  @IsEnum(tipoDespacho, { message: 'El tipo de despacho es incorrecto' })
-  public tipoDespacho: tipoDespacho;
+  @ApiProperty()
+  public tipoDespacho: string;
 
-  @ApiProperty({ example: tipoPago.MERCADOPAGO })
-  @IsEnum(tipoPago, { message: 'El tipo de pago es incorrecto' })
-  public tipoPago: tipoPago;
+  @ApiProperty()
+  public tipoPago: string;
 
   @ApiProperty({})
   @ValidateNested()

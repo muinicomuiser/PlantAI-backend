@@ -18,7 +18,6 @@ import {
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { ProductoSalidaDto } from '../dto/producto-salida.dto';
-import { FotoPeriodo, TipoRiego } from '../entities/categoria.entity';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
 
@@ -57,16 +56,16 @@ export class ProductosController {
   })
   @ApiQuery({ name: 'nombre', required: false })
   @ApiQuery({ name: 'familia', required: false })
-  @ApiQuery({ name: 'fotoperiodo', enum: FotoPeriodo, required: false })
-  @ApiQuery({ name: 'tiporiego', enum: TipoRiego, required: false })
+  @ApiQuery({ name: 'fotoperiodo', required: false })
+  @ApiQuery({ name: 'tiporiego', required: false })
   @ApiQuery({ name: 'petfriendly', enum: ['true', 'false'], required: false })
   @ApiQuery({ name: 'color', required: false })
   @Get()
   getByFilters(
     @Query('nombre') nombre: string,
     @Query('familia') familia: string,
-    @Query('fotoperiodo') fotoperiodo: FotoPeriodo,
-    @Query('tiporiego') tipoRiego: TipoRiego,
+    @Query('fotoperiodo') fotoperiodo: string,
+    @Query('tiporiego') tipoRiego: string,
     @Query('petfriendly') petFriendly: string,
     @Query('color') color: string,
   ) {
