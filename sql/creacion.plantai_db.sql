@@ -59,7 +59,7 @@ CREATE table categorias(
 
 CREATE table productos(
   id int auto_increment primary key,
-  SKU varchar(12),
+  SKU varchar(20),
   nombre varchar(50),
   id_categoria int not null,
   precio int not null,
