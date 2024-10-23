@@ -172,6 +172,7 @@ Table maceteros{
   material varchar
   forma varchar
   diametro integer
+  litros integer
 }
 Table tipo_maceteros{
   id integer [primary key]

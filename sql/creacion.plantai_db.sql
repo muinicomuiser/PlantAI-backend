@@ -1,3 +1,6 @@
+CREATE database plantai_db;
+USE plantai_db;
+
 CREATE table tipo_usuarios(
   id int auto_increment primary key,
   tipo varchar(15) not null
