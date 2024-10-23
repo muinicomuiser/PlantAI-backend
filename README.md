@@ -220,7 +220,11 @@ Una vez realizada la aprovación se realizará el merge.
 
 ## 9.Base de datos y MER
 
-Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER puede encontrarla en la carpeta MER y los script SQL en la carpeta sql
+Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER puede encontrarla en la carpeta MER y los script SQL en la carpeta sql.
+para configurar la base de datos seguir el siguiente flujo:
+
+1. Ejecutar el script de SQL creacion.plantai_db.sql
+2. Ejecutar el script de SQL creacion.data.sql
 
 ## 10.Contacto
 
