@@ -27,6 +27,7 @@ instalados los siguientes componentes:
 
 - **Node.js**: >= v16.0.0
 - **NestJS CLI**: `npm install -g @nestjs/cli`
+- **TypeORM**: yarn add @nest/typeorm
 
 ## 2. Instalación
 
@@ -76,6 +77,8 @@ siguiente comando, desde la ruta grupo-3-backend:
 docker compose up -d
 ```
 
+La base de datos se cargará automáticamente al gestor utilizado.
+
 ## 5. Ejecución - Producción
 
 Para ejecutar el proyecto en modo producción, usa el
@@ -85,6 +88,8 @@ siguiente comando, desde la ruta grupo-3-backend:
 cd prod
 docker compose up -d
 ```
+
+La base de datos se cargará automáticamente al gestor utilizado.
 
 ## 6. Estructura del Proyecto
 
@@ -213,7 +218,11 @@ contener una descripción clara de los cambios y cualquier
 instrucción necesaria para probarlos.
 Una vez realizada la aprovación se realizará el merge.
 
-## 9.Contacto
+## 9.Base de datos y MER
+
+Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER puede encontrarla en la carpeta MER y los script SQL en la carpeta sql
+
+## 10.Contacto
 
 Si tienes alguna pregunta, puedes contactarnos a través
 de:
