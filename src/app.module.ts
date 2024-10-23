@@ -22,7 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST,
+      host: process.env.BD_HOST,
       port: parseInt(process.env.BD_PORT),
       username: process.env.BD_USERNAME,
       password: process.env.BD_PASSWORD,
