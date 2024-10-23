@@ -98,18 +98,6 @@ VALUES
 ('Semilleros'),
 ('Apilables');
 
--- materiales         
---      ('Plástico'),
---		('Terracota'),
---		('Cerámica'),
---		('Metal'),
---		('Madera'),
---		('Fibra de coco'),
---		('Bronce'),
---		('Hormigón'),
---		('Cobre'),
---		('Mármol');
-
 -- tipo_usuarios
 INSERT INTO tipo_usuarios (tipo)
 VALUES 
@@ -124,8 +112,6 @@ VALUES
 ('password1', '10422222-2', 1, 'therock', 'Dwayne', 'Johnson',        'dwaynejohnson@gmail.com', '991233221', 'Masculino', '1968-01-01'),
 ('password2', '10444444-4', 2, 'bigdaddy', 'Daddy', 'Yankee', 'daddyyankee@gmail.com', '999999999', 'Masculino', '1966-10-12'),
 ('password3', '19123123-2', 3, 'ladydi', 'Diana', 'Gales', 'dianadgales@gmail.com', '123456789', 'Femenino', '1961-07-01');
-
-
 
 -- productos de plantas
 INSERT INTO productos (SKU, nombre, id_categoria, precio, descripcion, imagen, cantidad, unidades_vendidas, puntuacion, ancho, alto, largo, peso)
@@ -148,13 +134,13 @@ VALUES
 ('MAC-PLAS-2', 'Macetero Plástico', 3, 4500, 'Macetero de plástico cuadrado', 'plantAI.com/imagenes/macer_plastico.jpg', 13, 7, 4, 25, 25, 25, 500),
 ('MAC-MET-3', 'Macetero Metal', 3, 7000, 'Macetero de metal rectangular', 'plantAI.com/imagenes/macer_metal.jpg', 8, 10, 3, 20, 50, 30, 1500),
 ('MAC-FIB-4', 'Macetero Fibra de vidrio', 3, 6000, 'Macetero de fibra de vidrio cilíndrico', 'plantAI.com/imagenes/macer_fibra_vidri3.jpg', 6, 8, 3, 40, 40, 40, 1200),
-('MAC-BAR-5', 'Macetero Barro', 3, 3500, 'Macetero de barro triangular', 'plantAI.com/imagenes/macer_barro.jpg', 5, 9, 43 15, 15, 15, 700),
+('MAC-BAR-5', 'Macetero Barro', 3, 3500, 'Macetero de barro triangular', 'plantAI.com/imagenes/macer_barro.jpg', 5, 9, 4.3, 15, 15, 15, 700),
 ('MAC-CEM-6', 'Macetero Cemento', 3, 5000, 'Macetero de cemento en forma de cono', 'plantAI.com/imagenes/macer_cem3nto.jpg', 4, 6, 5, 35, 35, 35, 1800),
-('MAC-PLAS-7', 'Macetero Plástico', 3, 3000, 'Macetero de plástico en forma de cascada', 'plantAI.com/imagenes/macer_plast3co_cascada.jpg', 9, 5, 6, 50, 50, 50, 900),
-('MAC-CER-8', 'Macetero Cerámica', 3, 4800, 'Macetero de cerámica de forma irregular', 'plantAI.com/imagenes/macer_cera3ico_irregular.jpg', 7, 4, 6, 22, 22, 22, 1100),
-('MAC-MAD-9', 'Macetero Madera', 3, 5200, 'Macetero de madera colgante', 'plantAI.com/imagenes/macer_ma3era_colgante.jpg', 10, 7, 8, 28, 28, 28, 950),
+('MAC-PLAS-7', 'Macetero Plástico', 3, 3000, 'Macetero de plástico en forma de cascada', 'plantAI.com/imagenes/macer_plast3co_cascada.jpg', 9, 5, 5, 50, 50, 50, 900),
+('MAC-CER-8', 'Macetero Cerámica', 3, 4800, 'Macetero de cerámica de forma irregular', 'plantAI.com/imagenes/macer_cera3ico_irregular.jpg', 7, 4, 5, 22, 22, 22, 1100),
+('MAC-MAD-9', 'Macetero Madera', 3, 5200, 'Macetero de madera colgante', 'plantAI.com/imagenes/macer_ma3era_colgante.jpg', 10, 7, 5, 28, 28, 28, 950),
 ('MAC-CEM-10', 'Macetero Cemento', 3, 4000, 'Macetero de cemento hexagonal', 'plantAI.com/imagenes/macer_ceme3to_hexagonal.jpg', 6, 3, 5, 45, 45, 45, 1300);
---productos accesorios
+-- productos accesorios
 INSERT INTO productos (SKU, nombre, id_categoria, precio, descripcion, imagen, cantidad, unidades_vendidas, puntuacion, ancho, alto, largo, peso)
 VALUES
 ('SUP-PLANT-1', 'Soporte de Planta - Madera', 2, 1500, 'Soporte de madera para plantas de interior', 'plantAI.com/imagenes/soporte_madera.jpg', 50, 30, 4.5, 20, 40, 20, 500),
@@ -167,7 +153,7 @@ VALUES
 ('PLATO-RED-1', 'Plato para Maceta Redondo', 2, 600, 'Plato redondo para macetas de 25cm de diámetro', 'plantAI.com/imagenes/plato_maceta.jpg', 100, 50, 4.4, 25, 25, 2, 400),
 ('ETIQ-PLA-1', 'Etiquetas para Plantas', 2, 300, 'Etiquetas plásticas para identificar plantas', 'plantAI.com/imagenes/etiquetas_plantas.jpg', 500, 200, 4.2, 5, 1, 10, 50),
 ('INV-PEQ-1', 'Mini Invernadero', 2, 5500, 'Mini invernadero para terrazas y balcones', 'plantAI.com/imagenes/mini_invernadero.jpg', 15, 10, 4.9, 100, 50, 200, 5000);
---productos insumos
+-- productos insumos
 INSERT INTO productos (SKU, nombre, id_categoria, precio, descripcion, imagen, cantidad, unidades_vendidas, puntuacion, ancho, alto, largo, peso) VALUES
 ('SUS-TR-1', 'Sustrato', 4, 5000, 'Sustrato ideal para plantas.', 'ruta/a/la/imagen1.jpg', 100, 0, 4.5, 30, 10, 20, 5),
 ('TUR-B-1', 'Turba', 4, 8000, 'Turba de alta calidad.', 'ruta/a/la/imagen2.jpg', 150, 0, 4.7, 25, 10, 15, 3),
@@ -192,38 +178,31 @@ INSERT INTO productos (SKU, nombre, id_categoria, precio, descripcion, imagen, c
 -- plantas
 INSERT INTO plantas (id_producto, id_especie, pet_friendly, id_tipo_riego, id_fotoperiodo, tolerancia_temperatura, ciclo, altura, id_habito_crecimiento, id_color)
 VALUES 
-(1, 1, 1, 8, 2, 32, 1, 40, 2, 1),
-(2, 1, 1, 8, 2, 32, 1, 40, 2, 1), -- Grevillea
-(3, 2, 2, 9, 3, 35, 1, 50, 1, 2), -- Juniperus-Azul
-(4, 3, 1, 9, 2, 28, 2, 60, 3, 3), -- Agatea Verde
-(5, 4, 1, 8, 3, 30, 1, 70, 4, 4), -- Dólar Blanco
-(6, 5, 2, 9, 1, 34, 2, 80, 1, 5), -- Pennisetum Rubra
-(7, 6, 1, 9, 2, 25, 1, 30, 3, 6), -- Sedum Japonicum
-(8, 7, 2, 8, 3, 40, 1, 100, 2, 7), -- Buganvilla
-(9, 8, 1, 9, 2, 32, 1, 90, 1, 8); -- Jazmín del Cabo
+(1, 1, 1, 1, 2, 32, 1, 40, 2, 1),
+(2, 1, 1, 1, 2, 32, 1, 40, 2, 1), -- Grevillea
+(3, 2, 2, 2, 3, 35, 1, 50, 1, 2), -- Juniperus-Azul
+(4, 3, 1, 2, 2, 28, 2, 60, 3, 3), -- Agatea Verde
+(5, 4, 1, 1, 3, 30, 1, 70, 4, 4), -- Dólar Blanco
+(6, 5, 2, 2, 1, 34, 2, 80, 1, 5), -- Pennisetum Rubra
+(7, 6, 1, 2, 2, 25, 1, 30, 3, 6), -- Sedum Japonicum
+(8, 7, 2, 1, 3, 40, 1, 100, 2, 7), -- Buganvilla
+(9, 8, 1, 2, 2, 32, 1, 90, 1, 8); -- Jazmín del Cabo
 
 -- maceteros
-INSERT INTO maceteros (id_marca, id_tipo_macetero, material, forma, diametro)
+INSERT INTO maceteros (id_producto, id_marca, id_tipo_macetero, material, forma, diametro)
 VALUES 
--- recordar que los id son autoincrementados, por tanto
--- estar atentos al cambio de estos para el insert
-
-ALTER TABLE maceteros MODIFY forma VARCHAR(25);
-
 (19, 2, 11, 'Cerámica', 'Redondo', 30),
 (20, 5, 12, 'Plástico', 'Cuadrado', 25),
 (21, 8, 13, 'Metal', 'Rectangular', 20),
-(22, 3, 14, 'Fibra de vidrio', 'Cilíndrico', 40),
-(23, 7, 15, 'Barro', 'Triangular', 15),
-(24, 4, 16, 'Cemento', 'En forma de cono', 35),
-(25, 9, 17, 'Plástico', 'Cascada', 50),
-(26, 1, 18, 'Cerámica', 'Irregular', 22),
-(27, 10, 19, 'Madera', 'Colgante', 28),
-(28, 6, 20, 'Cemento', 'Hexagonal', 45);
+(22, 3, 10, 'Fibra de vidrio', 'Cilíndrico', 40),
+(23, 7, 9, 'Barro', 'Triangular', 15),            
+(24, 4, 8, 'Cemento', 'En forma de cono', 35),    
+(25, 9, 7, 'Plástico', 'Cascada', 50),            
+(26, 1, 6, 'Cerámica', 'Irregular', 22),          
+(27, 10, 5, 'Madera', 'Colgante', 28),            
+(28, 6, 4, 'Cemento', 'Hexagonal', 45);           
 
 -- tipo_accesorios
-ALTER TABLE tipo_accesorios MODIFY tipo VARCHAR(50);
-
 INSERT INTO tipo_accesorios (tipo)
 VALUES 
 ('Soporte de planta'),
@@ -235,23 +214,22 @@ VALUES
 ('Accesorio decorativo'),
 ('Plato para macetas'),
 ('Etiqueta para plantas'),
-('Invernadero'),
+('Invernadero');
 
---accesorios
+-- accesorios
 INSERT INTO accesorios (id_producto, id_marca, id_tipo_accesorio, id_color)
 VALUES 
-(29, 1, 29, 1),  -- Soporte de Planta - Madera
-(31, 2, 31, 2),  -- Sustrato para Orquídeas
-(32, 3, 32, 3),  -- Tijeras de Podar
-(33, 4, 33, 4),  -- Fertilizante Orgánico
-(34, 5, 34, 5),  -- Regadera de Plástico
-(35 ,6, 35, 6),  -- Estatua Decorativa - Buda
-(36, 7, 36, 7),  -- Plato para Maceta Redondo
-(37, 8, 37, 8),  -- Etiquetas para Plantas
-(38, 9, 38, 9);  -- Mini Invernadero
+(29, 1, 1, 1),  -- Soporte de Planta - Madera
+(31, 2, 2, 2),  -- Sustrato para Orquídeas
+(32, 3, 3, 3),  -- Tijeras de Podar
+(33, 4, 4, 4),  -- Fertilizante Orgánico
+(34, 5, 5, 5),  -- Regadera de Plástico
+(35, 6, 6, 6),  -- Estatua Decorativa - Buda
+(36, 7, 7, 7),  -- Plato para Maceta Redondo
+(37, 8, 8, 8),  -- Etiquetas para Plantas
+(38, 9, 9, 9);  -- Mini Invernadero
 
---tipo_insumos
-ALTER TABLE tipo_insumos MODIFY tipo_insumo VARCHAR(50);
+-- tipo_insumos
 INSERT INTO tipo_insumos (tipo_insumo)
 VALUES
 ('Sustrato'),
@@ -274,31 +252,31 @@ VALUES
 ('Hormonas de enraizamiento'),
 ('Bioestimulante');
 
---insumos
+-- insumos
+-- insumos
 INSERT INTO insumos (id_producto, id_tipo_insumo, id_marca) VALUES
-(58, 20, 1),  -- Sustrato
-(59, 21, 2),  -- Turba
-(60, 22, 3),  -- Fibra de coco
-(61, 23, 4),  -- Fertilizante orgánico
-(62, 24, 5),  -- Fertilizante químico
-(63, 25, 6),  -- Nutrientes específicos
-(64, 26, 7),  -- Fertilizante soluble
-(65, 27, 8),  -- Compost
-(66, 28, 9),  -- Perlita
-(67, 29, 10), -- Vermiculita
-(68, 30, 11), -- Arena y grava
-(69, 31, 12), -- Ceniza de madera
-(70, 32, 13), -- Abono verde
-(71, 33, 14), -- Insecticida natural
-(72, 34, 15), -- Insecticida químico
-(73, 35, 1),  -- Fungicida
-(74, 36, 2),  -- Herbicida
-(75, 37, 3),  -- Hormonas de enraizamiento
-(76, 38, 4);  -- Bioestimulante
+(31, 1, 1),  -- Sustrato
+(32, 2, 2),  -- Turba
+(33, 3, 3),  -- Fibra de coco
+(34, 4, 4),  -- Fertilizante orgánico
+(35, 5, 5),  -- Fertilizante químico
+(36, 6, 6),  -- Nutrientes específicos
+(37, 7, 7),  -- Fertilizante soluble
+(38, 8, 8),  -- Compost
+(39, 9, 9),  -- Perlita
+(40, 10, 10), -- Vermiculita
+(41, 11, 11), -- Arena y grava
+(42, 12, 12), -- Ceniza de madera
+(43, 13, 13), -- Abono verde
+(44, 14, 14), -- Insecticida natural
+(45, 15, 15), -- Insecticida químico
+(46, 16, 1),  -- Fungicida
+(47, 17, 2),  -- Herbicida
+(48, 18, 3),  -- Hormonas de enraizamiento
+(49, 19, 4);  -- Bioestimulante
 
---etiquetas
 
-ALTER TABLE etiquetas MODIFY etiqueta VARCHAR(50);
+-- etiquetas
 
 INSERT INTO etiquetas (etiqueta) VALUES
 ('Cyber Monday'),
@@ -330,61 +308,60 @@ INSERT INTO etiquetas (etiqueta) VALUES
 ('Minimalista'),
 ('Aventurero');
 
---productos_etiquetas
+-- productos_etiquetas
 
-INSERT INTO productos_etiquetas (id_producto, id_etiqueta) VALUES
-(1, 29),   -- Ciprés
-(1, 30),
-(2, 29),   -- Espino
-(2, 31),
-(11, 32),   -- Grevillea
-(12, 33),   -- Juniperus-Azul
-(12, 34),
-(13, 35),   -- Agatea Verde
-(14, 36),   -- Dólar Blanco
-(15, 37),   -- Pennisetum Rubra
-(16, 38),   -- Sedum Japonicum
-(17, 39),   -- Buganvilla
-(18, 40),  -- Jazmín del Cabo
-(19, 41),  -- Macetero Cerámica
-(20, 42),  -- Macetero Plástico
-(21, 43),  -- Macetero Metal
-(22, 44),  -- Macetero Fibra de vidrio
-(23, 45),  -- Macetero Barro
-(24, 46),  -- Macetero Cemento
-(25, 47),  -- Macetero Plástico
-(26, 48),  -- Macetero Cerámica
-(27, 49),  -- Macetero Madera
-(28, 50),  -- Macetero Cemento
-(29, 51),  -- Soporte de Planta - Madera
-(30, 52),  -- Maceta Cerámica Redonda
-(31, 53),  -- Sustrato para Orquídeas
-(32, 54),  -- Tijeras de Podar
-(33, 55),  -- Fertilizante Orgánico
-(34, 56),  -- Regadera de Plástico
-(35, 29),  -- Estatua Decorativa - Buda
-(36, 30),  -- Plato para Maceta Redondo
-(37, 31),  -- Etiquetas para Plantas
-(38, 32),  -- Mini Invernadero
-(58, 33),  -- Sustrato
-(59, 34),  -- Turba
-(60, 35),  -- Fibra de coco
-(61, 36),  -- Fertilizante orgánico
-(62, 37),  -- Fertilizante químico
-(63, 38),  -- Nutrientes específicos
-(64, 39),  -- Fertilizante soluble
-(65, 40),  -- Compost
-(66, 41),  -- Perlita
-(67, 42),  -- Vermiculita
-(68, 43),  -- Arena y grava
-(69, 44),  -- Ceniza de madera
-(70, 45),  -- Abono verde
-(71, 46),  -- Insecticida natural
-(72, 47),  -- Insecticida químico
-(73, 48),  -- Fungicida
-(74, 49),  -- Herbicida
-(75, 50),  -- Hormonas de enraizamiento
-(76, 51);  -- Bioestimulante
+INSERT INTO productos_etiquetas (id_producto, id_etiqueta) VALUES 
+(1, 1),
+(1, 2),
+(2, 1),
+(2, 3),
+(3, 4),
+(4, 5), 
+(4, 6),
+(5, 7), 
+(6, 8), 
+(7, 9), 
+(8, 10), 
+(9, 11), 
+(10, 12),
+(11, 13),
+(12, 14),
+(13, 15),
+(14, 16),
+(15, 17),
+(16, 18),
+(17, 19),
+(18, 20),
+(19, 21),
+(20, 22),
+(21, 23),
+(22, 24),
+(23, 25),
+(24, 26),
+(25, 27),
+(26, 28),
+(27, 1),
+(28, 2),
+(29, 3),
+(30, 4),
+(31, 5),
+(32, 6),
+(33, 7),
+(34, 8),
+(35, 9),
+(36, 10),
+(37, 11),
+(38, 12),
+(39, 13),
+(40, 14),
+(41, 15),
+(42, 16),
+(43, 17),
+(44, 18),
+(45, 19),
+(46, 20),
+(47, 21),
+(48, 22);
 
 -- medio_pago
 INSERT INTO medio_pago (nombre, habilitado)
@@ -398,11 +375,11 @@ VALUES
 INSERT INTO usuarios_medios_pagos (id_usuario, id_medio_pago, es_preferido)
 VALUES (3, 2, 1);
 
---carros
+-- carros
 INSERT INTO carros (id_usuario, fecha_creacion)
 VALUES (3, '2024-10-22');
 
---estado_pedidos
+-- estado_pedidos
 INSERT INTO estados_pedido (estado)
 VALUES 
 ('Confirmado'),
@@ -419,26 +396,26 @@ INSERT INTO carros_productos (id_carro, id_producto, cantidad_producto)
 VALUES 
 (1, 1, 2),
 (1, 19, 2),
-(1, 61, 1),
-(1, 75, 1);
+(1, 20, 1),
+(1, 30, 1);
 
---tipo_despacho
+-- tipo_despacho
 INSERT INTO tipo_despacho (tipo)
 VALUES 
 ('Retiro'),
 ('Chilexpress');
 
---pedidos
+-- pedidos
 INSERT INTO pedidos (id_usuario, fecha_creacion, id_medio_pago, id_estado, id_tipo_despacho, id_carro, fecha_entrega)
 VALUES 
 (1, '2024-10-22', 2, 1, 1, 1, '2024-10-24');
 
---pagos
+-- pagos
 INSERT INTO pagos (id_medio_pago, id_pedido, fecha, monto)
 VALUES 
-(2, 1, '2024-10-22', 43000)
+(2, 1, '2024-10-22', 43000);
 
---direcciones 
+-- direcciones 
 INSERT INTO direcciones (id_usuario, comuna, calle, numero, departamento, referencia)
 VALUES 
 (1, 'Maipú', 'Pasaje Asturias', 1200, NULL ,'Av Montt con Espectro'),

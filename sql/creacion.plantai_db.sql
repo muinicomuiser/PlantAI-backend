@@ -1,6 +1,3 @@
-CREATE database plantai_db;
-USE plantai_db;
-
 CREATE table tipo_usuarios(
   id int auto_increment primary key,
   tipo varchar(15) not null
@@ -49,7 +46,7 @@ CREATE table usuarios_medios_pagos(
 
 CREATE table etiquetas(
   id int auto_increment primary key,
-  etiqueta varchar(20) not null
+  etiqueta varchar(50) not null
 );
 
 CREATE table categorias(
@@ -67,7 +64,7 @@ CREATE table productos(
   imagen varchar(200),
   cantidad int not null,
   unidades_vendidas int, 
-  puntuacion decimal(3, 2),
+  puntuacion decimal(3, 2)  CHECK (puntuacion >= 1 AND puntuacion <= 5),
   ancho int,
   alto int,
   largo int,
@@ -195,9 +192,10 @@ CREATE table maceteros(
   id_producto int not null primary key,
   id_marca int,
   id_tipo_macetero int,
-  material varchar(12),
-  forma varchar(12),
+  material varchar(50),
+  forma varchar(50),
   diametro int,
+  litros int,
   foreign key (id_producto) references productos(id),
   foreign key (id_marca) references marcas(id),
   foreign key (id_tipo_macetero) references tipo_maceteros(id)
@@ -205,7 +203,7 @@ CREATE table maceteros(
 
 CREATE table tipo_insumos(
   id int auto_increment primary key,
-  tipo_insumo varchar(20) not null
+  tipo_insumo varchar(50) not null
 );
 
 CREATE table insumos(
@@ -219,7 +217,7 @@ CREATE table insumos(
 
 CREATE table tipo_accesorios(
   id int auto_increment primary key,
-  tipo varchar(20) not null
+  tipo varchar(50) not null
 );
 
 CREATE table accesorios(
