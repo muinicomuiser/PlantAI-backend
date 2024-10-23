@@ -4,6 +4,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class TipoRiego {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
-  tipo: string;
+  @Column({ name: 'tipo_riego' })
+  tipoRiego: string;
 }

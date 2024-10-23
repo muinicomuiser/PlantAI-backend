@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
+import { ProductoSalidaDto } from 'src/productos/dto/producto/get-producto.dto';
 import { CatalogoService } from '../service/catalogo.service';
 
 /**Historia de Usuario 12: Visualización del catálogo*/

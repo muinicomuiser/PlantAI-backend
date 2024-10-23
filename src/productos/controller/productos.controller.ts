@@ -17,7 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
-import { ProductoSalidaDto } from '../dto/producto-salida.dto';
+import { ProductoSalidaDto } from '../dto/producto/get-producto.dto';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
 

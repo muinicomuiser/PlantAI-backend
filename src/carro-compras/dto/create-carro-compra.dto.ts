@@ -6,7 +6,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
+import { ProductoSalidaDto } from 'src/productos/dto/producto/get-producto.dto';
 
 export class CreateCarroCompraDto {
   @ApiProperty({

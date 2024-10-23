@@ -55,7 +55,7 @@ export class Planta {
   // Relación con la entidad Fotoperiodo
   @ManyToOne(() => Fotoperiodo)
   @JoinColumn({ name: 'id_fotoperiodo' })
-  fotoperiodo: Fotoperiodo;
+  fotoPeriodo: Fotoperiodo;
 
   // Clave foránea para TipoRiego
   @Column({ name: 'id_tipo_riego' })

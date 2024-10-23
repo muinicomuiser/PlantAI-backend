@@ -191,16 +191,16 @@ VALUES
 -- maceteros
 INSERT INTO maceteros (id_producto, id_marca, id_tipo_macetero, material, forma, diametro)
 VALUES 
-(19, 2, 11, 'Cerámica', 'Redondo', 30),
-(20, 5, 12, 'Plástico', 'Cuadrado', 25),
-(21, 8, 13, 'Metal', 'Rectangular', 20),
-(22, 3, 10, 'Fibra de vidrio', 'Cilíndrico', 40),
-(23, 7, 9, 'Barro', 'Triangular', 15),            
-(24, 4, 8, 'Cemento', 'En forma de cono', 35),    
-(25, 9, 7, 'Plástico', 'Cascada', 50),            
-(26, 1, 6, 'Cerámica', 'Irregular', 22),          
-(27, 10, 5, 'Madera', 'Colgante', 28),            
-(28, 6, 4, 'Cemento', 'Hexagonal', 45);           
+(11, 2, 11, 'Cerámica', 'Redondo', 30),
+(12, 5, 12, 'Plástico', 'Cuadrado', 25),
+(13, 8, 13, 'Metal', 'Rectangular', 20),
+(14, 3, 10, 'Fibra de vidrio', 'Cilíndrico', 40),
+(15, 7, 9, 'Barro', 'Triangular', 15),            
+(16, 4, 8, 'Cemento', 'En forma de cono', 35),    
+(17, 9, 7, 'Plástico', 'Cascada', 50),            
+(18, 1, 6, 'Cerámica', 'Irregular', 22),          
+(19, 10, 5, 'Madera', 'Colgante', 28),            
+(20, 6, 4, 'Cemento', 'Hexagonal', 45);           
 
 -- tipo_accesorios
 INSERT INTO tipo_accesorios (tipo)
@@ -219,15 +219,15 @@ VALUES
 -- accesorios
 INSERT INTO accesorios (id_producto, id_marca, id_tipo_accesorio, id_color)
 VALUES 
-(29, 1, 1, 1),  -- Soporte de Planta - Madera
-(31, 2, 2, 2),  -- Sustrato para Orquídeas
-(32, 3, 3, 3),  -- Tijeras de Podar
-(33, 4, 4, 4),  -- Fertilizante Orgánico
-(34, 5, 5, 5),  -- Regadera de Plástico
-(35, 6, 6, 6),  -- Estatua Decorativa - Buda
-(36, 7, 7, 7),  -- Plato para Maceta Redondo
-(37, 8, 8, 8),  -- Etiquetas para Plantas
-(38, 9, 9, 9);  -- Mini Invernadero
+(21, 1, 1, 1),  -- Soporte de Planta - Madera
+(22, 2, 2, 2),  -- Sustrato para Orquídeas
+(23, 3, 3, 3),  -- Tijeras de Podar
+(24, 4, 4, 4),  -- Fertilizante Orgánico
+(25, 5, 5, 5),  -- Regadera de Plástico
+(26, 6, 6, 6),  -- Estatua Decorativa - Buda
+(27, 7, 7, 7),  -- Plato para Maceta Redondo
+(28, 8, 8, 8),  -- Etiquetas para Plantas
+(29, 9, 9, 9);  -- Mini Invernadero
 
 -- tipo_insumos
 INSERT INTO tipo_insumos (tipo_insumo)
