@@ -8,7 +8,6 @@ import { setupSwagger } from './config/swagger/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
   app.useGlobalInterceptors(new InterceptorOkLogInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
