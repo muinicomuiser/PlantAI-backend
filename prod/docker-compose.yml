@@ -3,8 +3,9 @@ version: '3.8'
 services:
   database-prod:
     image: mysql:8.0
+    container_name: database-prod
     volumes:
-      - ./db/data_prod:/var/lib/mysql
+      - ~/db/data_prod:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=clave123
       - MYSQL_DATABASE=plantai_db
