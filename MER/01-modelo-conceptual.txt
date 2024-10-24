@@ -1,0 +1,11 @@
+erDiagram
+
+  USUARIO ||--|{ CARRO-COMPRAS: "puede llenar"
+    PROVEEDORES-PAGO }|--|{ PAGOS: "procesan"
+  CARRO-COMPRAS ||--|| PEDIDOS: compone
+  PEDIDOS }|--|| ENTREGA: tiene
+  PEDIDOS ||--|| PAGOS: "tiene id de"
+  CARRO-COMPRAS }|--|{ PRODUCTO: contiene
+  PEDIDOS }|--|{ PRODUCTO: "SE COMPONE DE"
+  ENTREGA }|--|{ PROVEEDOR-LOGISTICO: "Las realizan"
+  PEDIDOS }|--|{ ESTADOS: "TIENEN"
