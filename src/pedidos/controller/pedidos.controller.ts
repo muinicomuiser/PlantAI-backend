@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { estadoPedido } from '../entities/estado.enum';
 import { UpdatePedidoDto } from '../dto/update-pedido.dto';
 import { OutputPedidoDto } from '../dto/output-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
@@ -34,13 +33,13 @@ export class PedidosController {
   @ApiOperation({
     summary: 'Filtra pedidos por estado o entrega todos los pedidos',
   })
-  @ApiQuery({ name: 'Estado', enum: estadoPedido, required: false })
+  @ApiQuery({ name: 'Estado', required: false })
   @ApiResponse({
     description: 'Pedidos filtrados por estado o todos los pedidos',
     type: OutputPedidoDto,
   })
   @Get()
-  findAll(@Query('Estado') estado: estadoPedido) {
+  findAll(@Query('Estado') estado: string) {
     return this.pedidosService.findAll();
   }
 

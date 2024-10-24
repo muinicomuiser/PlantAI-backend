@@ -1,11 +1,26 @@
 services:
+  database-dev:
+    image: mysql:9-oracle
+    volumes:
+      - ./db/data_dev:/usr/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=clave123
+      - MYSQL_DATABASE=plantai_db # Crear la base de datos al iniciar el contenedor
+      - MYSQL_HOST=database-dev
+    ports:
+      - '3308:3306'
   cotiledon-dev:
     image: node:22-alpine3.19
     working_dir: /usr/src/app
     environment:
       - AMBIENTE=dev
+      - DB_HOST=database-dev # Nombre del servicio de la base de datos
+      - DB_PORT=3306 # Cambiado a 3306, que es el puerto expuesto del contenedor MySQL
+      - DB_USERNAME=root
+      - DB_PASSWORD=clave123
+      - DB_DATABASE=plantai_db
     volumes:
       - ./:/usr/src/app
     ports:
-      - '3000:3000'
+      - '3000:3002'
     command: 'yarn start:dev'

@@ -1,5 +1,5 @@
-import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
+import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
 export declare class CreateCarroCompraDto {
-  idUsuario: number;
-  productos?: ProductoSalidaDto[];
+    idUsuario: number;
+    productos?: GetProductoDto[];
 }

@@ -9,6 +9,7 @@ import { EquipoModule } from './commons/modelse3/equipo/equipo.module';
 import { AuthModule } from './auth/auth.module';
 import { GlobalMiddleware } from './commons/middleware/global.middleware';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -18,6 +19,15 @@ import { ConfigModule } from '@nestjs/config';
         process.env.AMBIENTE != undefined
           ? `.env.${process.env.AMBIENTE}`
           : `.env.dev`,
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
     }),
     ProductosModule,
     CarroComprasModule,

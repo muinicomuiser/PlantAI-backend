@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FotoPeriodo, TipoRiego } from '../entities/categorias';
 import {
   IsBoolean,
-  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -52,14 +50,12 @@ export class CreateProductoDto {
   familia?: string;
 
   @ApiProperty({ required: false, example: 'neutral' })
-  @IsEnum(FotoPeriodo)
   @IsOptional()
-  fotoperiodo?: FotoPeriodo;
+  fotoperiodo?: string;
 
   @ApiProperty({ required: false, example: 'regadera' })
-  @IsEnum(TipoRiego)
   @IsOptional()
-  tipoRiego?: TipoRiego;
+  tipoRiego?: string;
 
   @ApiProperty({ required: false, example: true })
   @IsBoolean()

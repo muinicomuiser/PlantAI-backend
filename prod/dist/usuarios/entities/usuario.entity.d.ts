@@ -1,20 +1,22 @@
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { tipoPago } from 'src/pedidos/entities/pago.enum';
+import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { Direccion } from './direccion.entity';
+import { TipoUsuario } from './tipo_usuario.entity';
+import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
 export declare class Usuario {
-  id: number;
-  username: string;
-  password: string;
-  email: string;
-  carrito: CarroCompra;
-  pedidos: Pedido[];
-  medioPago: tipoPago;
-  constructor(
-    id: number,
-    name: string,
-    password: string,
-    email: string,
-    carrito: CarroCompra,
-    pedidos: Pedido[],
-  );
+    id: number;
+    contrasena: string;
+    nombre: string;
+    apellido: string;
+    nombreUsuario: string;
+    email: string;
+    telefono: string;
+    genero: string;
+    rut: string;
+    fechaNacimiento: Date;
+    direccion: Direccion[];
+    tipoUsuario: TipoUsuario;
+    usuarioMedioPago: UsuarioMedioPago[];
+    carros: CarroCompra[];
+    pedidos: Pedido[];
 }

@@ -1,0 +1,4 @@
+Cosas q se han agregado posteriormente:
+
+    - Tabla maceteros:
+        - Agregar atributo 'Litros'

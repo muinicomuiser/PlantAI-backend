@@ -27,6 +27,7 @@ instalados los siguientes componentes:
 
 - **Node.js**: >= v16.0.0
 - **NestJS CLI**: `npm install -g @nestjs/cli`
+- **TypeORM**: yarn add @nest/typeorm
 
 ## 2. Instalación
 
@@ -61,11 +62,21 @@ npm install
 
 - PORT: 3000
 - AMBIENTE: dev
+- DB_HOST="localhost"
+- DB_PORT=3308
+- DB_USERNAME="usuarioDev"
+- DB_PASSWORD="contraseña"
+- DB_DATABASE="plantai_db"
 
 3. En caso que se ejecute en ambiente productivo:
 
 - PORT: 8080
 - AMBIENTE: production
+- DB_HOST="localhost"
+- DB_PORT=3308
+- DB_USERNAME="usuarioProd"
+- DB_PASSWORD="contraseña"
+- DB_DATABASE="plantai_db"
 
 ## 4. Ejecución - Desarrollo
 
@@ -76,6 +87,8 @@ siguiente comando, desde la ruta grupo-3-backend:
 docker compose up -d
 ```
 
+La base de datos se cargará automáticamente al gestor utilizado.
+
 ## 5. Ejecución - Producción
 
 Para ejecutar el proyecto en modo producción, usa el
@@ -85,6 +98,8 @@ siguiente comando, desde la ruta grupo-3-backend:
 cd prod
 docker compose up -d
 ```
+
+La base de datos se cargará automáticamente al gestor utilizado.
 
 ## 6. Estructura del Proyecto
 
@@ -213,7 +228,15 @@ contener una descripción clara de los cambios y cualquier
 instrucción necesaria para probarlos.
 Una vez realizada la aprovación se realizará el merge.
 
-## 9.Contacto
+## 9.Base de datos y MER
+
+Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER puede encontrarla en la carpeta MER y los script SQL en la carpeta sql.
+para configurar la base de datos seguir el siguiente flujo:
+
+1. Ejecutar el script de SQL creacion.plantai_db.sql
+2. Ejecutar el script de SQL creacion.data.sql
+
+## 10.Contacto
 
 Si tienes alguna pregunta, puedes contactarnos a través
 de:

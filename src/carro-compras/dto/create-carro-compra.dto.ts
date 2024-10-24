@@ -6,7 +6,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
+import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
 
 export class CreateCarroCompraDto {
   @ApiProperty({
@@ -21,10 +21,10 @@ export class CreateCarroCompraDto {
   @ApiProperty({
     name: 'productos',
     description: 'Productos del carro de compras',
-    type: [ProductoSalidaDto],
+    type: [GetProductoDto],
   })
   @ValidateNested()
-  @Type(() => ProductoSalidaDto)
+  @Type(() => GetProductoDto)
   @IsOptional()
-  productos?: ProductoSalidaDto[];
+  productos?: GetProductoDto[];
 }

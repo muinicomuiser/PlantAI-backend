@@ -1,7 +1,14 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductoSalidaDto } from 'src/productos/dto/producto-salida.dto';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
 import { CatalogoService } from '../service/catalogo.service';
+import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 
 /**Historia de Usuario 12: Visualización del catálogo*/
 @ApiTags('Catálogo')
@@ -14,15 +21,28 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos del catálogo',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
+    isArray: true,
   })
   @ApiResponse({
     status: 404,
     description: 'No se encontraron los productos',
   })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'Cantidad de elementos por página',
+  })
   @Get()
-  findAll() {
-    return this.catalogoService.findAll();
+  findAll(
+    @Query('page', new ParseIntPipe({ errorHttpStatusCode: 400 }))
+    page: number = 1,
+    @Query('pageSize', new ParseIntPipe({ errorHttpStatusCode: 400 }))
+    pageSize: number = 10,
+  ): Promise<{ data: GetProductoDto[]; totalItems: number }> {
+    const paginacionDto: PaginacionDto = { page, pageSize };
+    return this.catalogoService.findAll(paginacionDto);
   }
 
   // Obtener productos mas vendidos
@@ -30,7 +50,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos más vendidos',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -46,7 +66,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos con la puntuación especificada',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -67,7 +87,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos recomendados para el id entregado',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -88,7 +108,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos dentro del rango de precios',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,

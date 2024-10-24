@@ -17,8 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
-import { ProductoSalidaDto } from '../dto/producto-salida.dto';
-import { FotoPeriodo, TipoRiego } from '../entities/categorias';
+import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
 
@@ -34,7 +33,7 @@ export class ProductosController {
   @ApiResponse({
     status: 200,
     description: 'Retorna el producto que coincida con el id.',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -42,8 +41,8 @@ export class ProductosController {
   })
   @ApiParam({ name: 'id', type: Number })
   @Get(':id')
-  getById(@Param('id') id: number) {
-    return this.productosService.getById(+id);
+  async getById(@Param('id') id: number): Promise<GetProductoDto> {
+    return await this.productosService.getById(+id);
   }
 
   // Obtener todos los productos
@@ -53,20 +52,20 @@ export class ProductosController {
     status: 200,
     description:
       'Devuelve todos los productos que coincidan con los parámetros. Si no hay parámetros, los devuelve todos.',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiQuery({ name: 'nombre', required: false })
   @ApiQuery({ name: 'familia', required: false })
-  @ApiQuery({ name: 'fotoperiodo', enum: FotoPeriodo, required: false })
-  @ApiQuery({ name: 'tiporiego', enum: TipoRiego, required: false })
+  @ApiQuery({ name: 'fotoperiodo', required: false })
+  @ApiQuery({ name: 'tiporiego', required: false })
   @ApiQuery({ name: 'petfriendly', enum: ['true', 'false'], required: false })
   @ApiQuery({ name: 'color', required: false })
   @Get()
   getByFilters(
     @Query('nombre') nombre: string,
     @Query('familia') familia: string,
-    @Query('fotoperiodo') fotoperiodo: FotoPeriodo,
-    @Query('tiporiego') tipoRiego: TipoRiego,
+    @Query('fotoperiodo') fotoperiodo: string,
+    @Query('tiporiego') tipoRiego: string,
     @Query('petfriendly') petFriendly: string,
     @Query('color') color: string,
   ) {

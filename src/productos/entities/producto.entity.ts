@@ -1,49 +1,91 @@
-import { FotoPeriodo, TipoRiego } from './categorias';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Categoria } from './categoria.entity';
+import { Etiqueta } from './etiqueta.entity';
+import { Planta } from './plantas/planta.entity';
+import { Macetero } from './maceteros/macetero.entity';
+import { Accesorio } from './accesorios/accesorio.entity';
+import { Insumo } from './insumos/insumo.entity';
 
+@Entity({ name: 'productos' })
 export class Producto {
-  id: number; //Identificador generado automáticamente
-  // SKU: string;        //string, porque tiene números y guiones. Lo postergué.
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  SKU: string;
+
+  @Column()
   nombre: string;
+
+  @Column({ name: 'id_categoria' })
+  idCategoria: number;
+
+  @Column()
   precio: number;
-  imagen: string; //URL
+
+  @Column()
   descripcion: string;
-  cantidad: number; //Stock
+
+  @Column()
+  imagen: string;
+
+  @Column()
+  cantidad: number;
+
+  @Column({ name: 'unidades_vendidas' })
   unidadesVendidas: number;
+
+  @Column()
   puntuacion: number;
-  familia: string; //<-- enum familia
-  fotoperiodo: FotoPeriodo; //<-- enum FotoPeriodo
-  tipoRiego: TipoRiego; //<-- enum TipoRiego
-  petFriendly: boolean;
-  color: string;
 
-  constructor(
-    nombre: string,
-    precio: number,
-    imagen: string = '',
-    descripcion: string = '',
-    cantidad: number = 0,
-    familia: string = '',
-    fotoperiodo: FotoPeriodo = undefined,
-    tipoRiego: TipoRiego = undefined,
-    petFriendly: boolean = false,
-    color: string = '',
-  ) {
-    //Propiedades
-    this.nombre = nombre;
-    this.precio = precio;
-    this.imagen = imagen;
-    this.descripcion = descripcion;
-    this.cantidad = cantidad;
+  @Column()
+  ancho: number;
 
-    //Atributos de inventario
-    this.unidadesVendidas = 0;
-    this.puntuacion = 0;
+  @Column()
+  alto: number;
 
-    //Atributos de categorías
-    this.familia = familia;
-    this.fotoperiodo = fotoperiodo;
-    this.tipoRiego = tipoRiego;
-    this.petFriendly = petFriendly;
-    this.color = color;
-  }
+  @Column()
+  largo: number;
+
+  @Column()
+  peso: number;
+
+  /**Many to One */
+  @ManyToOne(() => Categoria)
+  @JoinColumn({ name: 'id_categoria' })
+  categoria: Categoria; // Por Id_categoria
+
+  /**Many to Many */
+  @ManyToMany(() => Etiqueta, (etiqueta) => etiqueta.productos)
+  @JoinTable({
+    name: 'productos_etiquetas', // Nombre de la tabla intermedia
+    joinColumn: { name: 'id_producto', referencedColumnName: 'id' }, // Columna que referencia a la entidad actual (Producto)
+    inverseJoinColumn: { name: 'id_etiqueta', referencedColumnName: 'id' }, // Columna que referencia a la otra entidad (Etiqueta)
+  })
+  etiquetas: Etiqueta[];
+
+  //Relacion con plantas
+  @OneToOne(() => Planta, (planta) => planta.producto)
+  planta: Planta;
+
+  //Relacion con maceteros
+  @OneToOne(() => Macetero, (macetero) => macetero.producto)
+  macetero: Macetero;
+
+  //Relacion con accesorios
+  @OneToOne(() => Accesorio, (accesorio) => accesorio.producto)
+  accesorio: Accesorio;
+
+  // Relacion con insumos
+  @OneToOne(() => Insumo, (insumo) => insumo.producto)
+  insumo: Insumo;
 }

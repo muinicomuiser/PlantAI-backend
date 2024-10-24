@@ -1,10 +1,8 @@
-import { CarroCompra } from 'src/carro-compras/entities/carro-compra.entity';
-import { tipoDespacho } from '../entities/despacho.enum';
-import { tipoPago } from '../entities/pago.enum';
+import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 export declare class CreatePedidoDto {
-  idusuario: number;
-  tipoDespacho: tipoDespacho;
-  tipoPago: tipoPago;
-  carrito: CarroCompra;
-  fechaEntrega: Date;
+    idusuario: number;
+    tipoDespacho: string;
+    tipoPago: string;
+    carrito: CarroCompra;
+    fechaEntrega: Date;
 }
