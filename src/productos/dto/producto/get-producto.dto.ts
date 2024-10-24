@@ -12,7 +12,7 @@ import { GetMaceteroDto } from '../macetero/get-macetero.dto';
 import { GetAccesorioDto } from '../accesorio/get-accesorio.dto';
 import { GetInsumoDto } from '../insumo/get-insumo.dto';
 
-export class ProductoSalidaDto {
+export class GetProductoDto {
   @ApiProperty({ example: 1, description: 'Identificador único del producto' })
   @IsInt()
   id: number;

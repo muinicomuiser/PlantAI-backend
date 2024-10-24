@@ -1,6 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { GetMarcaDto } from '../producto/get-marca.dto';
-import { GetTipoMaceteroDto } from './get-tipo-macetero.dto';
 import { IsInt, IsString } from 'class-validator';
 
 export class GetMaceteroDto {
@@ -48,8 +46,8 @@ export class GetMaceteroDto {
   litros: number;
 
   // relaciones
-  @ApiProperty({ description: 'Marca', type: GetMarcaDto })
-  marca: GetMarcaDto;
-  @ApiProperty({ description: 'Tipo de macetero', type: GetTipoMaceteroDto })
-  tipoMacetero: GetTipoMaceteroDto;
+  @ApiProperty({ description: 'Marca' })
+  marca: string;
+  @ApiProperty({ description: 'Tipo de macetero' })
+  tipoMacetero: string;
 }

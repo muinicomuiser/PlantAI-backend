@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductoSalidaDto } from 'src/productos/dto/producto/get-producto.dto';
+import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
 import { CatalogoService } from '../service/catalogo.service';
 
 /**Historia de Usuario 12: Visualización del catálogo*/
@@ -14,7 +14,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos del catálogo',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -30,7 +30,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos más vendidos',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -46,7 +46,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos con la puntuación especificada',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -67,7 +67,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos recomendados para el id entregado',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -88,7 +88,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos dentro del rango de precios',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,

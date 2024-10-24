@@ -1,9 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { GetEspecieDto } from './get-especie.dto';
-import { GetColorDto } from './get-color.dto';
-import { GetFotoPediodoDto } from './get-foto-periodo.dto';
-import { GetTipoRiegoDto } from './get-tipo-riego.dto';
-import { GetHabitoCrecimientoDto } from './get-habito-crecimiento.dto';
 import { IsBoolean, IsInt, IsString } from 'class-validator';
 
 export class GetPlantaDto {
@@ -72,34 +67,24 @@ export class GetPlantaDto {
   idHabitoCrecimiento: number;
 
   // Relaciónes
-  @ApiProperty({
-    example: {
-      id: 1,
-      especie: 'Especie',
-    },
-    description: 'Especie de la planta',
-  })
-  @ApiProperty({ description: 'Especie de la planta', type: GetEspecieDto })
-  especie: GetEspecieDto;
+  @ApiProperty({ description: 'especie de la planta' })
+  especie: string;
 
-  @ApiProperty({ description: 'Color de la planta', type: GetColorDto })
-  color: GetColorDto;
+  @ApiProperty({ description: 'Color de la planta' })
+  color: string;
 
   @ApiProperty({
     description: 'Fotoperiodo de la planta',
-    type: GetFotoPediodoDto,
   })
-  fotoperiodo: GetFotoPediodoDto;
+  fotoPeriodo: string;
 
   @ApiProperty({
     description: 'Tipo de riego de la planta',
-    type: GetTipoRiegoDto,
   })
-  tipoRiego: GetTipoRiegoDto;
+  tipoRiego: string;
 
   @ApiProperty({
     description: 'Hábito de crecimiento de la planta',
-    type: GetHabitoCrecimientoDto,
   })
-  habitoCrecimiento: GetHabitoCrecimientoDto;
+  habitoCrecimiento: string;
 }

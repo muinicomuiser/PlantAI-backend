@@ -17,7 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
-import { ProductoSalidaDto } from '../dto/producto/get-producto.dto';
+import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/update-producto.dto';
 
@@ -33,7 +33,7 @@ export class ProductosController {
   @ApiResponse({
     status: 200,
     description: 'Retorna el producto que coincida con el id.',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -52,7 +52,7 @@ export class ProductosController {
     status: 200,
     description:
       'Devuelve todos los productos que coincidan con los parámetros. Si no hay parámetros, los devuelve todos.',
-    type: ProductoSalidaDto,
+    type: GetProductoDto,
   })
   @ApiQuery({ name: 'nombre', required: false })
   @ApiQuery({ name: 'familia', required: false })

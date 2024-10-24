@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from '../entities/producto.entity';
 import { Repository } from 'typeorm';
+import { ProductoMapper } from '../mapper/entity-to-dto-producto';
 
 @Injectable()
 export class ProductosService {
@@ -10,8 +11,8 @@ export class ProductosService {
     private readonly productoRepository: Repository<Producto>,
   ) {}
   /**Retorna el producto cuyo id coincida con el ingresado.*/
-  getById(id: number) {
-    const producto = this.productoRepository.findOne({
+  async getById(id: number) {
+    const producto = await this.productoRepository.findOne({
       where: { id: id },
       relations: [
         'categoria',
@@ -33,7 +34,7 @@ export class ProductosService {
         'macetero.marca',
       ],
     });
-    return producto;
+    return ProductoMapper.entityToDto(producto);
   }
 
   /**Retorna el conjunto de productos que coincida con los filtros.*/

@@ -23,6 +23,9 @@ export class Macetero {
   @Column({ name: 'id_tipo_macetero' })
   idTipoMacetero: number;
 
+  @Column()
+  litros: number;
+
   // Relación Muchos a Uno con Producto
   @ManyToOne(() => Producto)
   @JoinColumn({ name: 'id_producto' })

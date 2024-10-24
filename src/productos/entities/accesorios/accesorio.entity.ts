@@ -9,6 +9,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { ColorProducto } from 'src/commons/entities/color.entity';
 
 @Entity({ name: 'accesorios' })
 export class Accesorio {
@@ -20,6 +21,9 @@ export class Accesorio {
 
   @Column({ name: 'id_tipo_accesorio' })
   idTipoAccesorio: number;
+
+  @Column({ name: 'id_color' })
+  idColor: number;
 
   // Relación Uno a Uno con Producto
   @OneToOne(() => Producto)
@@ -35,4 +39,9 @@ export class Accesorio {
   @ManyToOne(() => TipoAccesorio)
   @JoinColumn({ name: 'id_tipo_accesorio' })
   tipoAccesorio: TipoAccesorio;
+
+  // relacion color muchos a uno
+  @ManyToOne(() => ColorProducto)
+  @JoinColumn({ name: 'id_color' })
+  color: ColorProducto;
 }

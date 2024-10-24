@@ -1,7 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { GetMarcaDto } from '../producto/get-marca.dto';
-import { GetColorDto } from '../planta/get-color.dto';
-import { GetTipoAccesorioDto } from './get-tipo-accesorio.dto';
 import { IsInt } from 'class-validator';
 
 export class GetAccesorioDto {
@@ -11,18 +8,21 @@ export class GetAccesorioDto {
   })
   @IsInt()
   idProducto: number;
+
   @ApiProperty({
     example: 1,
     description: 'Identificador de la marca',
   })
   @IsInt()
   idMarca: number;
+
   @ApiProperty({
     example: 1,
     description: 'Identificador del tipo de accesorio',
   })
   @IsInt()
   idTipoAccesorio: number;
+
   @ApiProperty({
     example: 1,
     description: 'Identificador del color',
@@ -31,10 +31,10 @@ export class GetAccesorioDto {
   idColor: number;
 
   // relaciones
-  @ApiProperty({ description: 'Marca', type: GetMarcaDto })
-  marca: GetMarcaDto;
-  @ApiProperty({ description: 'Tipo de accesorio', type: GetTipoAccesorioDto })
-  tipoAccesorio: GetTipoAccesorioDto;
-  @ApiProperty({ description: 'Color', type: GetColorDto })
-  color: GetColorDto;
+  @ApiProperty({ description: 'Marca' })
+  marca: string;
+  @ApiProperty({ description: 'Tipo de accesorio' })
+  tipoAccesorio: string;
+  @ApiProperty({ description: 'Color' })
+  color: string;
 }
