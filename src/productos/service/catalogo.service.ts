@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ProductosService } from 'src/productos/service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { InjectRepository } from '@nestjs/typeorm';
