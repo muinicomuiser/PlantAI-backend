@@ -14,7 +14,7 @@ import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
-  constructor(private readonly catalogoService: CatalogoService) { }
+  constructor(private readonly catalogoService: CatalogoService) {}
 
   // Obtener todos los productos
   @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
