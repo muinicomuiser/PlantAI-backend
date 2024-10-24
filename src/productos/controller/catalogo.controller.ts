@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import {
   ApiOperation,
   ApiParam,
@@ -14,7 +14,7 @@ import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
-  constructor(private readonly catalogoService: CatalogoService) {}
+  constructor(private readonly catalogoService: CatalogoService) { }
 
   // Obtener todos los productos
   @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
@@ -36,8 +36,12 @@ export class CatalogoController {
   })
   @Get()
   findAll(
-    @Query() paginacionDto: PaginacionDto,
+    @Query('page', new ParseIntPipe({ errorHttpStatusCode: 400 }))
+    page: number = 1,
+    @Query('pageSize', new ParseIntPipe({ errorHttpStatusCode: 400 }))
+    pageSize: number = 10,
   ): Promise<{ data: GetProductoDto[]; totalItems: number }> {
+    const paginacionDto: PaginacionDto = { page, pageSize };
     return this.catalogoService.findAll(paginacionDto);
   }
 
