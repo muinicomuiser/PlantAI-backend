@@ -41,8 +41,8 @@ export class ProductosController {
   })
   @ApiParam({ name: 'id', type: Number })
   @Get(':id')
-  getById(@Param('id') id: number) {
-    return this.productosService.getById(+id);
+  async getById(@Param('id') id: number): Promise<GetProductoDto> {
+    return await this.productosService.getById(+id);
   }
 
   // Obtener todos los productos

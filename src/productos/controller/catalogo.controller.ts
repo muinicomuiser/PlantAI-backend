@@ -1,7 +1,14 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
 import { CatalogoService } from '../service/catalogo.service';
+import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 
 /**Historia de Usuario 12: Visualización del catálogo*/
 @ApiTags('Catálogo')
@@ -15,14 +22,23 @@ export class CatalogoController {
     status: 200,
     description: 'Retorna todos los productos del catálogo',
     type: GetProductoDto,
+    isArray: true,
   })
   @ApiResponse({
     status: 404,
     description: 'No se encontraron los productos',
   })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'Cantidad de elementos por página',
+  })
   @Get()
-  findAll() {
-    return this.catalogoService.findAll();
+  findAll(
+    @Query() paginacionDto: PaginacionDto,
+  ): Promise<{ data: GetProductoDto[]; totalItems: number }> {
+    return this.catalogoService.findAll(paginacionDto);
   }
 
   // Obtener productos mas vendidos
