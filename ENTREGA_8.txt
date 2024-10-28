@@ -1,5 +1,8 @@
 - Historias de usuario priorizadas:
 
+    Historia de Usuario 1: Registro de Usuarios
+        Prioridad: Baja
+
     Historia de Usuario 2: Autenticación y Gestión de Sesiones
         Prioridad: Media
         Controlador: auth
@@ -23,7 +26,7 @@
             Por más vendidos
             Recomendados al usuario (según su id)
             Por nombre
-            Por familia
+            Por especie
             Por fotoperiodo
             Por tipo de riego
             Por pet friendly
@@ -47,37 +50,7 @@
 
 -----------------------------------------------------------------------------------------
 
-Entrega 8
-a. Modificar archivos docker-compose de desarrollo y de producción,
-agregar en cada uno un contenedor con una base de datos mysql.
+Entrega 9
 
-b. Crear un diagrama conceptual que identifique las entidades clave del
-sistema (todas las entidades de todo el proyecto).
-
-c. Crear un diagrama Modelo Entidad-Relación, tomando en cuenta sólo
-las entidades relacionadas con las 7 historias priorizadas.
-
-d. Crear un script SQL que permita crear la base de datos y su estructura
-(tablas y relaciones), tomando en cuenta el Modelo Entidad-Relación
-creado en el paso anterior. Ejecutarlo en el servidor de Mysql.
-
-e. Crear un script SQL que registre datos ficticios en las tablas anteriores
-(registrar al menos 10 datos en cada tabla - si aplica). Ejecutarlo en el
-servidor de Mysql.
-
-f. Los scripts SQL y los archivos de los diagramas se deben dejar dentro
-del proyecto en el Github. Determinar un directorio donde ubicarlos.
-
-g. Realizar la conexión de NestJS con el servidor de base de datos.
-
-h. Crear las entidades asociadas a cada una de las tablas.
-
-i. Implementar 2 historias de usuario: Catálogo de Productos y Detalle
-de Producto, leyendo los datos cargados en la base de datos.
-
-j. Modificar los archivos .env y el archivo README.md y ajustarlo con los
-cambios realizados.
-
-k. Generar la nueva imagen docker con los modificaciones, para esto
-cambiar el tag de la imagen aumentando el número de la versión y
-subir la imagen a DockerHub.
+A considerar:
+    Filtros para todas las categorías de productos
