@@ -1,4 +1,3 @@
-import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
 import { TipoUsuario } from './tipo_usuario.entity';
@@ -11,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
 
 @Entity({ name: 'usuarios' })
 export class Usuario {

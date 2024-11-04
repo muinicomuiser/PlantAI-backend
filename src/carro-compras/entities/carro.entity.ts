@@ -1,23 +1,28 @@
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { ProductosCarro } from './carro_productos.entity';
+import { CarroProducto } from './carro_producto.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'carros' })
 export class CarroCompra {
+
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
+
+  @Column({ name: 'id_usuario' })
   idUsuario: number;
+
   @Column()
   fecha_creacion: Date;
+
   @Column({ nullable: true })
   fecha_cierre: Date;
 
@@ -27,10 +32,15 @@ export class CarroCompra {
   usuario: Usuario; // Por id_usuario
 
   /**One to Many*/
-  @OneToOne(() => ProductosCarro, (productosCarro) => productosCarro.carro)
-  carroProductos: ProductosCarro[];
+  @OneToMany(() => CarroProducto, (carroProducto) => carroProducto.carro)
+  carroProductos: CarroProducto[];
 
   /**One to One */
   @OneToOne(() => Pedido, (pedido) => pedido.carro)
   pedido: Pedido;
+
+  constructor(idUsuario: number) {
+    this.idUsuario = idUsuario;
+    this.fecha_creacion = new Date()
+  }
 }
