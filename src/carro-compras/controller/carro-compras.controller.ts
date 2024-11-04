@@ -19,7 +19,7 @@ import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) { }
+  constructor(private readonly carroComprasService: CarroComprasService) {}
 
   // Obtener carro de compras por id
   @ApiOperation({ summary: 'Busca un carro de compras por id' })
@@ -30,7 +30,9 @@ export class CarroComprasController {
   })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get(':id')
-  async findByCarroId(@Param('id', ParseIntPipe, ValidarCarroExistePipe) id: number): Promise<GetCarroComprasDto> {
+  async findByCarroId(
+    @Param('id', ParseIntPipe, ValidarCarroExistePipe) id: number,
+  ): Promise<GetCarroComprasDto> {
     return await this.carroComprasService.findByCarroId(+id);
   }
 
@@ -47,7 +49,9 @@ export class CarroComprasController {
   })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get('user/:id')
-  async findByUserId(@Param('id', ParseIntPipe) id: number): Promise<GetCarroComprasDto> {
+  async findByUserId(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetCarroComprasDto> {
     return await this.carroComprasService.findByUserId(+id);
   }
 

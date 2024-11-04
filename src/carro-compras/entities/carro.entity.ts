@@ -13,7 +13,6 @@ import {
 
 @Entity({ name: 'carros' })
 export class CarroCompra {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -41,6 +40,6 @@ export class CarroCompra {
 
   constructor(idUsuario: number) {
     this.idUsuario = idUsuario;
-    this.fecha_creacion = new Date()
+    this.fecha_creacion = new Date();
   }
 }

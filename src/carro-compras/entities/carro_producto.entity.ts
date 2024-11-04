@@ -4,7 +4,6 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'carros_productos' })
 export class CarroProducto {
-
   @PrimaryColumn({ name: 'id_carro' })
   idCarro: number;
 

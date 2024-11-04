@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { GetCarroProductoDto } from './get-carro-producto.dto';
 
-
 export class GetCarroComprasDto {
   @ApiProperty({
     name: 'id',
@@ -32,5 +31,5 @@ export class GetCarroComprasDto {
   precioTotal: number;
 
   @ApiProperty()
-  carroProductos: GetCarroProductoDto[]
+  carroProductos: GetCarroProductoDto[];
 }
