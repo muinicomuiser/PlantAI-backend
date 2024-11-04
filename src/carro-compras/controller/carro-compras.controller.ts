@@ -1,23 +1,55 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { CarroComprasService } from '../service/carro-compras.service';
-import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
+import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
 import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
-import { OutputCarroComprasDto } from '../dto/output-carro-compras.dto';
+import { CarroComprasService } from '../service/carro-compras.service';
+import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) {}
+  constructor(private readonly carroComprasService: CarroComprasService) { }
+
+  // Obtener carro de compras por id
+  @ApiOperation({ summary: 'Busca un carro de compras por id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Carro encontrado',
+    type: GetCarroComprasDto,
+  })
+  @ApiResponse({ status: 404, description: 'Carro no encontrado' })
+  @Get(':id')
+  async findByCarroId(@Param('id', ParseIntPipe, ValidarCarroExistePipe) id: number): Promise<GetCarroComprasDto> {
+    return await this.carroComprasService.findByCarroId(+id);
+  }
+
+  // Obtener carro de compras por id de usuario
+  /**Validar que usuario existe y que carro existe.
+   * Son todos los carros o solo el activo?
+   * Se asume que este método solo trae el carro activo
+   */
+  @ApiOperation({ summary: 'Busca un carro de compras por id de usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Carro encontrado',
+    type: GetCarroComprasDto,
+  })
+  @ApiResponse({ status: 404, description: 'Carro no encontrado' })
+  @Get('user/:id')
+  async findByUserId(@Param('id', ParseIntPipe) id: number): Promise<GetCarroComprasDto> {
+    return await this.carroComprasService.findByUserId(+id);
+  }
 
   // Crear carro de compras
   @ApiOperation({ summary: 'Crea un carro de compras' })
@@ -26,32 +58,6 @@ export class CarroComprasController {
   @Post()
   createCarro(@Body() carro: CreateCarroCompraDto) {
     return this.carroComprasService.createCarro(carro);
-  }
-
-  // Obtener carro de compras por id
-  @ApiOperation({ summary: 'Busca un carro de compras por id' })
-  @ApiResponse({
-    status: 200,
-    description: 'Carro encontrado',
-    type: OutputCarroComprasDto,
-  })
-  @ApiResponse({ status: 404, description: 'Carro no encontrado' })
-  @Get(':id')
-  findByCarroId(@Param('id') id: number) {
-    return this.carroComprasService.findByCarroId(id);
-  }
-
-  // Obtener carro de compras por id de usuario
-  @ApiOperation({ summary: 'Busca un carro de compras por id de usuario' })
-  @ApiResponse({
-    status: 200,
-    description: 'Carro encontrado',
-    type: OutputCarroComprasDto,
-  })
-  @ApiResponse({ status: 404, description: 'Carro no encontrado' })
-  @Get('user/:id')
-  findByUserId(@Param('id') id: number) {
-    return this.carroComprasService.findByUserId(id);
   }
 
   // Eliminar carro de compras

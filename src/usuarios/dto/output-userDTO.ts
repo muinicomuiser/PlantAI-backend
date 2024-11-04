@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
+import { GetCarroComprasDto } from 'src/carro-compras/dto/get-carro-compras.dto';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 
 export class OutputUserDTO {
@@ -10,7 +10,7 @@ export class OutputUserDTO {
   public email: string;
 
   @ApiProperty()
-  public carrito: OutputCarroComprasDto;
+  public carrito: GetCarroComprasDto;
 
   @ApiProperty()
   public pedidos: Pedido[];
@@ -18,7 +18,7 @@ export class OutputUserDTO {
   constructor(
     name: string,
     email: string,
-    carrito: OutputCarroComprasDto,
+    carrito: GetCarroComprasDto,
     pedido: Pedido[],
   ) {
     this.name = name;

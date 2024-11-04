@@ -53,4 +53,4 @@
 Entrega 9
 
 A considerar:
-    Filtros para todas las categorías de productos
+    Prefijos de dto: get-create-update

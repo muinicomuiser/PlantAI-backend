@@ -1,9 +1,10 @@
 import { Producto } from 'src/productos/entities/producto.entity';
-import { CarroCompra } from './carros.entity';
+import { CarroCompra } from './carro.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'carros_productos' })
-export class ProductosCarro {
+export class CarroProducto {
+
   @PrimaryColumn({ name: 'id_carro' })
   idCarro: number;
 
