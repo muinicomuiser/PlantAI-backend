@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { GetCarroProductoDto } from './get-carro-producto.dto';
 
-import { Producto } from 'src/productos/entities/producto.entity';
 
-export class OutputCarroComprasDto {
+export class GetCarroComprasDto {
   @ApiProperty({
     name: 'id',
     description: 'Identificador del carro de compras',
@@ -17,17 +17,20 @@ export class OutputCarroComprasDto {
   })
   idUsuario: number;
 
-  @ApiProperty({
-    name: 'productos',
-    description: 'Productos del carro de compras',
-    example: ['producto1', 'producto2'],
-  })
-  productos: Producto[];
+  // @ApiProperty({
+  //   name: 'productos',
+  //   description: 'Productos del carro de compras',
+  //   example: ['producto1', 'producto2'],
+  // })
+  // productos: Producto[];
 
   @ApiProperty({
     name: 'precioTotal',
     description: 'Precio total del carro de compras',
-    example: 100,
+    example: 55000,
   })
   precioTotal: number;
+
+  @ApiProperty()
+  carroProductos: GetCarroProductoDto[]
 }

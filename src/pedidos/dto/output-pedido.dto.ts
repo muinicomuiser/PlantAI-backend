@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
+import { GetCarroComprasDto } from 'src/carro-compras/dto/get-carro-compras.dto';
 
 export class OutputPedidoDto {
   @ApiProperty({ example: 1 })
@@ -21,7 +21,7 @@ export class OutputPedidoDto {
   public tipoPago: string;
 
   @ApiProperty({})
-  public carrito: CarroCompra;
+  public carrito: GetCarroComprasDto;
 
   @ApiProperty({ example: new Date() })
   public fechaEntrega: Date;
@@ -31,7 +31,7 @@ export class OutputPedidoDto {
     estado: string,
     tipoDespacho: string,
     tipoPago: string,
-    carrito: CarroCompra,
+    carrito: GetCarroComprasDto,
   ) {
     this.id = 0;
     this.idUsuario = idUsuario;

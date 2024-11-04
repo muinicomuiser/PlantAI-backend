@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { IsNumber, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { GetCarroComprasDto } from 'src/carro-compras/dto/get-carro-compras.dto';
 
 export class CreatePedidoDto {
   @ApiProperty({ example: 1 })
@@ -16,8 +16,8 @@ export class CreatePedidoDto {
 
   @ApiProperty({})
   @ValidateNested()
-  @Type(() => CarroCompra)
-  public carrito: CarroCompra;
+  @Type(() => GetCarroComprasDto)
+  public carrito: GetCarroComprasDto;
 
   @ApiProperty({ example: new Date() })
   @ValidateNested()
