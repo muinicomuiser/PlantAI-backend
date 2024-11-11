@@ -14,7 +14,7 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OutputUserDTO } from '../dto/output-userDTO';
-import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
+import { OutputPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 

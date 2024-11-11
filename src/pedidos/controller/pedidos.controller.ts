@@ -6,11 +6,12 @@ import {
   Patch,
   Param,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePedidoDto } from '../dto/update-pedido.dto';
-import { OutputPedidoDto } from '../dto/output-pedido.dto';
+import { OutputPedidoDto } from '../dto/get-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
 
 /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
@@ -25,7 +26,7 @@ export class PedidosController {
   @ApiResponse({ status: 400, description: 'Problemas para crear el pedido' })
   @Post()
   create(@Body() createPedidoDTO: CreatePedidoDto) {
-    return this.pedidosService.create();
+    return this.pedidosService.create(createPedidoDTO);
   }
 
   // Obtener todos los pedidos
@@ -63,5 +64,14 @@ export class PedidosController {
   @Patch(':id')
   update(@Param('id') id: number, @Body() updatePedidoDto: UpdatePedidoDto) {
     return this.pedidosService.update(+id, updatePedidoDto);
+  }
+
+  // Eliminar un pedido
+  @ApiOperation({ summary: 'Elimina pedidos por id' })
+  @ApiResponse({ status: 200, description: 'Pedido eliminado' })
+  @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
+  @Delete(':id')
+  remove(@Param('id') id: number) {
+    return this.pedidosService.remove(+id);
   }
 }
