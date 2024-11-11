@@ -83,8 +83,11 @@ export class UsuariosController {
     description: 'No se ha podido actualizar el usuario',
   })
   @Put(':id')
-  updateOne(@Param('id') id: number, @Body() usuario: UpdateUsuarioDto) {
-    return this.usuariosService.updateOne(id, usuario);
+  async updateOne(
+    @Param('id') id: number,
+    @Body() updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<Usuario> {
+    return this.usuariosService.updateOne(id, updateUsuarioDto);
   }
 
   // Eliminar un usuario según el id

@@ -47,8 +47,28 @@ export class UsuariosService {
   }
 
   /**Actualiza un usuario según su id */
-  updateOne(id: number, usuario: UpdateUsuarioDto) {
-    return 'Usuario actualizado';
+  async updateOne(id: number, UpdateUsuarioDto: UpdateUsuarioDto) {
+    const usuario = await this.usuariosRepository.findOne({ where: { id } });
+    //validacion de id
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    //validación de tipousuario
+    if (UpdateUsuarioDto.tipoUsuarioId) {
+      const tipoUsuario = await this.tipoUsuarioRepository.findOne({
+        where: { id: UpdateUsuarioDto.tipoUsuarioId },
+      });
+      if (!tipoUsuario) {
+        throw new NotFoundException(
+          `Tipo Usuario con ID ${UpdateUsuarioDto.tipoUsuarioId} no existe`,
+        );
+      }
+      usuario.tipoUsuario = tipoUsuario;
+    }
+    //actualiza el usuario:
+    this.usuariosRepository.merge(usuario, UpdateUsuarioDto);
+    return this.usuariosRepository.save(usuario);
   }
 
   /**Elimina un usuario según su id */
