@@ -17,6 +17,7 @@ import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { UpdateProductCarro } from '../dto/update-product-carro';
 import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
+import { ValidarCarroActivoPipe } from '../pipe/validar-carro-activo-existente.pipe';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
@@ -62,9 +63,9 @@ export class CarroComprasController {
   @ApiOperation({ summary: 'Crea un carro de compras' })
   @ApiResponse({ status: 201, description: 'Carro creado' })
   @ApiResponse({ status: 400, description: 'Error al crear carro' })
-  @Post()
-  createCarro(@Body() carro: CreateCarroCompraDto) {
-    return this.carroComprasService.createCarro(carro);
+  @Post(':idUsuario')
+  createCarro(@Param('idUsuario', ParseIntPipe, ValidarCarroActivoPipe) idUsuario: number) {
+    return this.carroComprasService.createCarro(idUsuario);
   }
 
   // Eliminar carro de compras
@@ -72,8 +73,8 @@ export class CarroComprasController {
   @ApiResponse({ status: 200, description: 'Carro borrado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Delete(':id')
-  deleteCarro(@Param('id') id: number) {
-    return this.carroComprasService.deleteCarro(id);
+  deleteCarro(@Param('id', ParseIntPipe, ValidarCarroExistePipe) idCarro: number) {
+    return this.carroComprasService.deleteCarro(idCarro);
   }
 
   @ApiOperation({ summary: 'Agrega un producto al carro de compras' })

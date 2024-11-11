@@ -25,8 +25,10 @@ export class CarroComprasService {
   ) { }
 
   //Implementar para usuario administrador
-  createCarro(carro: CreateCarroCompraDto): GetCarroComprasDto {
-    return null;
+  async createCarro(idUsuario: number)/* : Promise<GetCarroComprasDto> */ {
+    const nuevoCarro = new CarroCompra(idUsuario);
+    const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
+    return true;
   }
 
   /**Retorna un DTO de carro de compras según su id. */
@@ -128,7 +130,24 @@ export class CarroComprasService {
   }
 
   //Implementar para usuario administrador
-  deleteCarro(id: number): boolean {
+  async deleteCarro(idCarro: number) {
+
+    const carroProducto = await this.carroProductoRepository.find({
+      where: {
+        idCarro: idCarro
+      }
+    });
+
+    await this.carroProductoRepository.remove(carroProducto);
+
+    const carroEncontrado: CarroCompra =
+      await this.carroComprasRepository.findOne({
+        where: {
+          id: idCarro
+        }
+      });
+
+    await this.carroComprasRepository.remove(carroEncontrado);
     return true;
   }
 }
