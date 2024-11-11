@@ -79,7 +79,7 @@ export class CarroComprasService {
     });
     //si producto existe, aumenta cantidad
     if (carroProducto) {
-      carroProducto.cantidadProducto += carroProducto.cantidadProducto;
+      carroProducto.cantidadProducto += addProductDto.cantidadProducto;
     } else {
       carroProducto = await this.carroProductoRepository.create({
         idCarro: idCarro,
@@ -87,8 +87,9 @@ export class CarroComprasService {
         cantidadProducto: addProductDto.cantidadProducto,
       });
     };
+    let carroProductGuardado = await this.carroProductoRepository.save(carroProducto);
 
-    return await this.carroProductoRepository.save(carroProducto);
+    return carroProductGuardado;
   }
 
   async updateProductQuantity(idCarro: number, updateDto: UpdateProductCarro) {
@@ -104,7 +105,8 @@ export class CarroComprasService {
     };
 
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
-    return await this.carroProductoRepository.save(carroProducto);
+    await this.carroProductoRepository.save(carroProducto)
+    return true;;
   }
 
   async removeProductCarro(idCarro: number, idProducto: number) {
