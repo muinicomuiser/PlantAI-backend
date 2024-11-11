@@ -72,8 +72,14 @@ export class UsuariosService {
   }
 
   /**Elimina un usuario según su id */
-  deleteOne(id: number) {
-    return { mensaje: 'Usuario eliminado' };
+  async deleteUser(id: number): Promise<void> {
+    //verificar id
+    const usuario = await this.usuariosRepository.findOne({ where: { id } });
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    //eliminar usuario
+    await this.usuariosRepository.delete(id);
   }
 
   /**Actualiza el carro de un usuario según su id */

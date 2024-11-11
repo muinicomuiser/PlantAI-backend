@@ -101,8 +101,8 @@ export class UsuariosController {
     description: 'No existe un usuario con ese id',
   })
   @Delete(':id')
-  deleteOne(@Param('id') id: number) {
-    return this.usuariosService.deleteOne(id);
+  async deleteOne(@Param('id') id: number): Promise<void> {
+    return this.usuariosService.deleteUser(id);
   }
 
   // Actualizar o modificar carro de un usuario
