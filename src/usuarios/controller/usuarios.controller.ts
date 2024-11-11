@@ -37,7 +37,7 @@ export class UsuariosController {
     description: 'No hay usuarios registrados',
   })
   @Get()
-  async findAll(): Promise<Usuario[]> {
+  async findAll(): Promise<OutputUserDTO[]> {
     return this.usuariosService.findAll();
   }
 
@@ -53,7 +53,7 @@ export class UsuariosController {
     description: 'No hay un usuario con ese id',
   })
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<Usuario> {
+  async findById(@Param('id') id: number): Promise<OutputUserDTO> {
     return this.usuariosService.findById(id);
   }
 
@@ -62,13 +62,16 @@ export class UsuariosController {
   @ApiResponse({
     status: 201,
     description: 'Usuario creado',
+    type: OutputUserDTO,
   })
   @ApiResponse({
     status: 400,
     description: 'Error al crear usuario',
   })
   @Post()
-  async create(@Body() createUsuarioDTO: CreateUsuarioDto): Promise<Usuario> {
+  async create(
+    @Body() createUsuarioDTO: CreateUsuarioDto,
+  ): Promise<OutputUserDTO> {
     return this.usuariosService.createUser(createUsuarioDTO);
   }
 
@@ -86,7 +89,7 @@ export class UsuariosController {
   async updateOne(
     @Param('id') id: number,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
-  ): Promise<Usuario> {
+  ): Promise<OutputUserDTO> {
     return this.usuariosService.updateOne(id, updateUsuarioDto);
   }
 
@@ -95,13 +98,16 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Usuario eliminado',
+    schema: {
+      example: { message: 'Usuario con ID 1 eliminado con éxito' },
+    },
   })
   @ApiResponse({
     status: 404,
     description: 'No existe un usuario con ese id',
   })
   @Delete(':id')
-  async deleteOne(@Param('id') id: number): Promise<void> {
+  async deleteOne(@Param('id') id: number): Promise<{ message: string }> {
     return this.usuariosService.deleteUser(id);
   }
 
