@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator';
 
 export class UpdateUsuarioDto {
@@ -48,6 +49,9 @@ export class UpdateUsuarioDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  @Matches(/^\d{7,8}-\d{1}$/, {
+    message: 'El RUT debe tener el formato 11111111-1 o 1111111-1',
+  })
   rut?: string;
 
   @ApiPropertyOptional()
