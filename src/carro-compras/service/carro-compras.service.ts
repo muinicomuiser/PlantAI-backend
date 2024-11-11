@@ -7,7 +7,7 @@ import { CarroCompra } from '../entities/carro.entity';
 import { IsNull, Repository } from 'typeorm';
 import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
 import { CarroComprasMapper } from '../mapper/carro-compras.mapper';
-import { CARRO_PRODUCTO_RELATIONS } from '../shared/constants/carro-relaciones';
+import { CARRO_PRODUCTOS_RELATIONS, CARRO_RELATIONS } from '../shared/constants/carro-relaciones';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { CarroProducto } from '../entities/carro_producto.entity';
@@ -24,6 +24,7 @@ export class CarroComprasService {
     private readonly carroProductoRepository: Repository<CarroProducto>
   ) { }
 
+  //Implementar para usuario administrador
   createCarro(carro: CreateCarroCompraDto): GetCarroComprasDto {
     return null;
   }
@@ -35,7 +36,7 @@ export class CarroComprasService {
         where: {
           id: id,
         },
-        relations: ['carroProductos', ...CARRO_PRODUCTO_RELATIONS],
+        relations: ['carroProductos', ...CARRO_RELATIONS],
       });
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
   }
@@ -48,7 +49,7 @@ export class CarroComprasService {
           idUsuario: id,
           fecha_cierre: IsNull(),
         },
-        relations: ['carroProductos', ...CARRO_PRODUCTO_RELATIONS],
+        relations: ['carroProductos', ...CARRO_RELATIONS],
       });
     if (!carroEncontrado) {
       const carroNuevo: CarroCompra = new CarroCompra(id);
@@ -75,13 +76,14 @@ export class CarroComprasService {
       where: {
         idCarro: idCarro,
         idProducto: addProductDto.productoId
-      }
+      },
+      relations: [...CARRO_PRODUCTOS_RELATIONS],
     });
     //si producto existe, aumenta cantidad
     if (carroProducto) {
       carroProducto.cantidadProducto += addProductDto.cantidadProducto;
     } else {
-      carroProducto = await this.carroProductoRepository.create({
+      carroProducto = this.carroProductoRepository.create({
         idCarro: idCarro,
         idProducto: addProductDto.productoId,
         cantidadProducto: addProductDto.cantidadProducto,
@@ -89,7 +91,7 @@ export class CarroComprasService {
     };
     let carroProductGuardado = await this.carroProductoRepository.save(carroProducto);
 
-    return carroProductGuardado;
+    return CarroComprasMapper.carroProductoEntityToDto(carroProductGuardado);
   }
 
   async updateProductQuantity(idCarro: number, updateDto: UpdateProductCarro) {
@@ -106,7 +108,7 @@ export class CarroComprasService {
 
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
     await this.carroProductoRepository.save(carroProducto)
-    return true;;
+    return updateDto;
   }
 
   async removeProductCarro(idCarro: number, idProducto: number) {
@@ -124,11 +126,9 @@ export class CarroComprasService {
     await this.carroProductoRepository.remove(carroProducto);
     return true;
   }
+
+  //Implementar para usuario administrador
   deleteCarro(id: number): boolean {
     return true;
-  }
-
-  updateCarro(id: number, carro: UpdateCarroCompraDto): GetCarroComprasDto {
-    return null;
   }
 }

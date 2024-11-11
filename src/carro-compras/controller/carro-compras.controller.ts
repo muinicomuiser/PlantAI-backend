@@ -76,15 +76,9 @@ export class CarroComprasController {
     return this.carroComprasService.deleteCarro(id);
   }
 
-  // Actualizar carro de compras
-  @ApiOperation({ summary: 'Actualiza un carro de compras' })
-  @ApiResponse({ status: 200, description: 'Carro actualizado' })
-  @ApiResponse({ status: 404, description: 'Carro no encontrado' })
-  @Patch(':id')
-  updateCarro(@Body() carro: UpdateCarroCompraDto, @Param('id', ParseIntPipe) id: number) {
-    return this.carroComprasService.updateCarro(id, carro);
-  }
-
+  @ApiOperation({ summary: 'Agrega un producto al carro de compras' })
+  @ApiResponse({ status: 201, description: 'Producto agregado' })
+  @ApiResponse({ status: 400, description: 'Producto no ha sido agregado' })
   @ApiBody({ type: AddProductCarro })
   @Post('add/:idCarro')
   async addProductToCarro(
@@ -93,6 +87,9 @@ export class CarroComprasController {
     return await this.carroComprasService.addProductToCarro(idCarro, addProductDto);
   }
 
+  @ApiOperation({ summary: 'Actualiza la cantidad de un producto determinado' })
+  @ApiResponse({ status: 200, description: 'Cantidad actualizada' })
+  @ApiResponse({ status: 400, description: 'No ha sido actualizada la cantidad' })
   @ApiBody({ type: UpdateProductCarro })
   @Patch('updateProducto/:idCarro')
   async updateProductQuantity(
@@ -101,6 +98,9 @@ export class CarroComprasController {
     return await this.carroComprasService.updateProductQuantity(idCarro, updateDto);
   }
 
+  @ApiOperation({ summary: 'Elimina un producto del carro' })
+  @ApiResponse({ status: 201, description: 'Producto eliminado del carro' })
+  @ApiResponse({ status: 400, description: 'El producto no ha podido ser eliminado' })
   @Delete('remove/:idCarro/:idProducto')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
