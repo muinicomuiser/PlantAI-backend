@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
 import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
@@ -8,13 +8,21 @@ import { IsNull, Repository } from 'typeorm';
 import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
 import { CarroComprasMapper } from '../mapper/carro-compras.mapper';
 import { CARRO_PRODUCTO_RELATIONS } from '../shared/constants/carro-relaciones';
+import { AddProductCarro } from '../dto/add-product-carro';
+import { Producto } from 'src/productos/entities/producto.entity';
+import { CarroProducto } from '../entities/carro_producto.entity';
+import { UpdateProductCarro } from '../dto/update-product-carro';
 
 @Injectable()
 export class CarroComprasService {
   constructor(
     @InjectRepository(CarroCompra)
     private readonly carroComprasRepository: Repository<CarroCompra>,
-  ) {}
+    @InjectRepository(Producto)
+    private readonly productoRepository: Repository<Producto>,
+    @InjectRepository(CarroProducto)
+    private readonly carroProductoRepository: Repository<CarroProducto>
+  ) { }
 
   createCarro(carro: CreateCarroCompraDto): GetCarroComprasDto {
     return null;
@@ -50,6 +58,70 @@ export class CarroComprasService {
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
   }
 
+  async addProductToCarro(idCarro: number, addProductDto: AddProductCarro) {
+    //verificar stock disponible
+    const stockProducto = await this.productoRepository.findOne({
+      where: {
+        id: addProductDto.productoId
+      }
+    });
+
+    if (!stockProducto || stockProducto.cantidad < addProductDto.cantidadProducto) {
+      throw new BadRequestException('Stock insuficiente');
+    }
+
+    //busca en el carro si ya existe un producto agregado
+    let carroProducto = await this.carroProductoRepository.findOne({
+      where: {
+        idCarro: idCarro,
+        idProducto: addProductDto.productoId
+      }
+    });
+    //si producto existe, aumenta cantidad
+    if (carroProducto) {
+      carroProducto.cantidadProducto += carroProducto.cantidadProducto;
+    } else {
+      carroProducto = await this.carroProductoRepository.create({
+        idCarro: idCarro,
+        idProducto: addProductDto.productoId,
+        cantidadProducto: addProductDto.cantidadProducto,
+      });
+    };
+
+    return await this.carroProductoRepository.save(carroProducto);
+  }
+
+  async updateProductQuantity(idCarro: number, updateDto: UpdateProductCarro) {
+    const carroProducto = await this.carroProductoRepository.findOne({
+      where: {
+        idCarro: idCarro,
+        idProducto: updateDto.productoId,
+      }
+    });
+
+    if (!carroProducto) {
+      throw new NotFoundException('Producto no encontrado en el carro');
+    };
+
+    carroProducto.cantidadProducto = updateDto.cantidadProducto;
+    return await this.carroProductoRepository.save(carroProducto);
+  }
+
+  async removeProductCarro(idCarro: number, idProducto: number) {
+    const carroProducto = await this.carroProductoRepository.findOne({
+      where: {
+        idCarro: idCarro,
+        idProducto: idProducto,
+      }
+    });
+
+    if (!carroProducto) {
+      throw new NotFoundException('Producto no encontrado en carrito');
+    };
+
+    await this.carroProductoRepository.remove(carroProducto);
+    return true;
+  }
   deleteCarro(id: number): boolean {
     return true;
   }

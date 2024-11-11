@@ -8,18 +8,21 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
 import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
 import { CarroComprasService } from '../service/carro-compras.service';
 import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
+import { AddProductCarro } from '../dto/add-product-carro';
+import { UpdateProductCarro } from '../dto/update-product-carro';
+import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) {}
+  constructor(private readonly carroComprasService: CarroComprasService) { }
 
   // Obtener carro de compras por id
   @ApiOperation({ summary: 'Busca un carro de compras por id' })
@@ -78,7 +81,30 @@ export class CarroComprasController {
   @ApiResponse({ status: 200, description: 'Carro actualizado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Patch(':id')
-  updateCarro(@Body() carro: UpdateCarroCompraDto, @Param('id') id: number) {
+  updateCarro(@Body() carro: UpdateCarroCompraDto, @Param('id', ParseIntPipe) id: number) {
     return this.carroComprasService.updateCarro(id, carro);
+  }
+
+  @ApiBody({ type: AddProductCarro })
+  @Post('add/:idCarro')
+  async addProductToCarro(
+    @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
+    @Body() addProductDto: AddProductCarro) {
+    return await this.carroComprasService.addProductToCarro(idCarro, addProductDto);
+  }
+
+  @ApiBody({ type: UpdateProductCarro })
+  @Patch('updateProducto/:idCarro')
+  async updateProductQuantity(
+    @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
+    @Body() updateDto: UpdateProductCarro) {
+    return await this.carroComprasService.updateProductQuantity(idCarro, updateDto);
+  }
+
+  @Delete('remove/:idCarro/:idProducto')
+  async removeProductCarro(
+    @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
+    return await this.carroComprasService.removeProductCarro(idCarro, idProducto);
   }
 }
