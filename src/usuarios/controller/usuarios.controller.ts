@@ -37,7 +37,7 @@ export class UsuariosController {
     description: 'No hay usuarios registrados',
   })
   @Get()
-  findAll() {
+  async findAll(): Promise<Usuario[]> {
     return this.usuariosService.findAll();
   }
 

@@ -18,8 +18,16 @@ export class UsuariosService {
   ) {}
 
   /**Retorna todos los usuarios */
-  findAll() {
-    return null;
+  async findAll(): Promise<Usuario[]> {
+    return this.usuariosRepository.find({
+      relations: [
+        'tipoUsuario',
+        'direccion',
+        'usuarioMedioPago',
+        'carros',
+        'pedidos',
+      ],
+    });
   }
 
   /**Obtiene un usuario según su id */

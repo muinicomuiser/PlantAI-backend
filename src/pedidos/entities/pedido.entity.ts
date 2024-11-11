@@ -17,19 +17,26 @@ import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
 export class Pedido {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ name: 'id_usuario' })
   idUsuario: number;
-  @Column({ name: 'fecha_creacion' })
+
+  @Column({ name: 'fecha_creacion', type: 'date' })
   fechaCreacion: Date;
+
   @Column({ name: 'id_medio_pago' })
   idMedioPago: number;
+
   @Column({ name: 'id_estado' })
   idEstado: number;
+
   @Column({ name: 'id_tipo_despacho' })
   idTipoDespacho: number;
+
   @Column({ name: 'id_carro' })
   idCarro: number;
-  @Column()
+
+  @Column({ name: 'fecha_entrega', type: 'date' })
   fechaEntrega: Date;
 
   /**Many to One */
@@ -59,5 +66,6 @@ export class Pedido {
 
   /**One to One */
   @OneToOne(() => Pago, (pago) => pago.pedido)
+  @JoinColumn({ name: 'id' })
   Pago: Pago; // Por id_pedido
 }
