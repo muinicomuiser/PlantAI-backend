@@ -106,7 +106,7 @@ export class UsuariosController {
   }
 
   // Actualizar o modificar carro de un usuario
-  @ApiOperation({ summary: 'Actualiza el carro de un usuario' })
+  @ApiOperation({ summary: 'Actualiza el carro de un usuario NO IMPLEMENTADO' })
   @ApiResponse({
     status: 201,
     description: 'Carro actualizado',
@@ -124,7 +124,7 @@ export class UsuariosController {
   }
 
   // Agregar un pedido
-  @ApiOperation({ summary: 'Agrega un pedido a un usuario' })
+  @ApiOperation({ summary: 'Agrega un pedido a un usuario NO IMPLEMENTADO' })
   @ApiResponse({
     status: 201,
     description: 'Pedido añadido',
@@ -142,7 +142,9 @@ export class UsuariosController {
   }
 
   //Obtener pedidos de usuario
-  @ApiOperation({ summary: 'Obtiene los pedidos realizados según usuario' })
+  @ApiOperation({
+    summary: 'Obtiene los pedidos realizados según usuario NO IMPLEMENTADO',
+  })
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de pedidos de un usuario',
@@ -158,7 +160,9 @@ export class UsuariosController {
   }
 
   // Modificar medio de pago
-  @ApiOperation({ summary: 'Modifica el medio de pago de un usuario' })
+  @ApiOperation({
+    summary: 'Modifica el medio de pago de un usuario NO IMPLEMENTADO',
+  })
   @ApiResponse({
     status: 201,
     description: 'Medio de pago modificado',
