@@ -53,8 +53,8 @@ export class UsuariosController {
     description: 'No hay un usuario con ese id',
   })
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usuariosService.findOne(id);
+  async findById(@Param('id') id: number): Promise<Usuario> {
+    return this.usuariosService.findById(id);
   }
 
   // Crear un usuario

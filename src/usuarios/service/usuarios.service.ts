@@ -31,8 +31,21 @@ export class UsuariosService {
   }
 
   /**Obtiene un usuario según su id */
-  findOne(id: number) {
-    return null;
+  async findById(id: number): Promise<Usuario> {
+    const usuario = await this.usuariosRepository.findOne({
+      where: { id },
+      relations: [
+        'tipoUsuario',
+        'direccion',
+        'usuarioMedioPago',
+        'carros',
+        'pedidos',
+      ],
+    });
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    return usuario;
   }
 
   /**Crear un usuario */
