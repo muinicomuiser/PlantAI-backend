@@ -41,7 +41,7 @@ export class Usuario {
 
   /**Many to One*/
   @ManyToOne(() => TipoUsuario)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'id_tipo_usuario' })
   tipoUsuario: TipoUsuario; //  a través de: id_tipo_usuario;
 
   /* One to Many */

@@ -1,22 +1,59 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsISO8601,
+} from 'class-validator';
 
 export class CreateUsuarioDto {
-  @ApiProperty({ example: 'New User' })
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  public name: string;
+  contrasena: string;
 
-  @ApiProperty({ example: 'qwerty' })
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  public password: string;
+  nombre: string;
 
-  @ApiProperty({ example: 'newuser@gmail.com' })
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  apellido: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  nombreUsuario: string;
+
+  @ApiProperty()
   @IsEmail()
-  public email: string;
+  @IsNotEmpty()
+  email: string;
 
-  constructor(name: string, password: string, email: string) {
-    this.name = name;
-    this.password = password;
-    this.email = email;
-  }
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  telefono?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  genero?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  rut: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  @IsNotEmpty()
+  fechaNacimiento: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  tipoUsuarioId: number;
 }

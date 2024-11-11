@@ -17,6 +17,7 @@ import { OutputUserDTO } from '../dto/output-userDTO';
 import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
+import { Usuario } from '../entities/usuario.entity';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
@@ -67,8 +68,8 @@ export class UsuariosController {
     description: 'Error al crear usuario',
   })
   @Post()
-  createUser(@Body() usuario: CreateUsuarioDto) {
-    return this.usuariosService.createUser(usuario);
+  async create(@Body() createUsuarioDTO: CreateUsuarioDto): Promise<Usuario> {
+    return this.usuariosService.createUser(createUsuarioDTO);
   }
 
   // Actualizar un usuario según el id

@@ -1,12 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Usuario } from '../entities/usuario.entity';
+import { Repository } from 'typeorm';
+import { TipoUsuario } from '../entities/tipo_usuario.entity';
 
 @Injectable()
 export class UsuariosService {
-  constructor() {}
+  constructor(
+    @InjectRepository(Usuario)
+    private readonly usuariosRepository: Repository<Usuario>,
+    @InjectRepository(TipoUsuario)
+    private readonly tipoUsuarioRepository: Repository<TipoUsuario>,
+  ) {}
 
   /**Retorna todos los usuarios */
   findAll() {
@@ -19,8 +28,22 @@ export class UsuariosService {
   }
 
   /**Crear un usuario */
-  createUser(usuario: CreateUsuarioDto) {
-    return null;
+  async createUser(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
+    //verificar que el id tipo usuario existe en la entidad
+    const tipoUsuario = await this.tipoUsuarioRepository.findOne({
+      where: { id: createUsuarioDto.tipoUsuarioId },
+    });
+    if (!tipoUsuario) {
+      throw new NotFoundException(
+        `TipoUsuario con ID ${createUsuarioDto.tipoUsuarioId} no existe`,
+      );
+    }
+
+    const usuario = this.usuariosRepository.create({
+      ...createUsuarioDto,
+      tipoUsuario,
+    });
+    return this.usuariosRepository.save(usuario);
   }
 
   /**Actualiza un usuario según su id */
