@@ -1,29 +1,28 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
-import { UsuariosService } from '../service/usuarios.service';
-import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
-import { CreateUsuarioDto } from '../dto/create-usuario.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { OutputUserDTO } from '../dto/output-userDTO';
-import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
-import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
-import { Usuario } from '../entities/usuario.entity';
+import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
+import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { OutputUserDTO } from '../dto/output-userDTO';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
+import { UsuariosService } from '../service/usuarios.service';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -33,12 +32,12 @@ export class UsuariosController {
     type: OutputUserDTO,
   })
   @ApiResponse({
-    status: 404,
-    description: 'No hay usuarios registrados',
+    status: 418,
+    description: 'No hay teteras registradas',
   })
   @Get()
   async findAll(): Promise<OutputUserDTO[]> {
-    return this.usuariosService.findAll();
+    return await this.usuariosService.findAll();
   }
 
   // Obtener un usuario según su ID
@@ -53,8 +52,8 @@ export class UsuariosController {
     description: 'No hay un usuario con ese id',
   })
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<OutputUserDTO> {
-    return this.usuariosService.findById(id);
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<OutputUserDTO> {
+    return await this.usuariosService.findById(id);
   }
 
   // Crear un usuario
@@ -68,35 +67,38 @@ export class UsuariosController {
     status: 400,
     description: 'Error al crear usuario',
   })
+  @ApiBody({ type: CreateUsuarioDto })
   @Post()
   async create(
     @Body() createUsuarioDTO: CreateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    return this.usuariosService.createUser(createUsuarioDTO);
+    return await this.usuariosService.createUser(createUsuarioDTO);
   }
 
   // Actualizar un usuario según el id
   @ApiOperation({ summary: 'Actualiza un usuario' })
   @ApiResponse({
-    status: 201,
+    status: 204,
     description: 'Usuario actualizado',
+    type: OutputUserDTO
   })
   @ApiResponse({
     status: 400,
     description: 'No se ha podido actualizar el usuario',
   })
+  @ApiBody({ type: UpdateUsuarioDto })
   @Put(':id')
   async updateOne(
     @Param('id') id: number,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    return this.usuariosService.updateOne(id, updateUsuarioDto);
+    return await this.usuariosService.updateOne(id, updateUsuarioDto);
   }
 
   // Eliminar un usuario según el id
   @ApiOperation({ summary: 'Elimina un usuario según su id' })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'Usuario eliminado',
     schema: {
       example: { message: 'Usuario con ID 1 eliminado con éxito' },
@@ -108,25 +110,7 @@ export class UsuariosController {
   })
   @Delete(':id')
   async deleteOne(@Param('id') id: number): Promise<{ message: string }> {
-    return this.usuariosService.deleteUser(id);
-  }
-
-  // Actualizar o modificar carro de un usuario
-  @ApiOperation({ summary: 'Actualiza el carro de un usuario NO IMPLEMENTADO' })
-  @ApiResponse({
-    status: 201,
-    description: 'Carro actualizado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Error al actualizar el carro',
-  })
-  @Patch('updateCarro/:idUsuario/')
-  updateCarro(
-    @Param('idUsuario') idUsuario: number,
-    @Body() carro: UpdateCarroCompraDto,
-  ) {
-    return this.usuariosService.updateCarro(idUsuario, carro);
+    return await this.usuariosService.deleteUser(id);
   }
 
   // Agregar un pedido
@@ -170,7 +154,7 @@ export class UsuariosController {
     summary: 'Modifica el medio de pago de un usuario NO IMPLEMENTADO',
   })
   @ApiResponse({
-    status: 201,
+    status: 204,
     description: 'Medio de pago modificado',
   })
   @ApiResponse({

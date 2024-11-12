@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUsuarioDto } from '../dto/create-usuario.dto';
-import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
-import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
-import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Usuario } from '../entities/usuario.entity';
+import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { Repository } from 'typeorm';
-import { TipoUsuario } from '../entities/tipo_usuario.entity';
-import { OutputUserDTO } from '../dto/output-userDTO';
 import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { OutputUserDTO } from '../dto/output-userDTO';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
+import { TipoUsuario } from '../entities/tipo_usuario.entity';
+import { Usuario } from '../entities/usuario.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -17,7 +16,7 @@ export class UsuariosService {
     private readonly usuariosRepository: Repository<Usuario>,
     @InjectRepository(TipoUsuario)
     private readonly tipoUsuarioRepository: Repository<TipoUsuario>,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -120,11 +119,6 @@ export class UsuariosService {
     //eliminar usuario
     await this.usuariosRepository.delete(id);
     return { message: `Usuario con ID ${id} eliminado con éxito` };
-  }
-
-  /**Actualiza el carro de un usuario según su id */
-  updateCarro(idUsuario: number, carro: UpdateCarroCompraDto) {
-    return carro;
   }
 
   /**Retorna los pedidos asociados a un id de usuario */
