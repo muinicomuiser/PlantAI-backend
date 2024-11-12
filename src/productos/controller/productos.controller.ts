@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -41,7 +42,9 @@ export class ProductosController {
   })
   @ApiParam({ name: 'id', type: Number })
   @Get(':id')
-  async getById(@Param('id') id: number): Promise<GetProductoDto> {
+  async getById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetProductoDto> {
     return await this.productosService.getById(+id);
   }
 

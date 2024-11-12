@@ -1,19 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { PartialType } from '@nestjs/swagger';
+import { CreatePedidoDto } from './create-pedido.dto';
 
-export class UpdatePedidoDto {
-  @ApiProperty()
-  public estado: string;
-
-  @ApiProperty()
-  public tipoDespacho: string;
-
-  @ApiProperty()
-  public tipoPago: string;
-
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => Date)
-  public fechaEntrega: Date;
-}
+export class UpdatePedidoDto extends PartialType(CreatePedidoDto) {}

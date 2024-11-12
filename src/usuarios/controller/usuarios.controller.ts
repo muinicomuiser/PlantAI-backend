@@ -138,7 +138,6 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de pedidos de un usuario',
-    type: OutputPedidoDto,
   })
   @ApiResponse({
     status: 404,
