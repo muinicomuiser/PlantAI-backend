@@ -29,7 +29,7 @@ export class Pedido {
   idTipoDespacho: number;
   @Column({ name: 'id_carro' })
   idCarro: number;
-  @Column()
+  @Column({ name: 'fecha_entrega' })
   fechaEntrega: Date;
 
   /**Many to One */

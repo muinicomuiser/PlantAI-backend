@@ -14,7 +14,6 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OutputUserDTO } from '../dto/output-userDTO';
-import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 
@@ -142,7 +141,6 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de pedidos de un usuario',
-    type: OutputPedidoDto,
   })
   @ApiResponse({
     status: 404,
