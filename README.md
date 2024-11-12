@@ -122,13 +122,26 @@ src/
 │ └── controller/ # Controladores de funcionalidad autenticación
 │ │ └── carro-compras.controller.ts #controlador de funcionalidad carro compras
 │ ├── dto # DTO de la funcionalidad carro compras
+│ │ ├── add-product-carro.dto.ts #dto de actualización carro de compra
 │ │ ├── create-carro-compra.dto.ts #dto creación carro de compras
-│ │ ├── output-carro-compra.dto.ts #dto de salida carro de compra
-│ │ └── update-carro-compra.dto.ts #actualización de carro de compras
+│ │ ├── get-carro-compra.dto.ts #dto consulta carro de compras
+│ │ ├── get-carro-producto.dto.ts #dto consulta prodctos en carro de compras
+│ │ ├── update-carro-compra.dto.ts #dto actualización carro de compras
+│ │ └── update-product-carro.dto.ts #actualización de productos en el carro de compra
 │ ├── entities # entidades de funcionalidad carro-compras
-│ │ └── carro-compra.entity.ts # entidad carro compras
+│ │ ├── carro_producto.entity.ts #entidad qeu relaciona carro de compras con productos
+│ │ └── carro.entity.ts # entidad carro compras
+│ ├── mapper # mapper dto salida carro de compra
+│ │ └── carro-compras.mapper.ts # mapper dto salida carro compras
+│ ├── pipe # validaciones carro de compra
+│ │ ├── validar-carro-activo-existente.ts #validacion carro activo
+│ │ ├── validar-carro-existe.pipe.ts #validacion consulta carro
+│ │ └── validar-producto-existente.pipe.ts # valida la exitencia de productos
 │ ├── service # servicios de la funcionalidad carro de compra
 │ │ └── carro-compras.service.ts # servicio carro de compras
+│ ├── shared # elementos compartidos en carro compras
+│ │ └── constants
+│ │ │ └── carro-relaciones.ts #relaciones de carro compras con productos.
 │ └── carro-compras.module.ts # módulo de la funcionalidad carro de compras
 ├── catalogo/ # ruta de módulo de la funcionalidad catalogo
 │ └── controller/ # Controladores de funcionalidad catalogo
@@ -151,14 +164,50 @@ src/
 │ └── modelse3 # información general del equipo desarrollador.
 ├── pedidos/ # ruta de módulo de la funcionalidad carro de compras
 │ └── controller/ # Controladores de funcionalidad autenticación
+│ │ ├── catalogo.controller.ts #controlador de la fucionalidad catalogo
 │ │ └── pedidos.controller.ts #controlador de funcionalidad pedidos
 │ ├── dto # DTO de la funcionalidad pedidos
-│ │ ├── create-pedidos.dto.ts #dto creación pedidos
-│ │ ├── output-pedidos.dto.ts #dto de salida pedidos
-│ │ └── update-pedidos.dto.ts #actualización pedidos
+│ │ ├── accesorio #Carpeta DTO accesorios
+│ │ │ └── get-accesorio.dto.ts # DTO salida accesorioss
+│ │ ├── catalogo #Carpeta DTO catálogo
+│ │ │ └── paginacion.dto.ts # DTO paginacion de catalogo
+│ │ ├── categoria #Carpeta DTO categorias
+│ │ │ └── get-categoria.dto.ts # DTO salida categoria
+│ │ ├── insumo #Carpeta DTO insumos
+│ │ │ └── get-insumo.dto.ts # DTO salida insumo
+│ │ ├── macetero #Carpeta DTO macetero
+│ │ │ └── get-macetero.dto.ts # DTO salida macetero
+│ │ ├── planta #Carpeta DTO planta
+│ │ │ └── get-planta.dto.ts # DTO salida planta
+│ │ └── producto #Carpeta DTO macetero
+│ │ │ ├── create-producto.dto.ts # DTO creacion producto
+│ │ │ └── update-producto.dto.ts # DTO para actualizar producto
 │ ├── entities # entidades de funcionalidad pedidos
-│ │ ├── despacho.enum.ts #enum de entidad
-│ │ ├── estado.enum.ts #enum de entidad
+│ │ ├── accesorios #carpeta contenedora de entidades accesorios
+│ │ │ ├── accesorio.entity.ts # enntidad accesorio
+│ │ │ └── tipo_accesorio.entity.ts # entidad tipo accesorio
+│ │ ├── insumos #carpeta contenedora de entidades insumos
+│ │ │ ├── insumo.entity.ts # entidad insumo
+│ │ │ └── tipo_insumo.entity.ts # entidad tipo insumo
+│ │ ├── maceteros #carpeta contenedora de entidades maceteros
+│ │ │ ├── maceteros.entity.ts # enntidad macetero
+│ │ │ └── tipo_macetero.entity.ts # entidad tipo macetero
+│ │ ├── plantas #carpeta contenedora de entidades plantas
+│ │ │ ├── especie.entity.ts # entidad insumo
+│ │ │ ├── fotoperiodo.entity.ts # entidad fotoperiodo
+│ │ │ ├── habito_crecimiento.entity.ts # entidad tipo de crecimiento
+│ │ │ ├── planta.entity.ts # entidad planta
+│ │ │ └── tipo_riego.entity.ts # entidad tipo riego
+│ │ ├── categoria.entity.ts #entidad categoria
+│ │ ├── etiqueta.entity.ts #emtodad etiquetas
+│ │ └── productos.entity.ts #entidad de productos
+│ ├── mapper # contenedor de mapper productos
+│ │ └── entity-to-dto-producto.ts # mapper de dto salida productos
+│ ├── service # contenedor de mapper productos
+│ │ ├── catalogo.service.ts # servicio de catalogo.
+│ │ └── productos.service.ts # servicio deproductos.
+
+
 │ │ ├── pago.enum.ts #enum de entidad
 │ │ └── pedidos.entity.ts # entidad carro compras
 │ ├── service # servicios de la funcionalidad pedidos
@@ -172,7 +221,14 @@ src/
 │ │ ├── output-usuarios.dto.ts #dto de salida usuarios
 │ │ └── update-usuarios.dto.ts #actualización usuarios
 │ ├── entities # entidades del módulo usuarios
-│ │ └── usuarios.entity.ts # entidad usuarios
+│ │ ├── direccion.entity.ts #entidad direccion.
+│ │ ├── tipo_usuario.entity.ts #entidad tipo usuario.
+│ │ ├── usuarios.entity.ts # entidad usuarios.
+│ │ └── usuarios_medio_pago.entity.ts # entidad medio de pagos
+│ ├── mapper # servicios de la funcionalidad usuarios
+│ │ └── entity-to-dto-usuarios.ts # mapper de dto output usuario
+│ ├── pipe # servicios de la funcionalidad usuarios
+│ │ └── validar-usuario-existente.pipe.ts # mapper de dto output usuario
 │ ├── service # servicios de la funcionalidad usuarios
 │ │ └── usuarios.service.ts # servicio usuarios
 │ └── usuarios.module.ts # módulo de la funcionalidad usuarios

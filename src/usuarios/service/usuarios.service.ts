@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { Repository } from 'typeorm';
-import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -16,7 +16,7 @@ export class UsuariosService {
     private readonly usuariosRepository: Repository<Usuario>,
     @InjectRepository(TipoUsuario)
     private readonly tipoUsuarioRepository: Repository<TipoUsuario>,
-  ) { }
+  ) {}
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
