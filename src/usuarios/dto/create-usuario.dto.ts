@@ -1,22 +1,82 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsISO8601,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength
+} from 'class-validator';
 
 export class CreateUsuarioDto {
-  @ApiProperty({ example: 'New User' })
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  public name: string;
+  @MaxLength(50, {
+    message: 'La contraseña no puede tener más de 50 caracteres',
+  })
+  contrasena: string;
 
-  @ApiProperty({ example: 'qwerty' })
+  @ApiProperty()
+  @IsNotEmpty()
   @IsString()
-  public password: string;
+  @MaxLength(50, {
+    message: 'El nombre no puede tener más de 50 caracteres',
+  })
+  nombre: string;
 
-  @ApiProperty({ example: 'newuser@gmail.com' })
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50, {
+    message: 'El apellido no puede tener más de 50 caracteres',
+  })
+  apellido: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50, {
+    message: 'El nombre usuario no puede tener más de 50 caracteres',
+  })
+  nombreUsuario: string;
+
+  @ApiProperty()
   @IsEmail()
-  public email: string;
+  @IsNotEmpty()
+  email: string;
 
-  constructor(name: string, password: string, email: string) {
-    this.name = name;
-    this.password = password;
-    this.email = email;
-  }
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @Matches(/^[0-9]+$/, {
+    message: 'El teléfono solo debe contener números',
+  })
+  telefono?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(50, {
+    message: 'El género no puede tener más de 50 caracteres',
+  })
+  genero?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^\d{7,8}-\d{1}$/, {
+    message: 'El RUT debe tener el formato 11111111-1 o 1111111-1',
+  })
+  rut: string;
+
+  @ApiProperty()
+  @IsISO8601()
+  @IsNotEmpty()
+  fechaNacimiento: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  tipoUsuarioId: number;
 }

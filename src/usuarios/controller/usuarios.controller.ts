@@ -1,27 +1,28 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
   Put,
   Query,
 } from '@nestjs/common';
-import { UsuariosService } from '../service/usuarios.service';
-import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
-import { CreateUsuarioDto } from '../dto/create-usuario.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { OutputUserDTO } from '../dto/output-userDTO';
-import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
+import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
+import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { OutputUserDTO } from '../dto/output-userDTO';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
+import { UsuariosService } from '../service/usuarios.service';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -31,12 +32,12 @@ export class UsuariosController {
     type: OutputUserDTO,
   })
   @ApiResponse({
-    status: 404,
-    description: 'No hay usuarios registrados',
+    status: 418,
+    description: 'No hay teteras registradas',
   })
   @Get()
-  findAll() {
-    return this.usuariosService.findAll();
+  async findAll(): Promise<OutputUserDTO[]> {
+    return await this.usuariosService.findAll();
   }
 
   // Obtener un usuario según su ID
@@ -51,8 +52,8 @@ export class UsuariosController {
     description: 'No hay un usuario con ese id',
   })
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usuariosService.findOne(id);
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<OutputUserDTO> {
+    return await this.usuariosService.findById(id);
   }
 
   // Crear un usuario
@@ -60,66 +61,60 @@ export class UsuariosController {
   @ApiResponse({
     status: 201,
     description: 'Usuario creado',
+    type: OutputUserDTO,
   })
   @ApiResponse({
     status: 400,
     description: 'Error al crear usuario',
   })
+  @ApiBody({ type: CreateUsuarioDto })
   @Post()
-  createUser(@Body() usuario: CreateUsuarioDto) {
-    return this.usuariosService.createUser(usuario);
+  async create(
+    @Body() createUsuarioDTO: CreateUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    return await this.usuariosService.createUser(createUsuarioDTO);
   }
 
   // Actualizar un usuario según el id
   @ApiOperation({ summary: 'Actualiza un usuario' })
   @ApiResponse({
-    status: 201,
+    status: 204,
     description: 'Usuario actualizado',
+    type: OutputUserDTO
   })
   @ApiResponse({
     status: 400,
     description: 'No se ha podido actualizar el usuario',
   })
+  @ApiBody({ type: UpdateUsuarioDto })
   @Put(':id')
-  updateOne(@Param('id') id: number, @Body() usuario: UpdateUsuarioDto) {
-    return this.usuariosService.updateOne(id, usuario);
+  async updateOne(
+    @Param('id') id: number,
+    @Body() updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    return await this.usuariosService.updateOne(id, updateUsuarioDto);
   }
 
   // Eliminar un usuario según el id
   @ApiOperation({ summary: 'Elimina un usuario según su id' })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'Usuario eliminado',
+    schema: {
+      example: { message: 'Usuario con ID 1 eliminado con éxito' },
+    },
   })
   @ApiResponse({
     status: 404,
     description: 'No existe un usuario con ese id',
   })
   @Delete(':id')
-  deleteOne(@Param('id') id: number) {
-    return this.usuariosService.deleteOne(id);
-  }
-
-  // Actualizar o modificar carro de un usuario
-  @ApiOperation({ summary: 'Actualiza el carro de un usuario' })
-  @ApiResponse({
-    status: 201,
-    description: 'Carro actualizado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Error al actualizar el carro',
-  })
-  @Patch('updateCarro/:idUsuario/')
-  updateCarro(
-    @Param('idUsuario') idUsuario: number,
-    @Body() carro: UpdateCarroCompraDto,
-  ) {
-    return this.usuariosService.updateCarro(idUsuario, carro);
+  async deleteOne(@Param('id') id: number): Promise<{ message: string }> {
+    return await this.usuariosService.deleteUser(id);
   }
 
   // Agregar un pedido
-  @ApiOperation({ summary: 'Agrega un pedido a un usuario' })
+  @ApiOperation({ summary: 'Agrega un pedido a un usuario NO IMPLEMENTADO' })
   @ApiResponse({
     status: 201,
     description: 'Pedido añadido',
@@ -137,7 +132,9 @@ export class UsuariosController {
   }
 
   //Obtener pedidos de usuario
-  @ApiOperation({ summary: 'Obtiene los pedidos realizados según usuario' })
+  @ApiOperation({
+    summary: 'Obtiene los pedidos realizados según usuario NO IMPLEMENTADO',
+  })
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de pedidos de un usuario',
@@ -152,9 +149,11 @@ export class UsuariosController {
   }
 
   // Modificar medio de pago
-  @ApiOperation({ summary: 'Modifica el medio de pago de un usuario' })
+  @ApiOperation({
+    summary: 'Modifica el medio de pago de un usuario NO IMPLEMENTADO',
+  })
   @ApiResponse({
-    status: 201,
+    status: 204,
     description: 'Medio de pago modificado',
   })
   @ApiResponse({

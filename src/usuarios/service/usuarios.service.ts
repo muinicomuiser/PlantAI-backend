@@ -1,41 +1,124 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUsuarioDto } from '../dto/create-usuario.dto';
-import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
-import { UpdateCarroCompraDto } from 'src/carro-compras/dto/update-carro-compra.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
+import { Repository } from 'typeorm';
+import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { OutputUserDTO } from '../dto/output-userDTO';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
+import { TipoUsuario } from '../entities/tipo_usuario.entity';
+import { Usuario } from '../entities/usuario.entity';
 
 @Injectable()
 export class UsuariosService {
-  constructor() {}
+  constructor(
+    @InjectRepository(Usuario)
+    private readonly usuariosRepository: Repository<Usuario>,
+    @InjectRepository(TipoUsuario)
+    private readonly tipoUsuarioRepository: Repository<TipoUsuario>,
+  ) { }
 
   /**Retorna todos los usuarios */
-  findAll() {
-    return null;
+  async findAll(): Promise<OutputUserDTO[]> {
+    const usuarios = await this.usuariosRepository.find({
+      relations: [
+        'tipoUsuario',
+        'direccion',
+        'usuarioMedioPago',
+        'carros',
+        'pedidos',
+      ],
+    });
+    return usuarios.map(toOutputUserDTO);
   }
 
   /**Obtiene un usuario según su id */
-  findOne(id: number) {
-    return null;
+  async findById(id: number): Promise<OutputUserDTO> {
+    const usuario = await this.usuariosRepository.findOne({
+      where: { id },
+      relations: [
+        'tipoUsuario',
+        'direccion',
+        'usuarioMedioPago',
+        'carros',
+        'pedidos',
+      ],
+    });
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    return toOutputUserDTO(usuario);
   }
 
   /**Crear un usuario */
-  createUser(usuario: CreateUsuarioDto) {
-    return null;
+  async createUser(createUsuarioDto: CreateUsuarioDto): Promise<OutputUserDTO> {
+    //verificar que el id tipo usuario existe en la entidad
+    const tipoUsuario = await this.tipoUsuarioRepository.findOne({
+      where: { id: createUsuarioDto.tipoUsuarioId },
+    });
+    if (!tipoUsuario) {
+      throw new NotFoundException(
+        `TipoUsuario con ID ${createUsuarioDto.tipoUsuarioId} no existe`,
+      );
+    }
+    //crear nuevo usuario
+    const usuario = this.usuariosRepository.create({
+      ...createUsuarioDto,
+      tipoUsuario,
+    });
+    const usuarioCreado = await this.usuariosRepository.save(usuario);
+    return toOutputUserDTO(usuarioCreado);
   }
 
   /**Actualiza un usuario según su id */
-  updateOne(id: number, usuario: UpdateUsuarioDto) {
-    return 'Usuario actualizado';
+  async updateOne(
+    id: number,
+    UpdateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    const usuario = await this.usuariosRepository.findOne({
+      where: { id },
+      relations: [
+        'tipoUsuario',
+        'direccion',
+        'usuarioMedioPago',
+        'carros',
+        'pedidos',
+      ],
+    });
+    //validacion de id
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    //validación de tipousuario
+    if (UpdateUsuarioDto.tipoUsuarioId) {
+      const tipoUsuario = await this.tipoUsuarioRepository.findOne({
+        where: { id: UpdateUsuarioDto.tipoUsuarioId },
+      });
+      if (!tipoUsuario) {
+        throw new NotFoundException(
+          `Tipo Usuario con ID ${UpdateUsuarioDto.tipoUsuarioId} no existe`,
+        );
+      }
+      usuario.tipoUsuario = tipoUsuario;
+    }
+    //actualiza el usuario:
+    this.usuariosRepository.merge(usuario, UpdateUsuarioDto);
+    const usuarioActualizado = await this.usuariosRepository.save(usuario);
+
+    return toOutputUserDTO(usuarioActualizado);
   }
 
   /**Elimina un usuario según su id */
-  deleteOne(id: number) {
-    return { mensaje: 'Usuario eliminado' };
-  }
-
-  /**Actualiza el carro de un usuario según su id */
-  updateCarro(idUsuario: number, carro: UpdateCarroCompraDto) {
-    return carro;
+  async deleteUser(id: number): Promise<{ message: string }> {
+    //verificar id
+    const usuario = await this.usuariosRepository.findOne({ where: { id } });
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    //eliminar usuario
+    await this.usuariosRepository.delete(id);
+    return { message: `Usuario con ID ${id} eliminado con éxito` };
   }
 
   /**Retorna los pedidos asociados a un id de usuario */

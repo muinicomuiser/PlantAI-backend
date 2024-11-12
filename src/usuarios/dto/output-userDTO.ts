@@ -1,29 +1,36 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { GetCarroComprasDto } from 'src/carro-compras/dto/get-carro-compras.dto';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class OutputUserDTO {
-  @ApiProperty({ example: 'New Name' })
-  public name: string;
-
-  @ApiProperty({ example: 'updateduser@gmail.com' })
-  public email: string;
+  @ApiProperty()
+  id: number;
 
   @ApiProperty()
-  public carrito: GetCarroComprasDto;
+  nombre: string;
 
   @ApiProperty()
-  public pedidos: Pedido[];
+  apellido: string;
 
-  constructor(
-    name: string,
-    email: string,
-    carrito: GetCarroComprasDto,
-    pedido: Pedido[],
-  ) {
-    this.name = name;
-    this.email = email;
-    this.carrito = carrito;
-    this.pedidos = pedido;
-  }
+  @ApiProperty()
+  nombreUsuario: string;
+
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  telefono: string;
+
+  @ApiProperty()
+  genero: string;
+
+  @ApiProperty()
+  rut: string;
+
+  @ApiProperty()
+  fechaNacimiento: Date;
+
+  @ApiProperty()
+  tipoUsuario: string;
+
+  @ApiProperty()
+  direcciones: string[];
 }
