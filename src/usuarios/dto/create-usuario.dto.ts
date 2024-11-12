@@ -6,27 +6,41 @@ import {
   IsOptional,
   IsISO8601,
   Matches,
+  MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateUsuarioDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50, {
+    message: 'La contraseña no puede tener más de 50 caracteres',
+  })
   contrasena: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50, {
+    message: 'El nombre no puede tener más de 50 caracteres',
+  })
   nombre: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50, {
+    message: 'El apellido no puede tener más de 50 caracteres',
+  })
   apellido: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50, {
+    message: 'El nombre usuario no puede tener más de 50 caracteres',
+  })
   nombreUsuario: string;
 
   @ApiProperty()
@@ -37,11 +51,17 @@ export class CreateUsuarioDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
+  @Matches(/^[0-9]+$/, {
+    message: 'El teléfono solo debe contener números',
+  })
   telefono?: string;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
+  @MaxLength(50, {
+    message: 'El género no puede tener más de 50 caracteres',
+  })
   genero?: string;
 
   @ApiProperty()
