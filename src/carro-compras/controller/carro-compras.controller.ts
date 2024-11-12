@@ -18,6 +18,7 @@ import { AddProductCarro } from '../dto/add-product-carro';
 import { UpdateProductCarro } from '../dto/update-product-carro';
 import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 import { ValidarCarroActivoPipe } from '../pipe/validar-carro-activo-existente.pipe';
+import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
@@ -54,7 +55,7 @@ export class CarroComprasController {
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Get('user/:id')
   async findByUserId(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe, ValidarUsuarioExistePipe) id: number,
   ): Promise<GetCarroComprasDto> {
     return await this.carroComprasService.findByUserId(+id);
   }
@@ -62,9 +63,10 @@ export class CarroComprasController {
   // Crear carro de compras
   @ApiOperation({ summary: 'Crea un carro de compras' })
   @ApiResponse({ status: 201, description: 'Carro creado' })
-  @ApiResponse({ status: 400, description: 'Error al crear carro' })
+  @ApiResponse({ status: 400, description: 'Error al crear carro. El usuario no puede tener más de un carro activo.' })
+  @ApiResponse({ status: 404, description: 'No existe un usuario con el ID' })
   @Post(':idUsuario')
-  createCarro(@Param('idUsuario', ParseIntPipe, ValidarCarroActivoPipe) idUsuario: number) {
+  createCarro(@Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe, ValidarCarroActivoPipe) idUsuario: number) {
     return this.carroComprasService.createCarro(idUsuario);
   }
 

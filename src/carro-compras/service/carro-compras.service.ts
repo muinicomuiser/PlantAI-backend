@@ -54,9 +54,7 @@ export class CarroComprasService {
         relations: ['carroProductos', ...CARRO_RELATIONS],
       });
     if (!carroEncontrado) {
-      const carroNuevo: CarroCompra = new CarroCompra(id);
-      this.carroComprasRepository.save(carroNuevo);
-      return await this.findByUserId(id); /**Aguante la recursividad*/
+      throw new NotFoundException('No existe un carro activo para este usuario.')
     }
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
   }
@@ -97,6 +95,7 @@ export class CarroComprasService {
   }
 
   async updateProductQuantity(idCarro: number, updateDto: UpdateProductCarro) {
+
     const carroProducto = await this.carroProductoRepository.findOne({
       where: {
         idCarro: idCarro,
@@ -107,6 +106,16 @@ export class CarroComprasService {
     if (!carroProducto) {
       throw new NotFoundException('Producto no encontrado en el carro');
     };
+    //verificar stock disponible
+    const stockProducto = await this.productoRepository.findOne({
+      where: {
+        id: updateDto.productoId
+      }
+    });
+
+    if (!stockProducto || stockProducto.cantidad < updateDto.cantidadProducto) {
+      throw new BadRequestException('Stock insuficiente');
+    }
 
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
     await this.carroProductoRepository.save(carroProducto)

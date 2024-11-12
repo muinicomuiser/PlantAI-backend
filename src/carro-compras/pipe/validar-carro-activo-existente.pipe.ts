@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { CarroCompra } from '../entities/carro.entity';
 
-/**Valida la existencia de un carro por su id. */
+/**Valida si un usuario tiene un carro activo. */
 @Injectable()
 export class ValidarCarroActivoPipe implements PipeTransform {
   constructor(
