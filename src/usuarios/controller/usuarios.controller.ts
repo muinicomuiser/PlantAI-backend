@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
-import { OutputPedidoDto } from 'src/pedidos/dto/output-pedido.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';

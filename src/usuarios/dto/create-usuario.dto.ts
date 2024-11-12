@@ -66,7 +66,7 @@ export class CreateUsuarioDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @Matches(/^\d{7,8}-\d{1}$/, {
+  @Matches(/^\d{7,8}-[0-9kK]$/, {
     message: 'El RUT debe tener el formato 11111111-1 o 1111111-1',
   })
   rut: string;
