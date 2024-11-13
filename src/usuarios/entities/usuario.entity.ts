@@ -36,7 +36,10 @@ export class Usuario {
   fechaNacimiento: Date;
 
   /**One to Many */
-  @OneToMany(() => Direccion, (direccion) => direccion.usuario)
+  @OneToMany(() => Direccion, (direccion) => direccion.usuario, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   direccion: Direccion[];
 
   /**Many to One*/
