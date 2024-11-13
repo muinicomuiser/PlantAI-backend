@@ -8,3 +8,8 @@ Carro:
 Cambios:
     - Nombres a entidades y dto de Carro
     - Nombres de scripts sql
+
+Correcciones:
+    A la versión 1.0.2
+        Documentar los campos requeridos y opcionales en el dto de crear usuario
+        Validar los campos requeridos y opcionales en el dto de crear usuario
