@@ -1,9 +1,12 @@
 Carro:
     - Al buscar por id Usuario: Retorna el carro activo, donde la fecha_cierre sea null.
-    - Si el usuario existe, pero no tiene un carro, creará un carro nuevo.
-        No sería necesario validar si existe un carro activo para el usuario, porque si no existe lo creará.
-    Falta: 
-        - Validar la existencia de un usuario por su id. Que la validación la haga el equipo de usuario.
+
+    Falta:
+        Un endpoint que cierre un carro, o verificar que ese proceso se haga al crear un pedido a partir de un carro.
+
+Productos:
+    Falta:
+        Agregar un get de opciones de atributos por categorías. Que devuelva toda la tabla.
 
 Cambios:
     - Nombres a entidades y dto de Carro
