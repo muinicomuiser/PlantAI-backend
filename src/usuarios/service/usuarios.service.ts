@@ -8,6 +8,7 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { TipoUsuario } from '../entities/tipo_usuario.entity';
 import { Usuario } from '../entities/usuario.entity';
 import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
+import { Direccion } from '../entities/direccion.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -112,12 +113,14 @@ export class UsuariosService {
   /**Elimina un usuario según su id */
   async deleteUser(id: number): Promise<{ message: string }> {
     //verificar id
-    const usuario = await this.usuariosRepository.findOne({ where: { id } });
+    const usuario = await this.usuariosRepository.findOne({ where: { id }, relations: { direccion: true } });
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
+    // usuario.direccion = []
     //eliminar usuario
-    await this.usuariosRepository.delete(id);
+    await this.usuariosRepository.softDelete(id);
+    // await this.usuariosRepository.delete(id);
     return { message: `Usuario con ID ${id} eliminado con éxito` };
   }
 

@@ -4,6 +4,7 @@ import { TipoUsuario } from './tipo_usuario.entity';
 import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -36,10 +37,7 @@ export class Usuario {
   fechaNacimiento: Date;
 
   /**One to Many */
-  @OneToMany(() => Direccion, (direccion) => direccion.usuario, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Direccion, (direccion) => direccion.usuario)
   direccion: Direccion[];
 
   /**Many to One*/
@@ -61,4 +59,8 @@ export class Usuario {
   /**One to Many */
   @OneToMany(() => Pedido, (pedido) => pedido.usuario)
   pedidos: Pedido[];
+
+  // Add this column to your entity!
+  @DeleteDateColumn({ name: 'fecha_eliminacion' })
+  deletedAt?: Date;
 }
