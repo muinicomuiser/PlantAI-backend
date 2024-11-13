@@ -46,7 +46,7 @@ cd grupo-3-backend
 3. Instala las dependencias:
 
 ```bash
-npm install
+yarn install
 ```
 
 ## 3. Configuración
@@ -87,7 +87,8 @@ siguiente comando, desde la ruta grupo-3-backend:
 docker compose up -d
 ```
 
-La base de datos se cargará automáticamente al gestor utilizado.
+La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
+La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
 ## 5. Ejecución - Producción
 
@@ -99,7 +100,8 @@ cd prod
 docker compose up -d
 ```
 
-La base de datos se cargará automáticamente al gestor utilizado.
+La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
+La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
 ## 6. Estructura del Proyecto
 
@@ -107,6 +109,8 @@ La base de datos se cargará automáticamente al gestor utilizado.
 src/
 │
 ├── app.module.ts # Módulo raíz de la aplicación
+├── app.service.ts # Módulo raíz de la aplicación
+├── app.controller.ts # Módulo raíz de la aplicación
 ├── main.ts # Punto de entrada del servidor
 ├── auth/ # ruta de módulo de la funcionalidad autenticación
 │ └── controller/ # Controladores de funcionalidad autenticación
@@ -206,13 +210,10 @@ src/
 │ ├── service # contenedor de mapper productos
 │ │ ├── catalogo.service.ts # servicio de catalogo.
 │ │ └── productos.service.ts # servicio deproductos.
-
-
-│ │ ├── pago.enum.ts #enum de entidad
-│ │ └── pedidos.entity.ts # entidad carro compras
-│ ├── service # servicios de la funcionalidad pedidos
-│ │ └── pedidos.service.ts # servicio pedidos
-│ └── pedidos.module.ts # módulo de la funcionalidad pedidos
+│ ├── shared
+│ │ └── constants
+│ │ │ └──  producto-relaciones.ts # relaciones de la entidad productos
+│ ├── productos.module.ts #Modulo productos.
 └── usuarios/ # ruta de módulo de la funcionalidad usuarios
 │ └── controller/ # Controladores de funcionalidad usuarios
 │ │ └── usuarios.controller.ts # Controlador de funcionalidad usuarios
@@ -244,7 +245,7 @@ servidor.
 1. Inicia el proyecto con el comando:
 
 ```bash
-npm run start:dev
+yarn start:dev
 ```
 
 2. Accede a Swagger en tu navegador:
