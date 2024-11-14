@@ -18,8 +18,10 @@ Este proyecto es un API RESTful desarrollada con NestJS que permite gestionar el
 6. [Estructura del Proyecto](#estructura-del-proyecto)
 7. [Documentación de la API](#documentacion-api)
 8. [Flujo de Trabajo](#flujo-trabajo)
-9. [Contacto](#contacto)
+9. [Base de datos y MER](#base-datos)
+10. [Contacto](#contacto)
 
+<a name="requisitos-previos"></a>
 ## 1. Requisitos Previos
 
 Antes de ejecutar el proyecto, asegúrate de tener
@@ -29,6 +31,7 @@ instalados los siguientes componentes:
 - **NestJS CLI**: `npm install -g @nestjs/cli`
 - **TypeORM**: yarn add @nest/typeorm
 
+<a name="instalacion"></a>
 ## 2. Instalación
 
 1. Clona el repositorio:
@@ -49,15 +52,10 @@ cd grupo-3-backend
 yarn install
 ```
 
+<a name="configuracion"></a>
 ## 3. Configuración
 
-1. Se deben completar las siguientes variables de
-   entorno:
-
-- PORT: Número del puerto.
-- AMBIENTE: Indicar el nombre del ambiente de trabajo.
-
-2. Completar el archivo .env en la raíz del proyecto,
+1. Completar el archivo .env en la raíz del proyecto,
    configurando las siguientes variables de entorno (tomar el archivo .env.example como referencia):
 
 - PORT: 3000
@@ -68,7 +66,7 @@ yarn install
 - DB_PASSWORD="contraseña"
 - DB_DATABASE="plantai_db"
 
-3. En caso que se ejecute en ambiente productivo:
+2. En caso que se ejecute en ambiente productivo:
 
 - PORT: 8080
 - AMBIENTE: production
@@ -78,6 +76,7 @@ yarn install
 - DB_PASSWORD="contraseña"
 - DB_DATABASE="plantai_db"
 
+<a name="ejecucion-desarrollo"></a>
 ## 4. Ejecución - Desarrollo
 
 Para ejecutar el proyecto en modo desarrollo, usa el
@@ -90,6 +89,7 @@ docker compose up -d
 La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
 La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
+<a name="ejecucion-produccion"></a>
 ## 5. Ejecución - Producción
 
 Para ejecutar el proyecto en modo producción, usa el
@@ -103,6 +103,7 @@ docker compose up -d
 La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
 La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
+<a name="estructura-del-proyecto"></a>
 ## 6. Estructura del Proyecto
 
 ```bash
@@ -236,6 +237,7 @@ src/
 
 ```
 
+<a name="documentacion-api"></a>
 ## 7. Documentación de la API (Swagger)
 
 Swagger está habilitado en este proyecto. Puedes acceder
@@ -251,6 +253,7 @@ yarn start:dev
 2. Accede a Swagger en tu navegador:
    http://localhost:3000/api
 
+<a name="flujo-trabajo"></a>
 ## 8. Flujo de Trabajo
 
 En este proyecto, seguimos un flujo de trabajo basado en
@@ -285,15 +288,18 @@ contener una descripción clara de los cambios y cualquier
 instrucción necesaria para probarlos.
 Una vez realizada la aprovación se realizará el merge.
 
-## 9.Base de datos y MER
+<a name="base-datos"></a>
+## 9. Base de datos y MER
 
-Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER puede encontrarla en la carpeta MER y los script SQL en la carpeta sql.
-para configurar la base de datos seguir el siguiente flujo:
+Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER en el directorio __Diagramas__ y los script SQL en el directorio __sql__.
+Para iniciar la base de datos ejecuta los archivos del directorio __sql__, siguiendo el orden numérico:
 
-1. Ejecutar el script de SQL creacion.plantai_db.sql
-2. Ejecutar el script de SQL creacion.data.sql
+- V0.0.1...
+- V0.0.2...
+- ...
 
-## 10.Contacto
+<a name="contacto"></a>
+## 10. Contacto
 
 Si tienes alguna pregunta, puedes contactarnos a través
 de:
