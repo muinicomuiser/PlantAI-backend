@@ -22,12 +22,13 @@ import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { UsuariosService } from '../service/usuarios.service';
+import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -74,10 +75,18 @@ export class UsuariosController {
     status: 400,
     description: 'Error al crear usuario',
   })
+  @ApiResponse({
+    status: 400,
+    description: 'El email ya está registrado',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El nombre de usuario ya está registrado',
+  })
   @ApiBody({ type: CreateUsuarioDto })
   @Post()
   async create(
-    @Body() createUsuarioDTO: CreateUsuarioDto,
+    @Body(ValidarCrearUsuarioPipe) createUsuarioDTO: CreateUsuarioDto,
   ): Promise<OutputUserDTO> {
     return await this.usuariosService.createUser(createUsuarioDTO);
   }
