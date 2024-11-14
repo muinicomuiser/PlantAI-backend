@@ -29,7 +29,7 @@ export class CarroComprasService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
     private readonly carroProductoRepository: Repository<CarroProducto>,
-  ) {}
+  ) { }
 
   //Implementar para usuario administrador
   async createCarro(idUsuario: number) /* : Promise<GetCarroComprasDto> */ {
@@ -152,22 +152,24 @@ export class CarroComprasService {
 
   //Implementar para usuario administrador
   async deleteCarro(idCarro: number) {
-    const carroProducto = await this.carroProductoRepository.find({
-      where: {
-        idCarro: idCarro,
-      },
-    });
+    // const carroProducto = await this.carroProductoRepository.find({
+    //   where: {
+    //     idCarro: idCarro,
+    //   },
+    // });
+    await this.carroComprasRepository.softDelete(idCarro);
+    // await this.usuariosRepository.delete(id);
+    return { message: `Carro con ID ${idCarro} eliminado con éxito` };
+    // await this.carroProductoRepository.remove(carroProducto);
 
-    await this.carroProductoRepository.remove(carroProducto);
+    // const carroEncontrado: CarroCompra =
+    //   await this.carroComprasRepository.findOne({
+    //     where: {
+    //       id: idCarro,
+    //     },
+    //   });
 
-    const carroEncontrado: CarroCompra =
-      await this.carroComprasRepository.findOne({
-        where: {
-          id: idCarro,
-        },
-      });
-
-    await this.carroComprasRepository.remove(carroEncontrado);
-    return true;
+    // await this.carroComprasRepository.remove(carroEncontrado);
+    // return true;
   }
 }

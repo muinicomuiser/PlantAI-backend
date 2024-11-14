@@ -60,7 +60,7 @@ export class Usuario {
   @OneToMany(() => Pedido, (pedido) => pedido.usuario)
   pedidos: Pedido[];
 
-  // Add this column to your entity!
+  /**Propiedad para el soft delete */
   @DeleteDateColumn({ name: 'fecha_eliminacion' })
   deletedAt?: Date;
 }
