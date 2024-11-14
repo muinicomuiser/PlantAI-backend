@@ -7,6 +7,7 @@ import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { ProductoMapperAux } from '../mapper/ent-to-dto-aux';
 
 @Injectable()
 export class ProductosService {
@@ -39,27 +40,18 @@ export class ProductosService {
   //
   async create(createProductoDto: CreateProductoDto): Promise<GetProductoDto> {
     const newProducto = await this.productoRepository.save(createProductoDto);
-    return ProductoMapper.entityToDto(newProducto);
+    return ProductoMapperAux.entityToDtoAux(newProducto);
   }
 
-  async update(id: number, updateProductoDto: UpdateProductoDto) {
-    await this.findEntityById(id);
+  async update(
+    id: number,
+    updateProductoDto: UpdateProductoDto,
+  ): Promise<GetProductoDto> {
     await this.productoRepository.update(id, updateProductoDto);
-    const productoActualizado = await this.findEntityById(id);
-    return ProductoMapper.entityToDto(productoActualizado);
+    return this.getById(id);
   }
-
   /**Elimina un producto según su id */
   async deleteOne(id: number) {
-    await this.findEntityById(id);
     return this.productoRepository.delete(id);
-  }
-
-  async findEntityById(id: number) {
-    const producto = this.productoRepository.findOneBy({ id });
-    if (!producto) {
-      throw new NotFoundException(`Producto con id ${id} no encontrado`);
-    }
-    return producto;
   }
 }
