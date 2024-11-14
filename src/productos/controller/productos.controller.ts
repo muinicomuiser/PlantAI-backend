@@ -19,8 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
-import { CreateProductoDto } from '../dto/create-producto.dto';
-import { UpdateProductoDto } from '../dto/update-producto.dto';
+
+import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -87,7 +88,7 @@ export class ProductosController {
   })
   @Post()
   createProduct(@Body() createProductoDto: CreateProductoDto) {
-    return this.productosService.create();
+    return this.productosService.create(createProductoDto);
   }
 
   // Actualizar un producto
@@ -106,7 +107,7 @@ export class ProductosController {
     @Param('id') id: number,
     @Body() updateProductoDto: UpdateProductoDto,
   ) {
-    return this.productosService.update();
+    return this.productosService.update(id, updateProductoDto);
   }
 
   // Eliminar un producto

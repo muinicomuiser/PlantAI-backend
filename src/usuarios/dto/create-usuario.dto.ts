@@ -6,11 +6,11 @@ import {
   IsOptional,
   IsString,
   Matches,
-  MaxLength
+  MaxLength,
 } from 'class-validator';
 
 export class CreateUsuarioDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'clave1234' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -18,7 +18,7 @@ export class CreateUsuarioDto {
   })
   contrasena: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Jhon' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -26,7 +26,7 @@ export class CreateUsuarioDto {
   })
   nombre: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Smith' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -34,7 +34,7 @@ export class CreateUsuarioDto {
   })
   apellido: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'jhon.smith' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -42,12 +42,12 @@ export class CreateUsuarioDto {
   })
   nombreUsuario: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'jhon.smith@gmail.com' })
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '12345678' })
   @IsOptional()
   @IsString()
   @Matches(/^[0-9]+$/, {
@@ -55,7 +55,7 @@ export class CreateUsuarioDto {
   })
   telefono?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Masculino' })
   @IsOptional()
   @IsString()
   @MaxLength(50, {
@@ -63,7 +63,7 @@ export class CreateUsuarioDto {
   })
   genero?: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '11111111-1' })
   @IsNotEmpty()
   @IsString()
   @Matches(/^\d{7,8}-[0-9kK]$/, {
@@ -71,12 +71,12 @@ export class CreateUsuarioDto {
   })
   rut: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '2000-01-01' })
   @IsISO8601()
   @IsNotEmpty()
   fechaNacimiento: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 3 })
   @IsNotEmpty()
   tipoUsuarioId: number;
 }

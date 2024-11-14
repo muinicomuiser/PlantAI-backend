@@ -1,26 +1,39 @@
 services:
-  database-dev:
-    image: mysql:9-oracle
+  database-prod:
+    image: mysql:8.0
+    container_name: database-prod
     volumes:
-      - ./db/data_dev:/usr/lib/mysql
+      - ./db/data_prod:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=clave123
-      - MYSQL_DATABASE=plantai_db # Crear la base de datos al iniciar el contenedor
-      - MYSQL_HOST=database-dev
+      - MYSQL_DATABASE=plantai_db
+      ##- MYSQL_HOST=database-prod
     ports:
-      - '3308:3306'
-  cotiledon-dev:
-    image: node:22-alpine3.19
-    working_dir: /usr/src/app
+      - '3312:3306' # Exponiendo el puerto 3306 al host
+  flyway:
+    image: flyway/flyway:10.20.1-alpine
+    volumes:
+      - ./sql:/flyway/sql
+    command: -url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE} -user=${DB_USERNAME} -password=${DB_PASSWORD} -connectRetries=60 migrate
+
+  cotiledon-prod:
+    image: nicolasf1/cotiledonapp:1.0.2
+    depends_on:
+      - database-prod
     environment:
-      - AMBIENTE=dev
-      - DB_HOST=database-dev # Nombre del servicio de la base de datos
-      - DB_PORT=3306 # Cambiado a 3306, que es el puerto expuesto del contenedor MySQL
+      - AMBIENTE=production
+      - DB_HOST=database-prod
+      - DB_PORT=3306
       - DB_USERNAME=root
       - DB_PASSWORD=clave123
       - DB_DATABASE=plantai_db
-    volumes:
-      - ./:/usr/src/app
     ports:
-      - '3000:3002'
-    command: 'yarn start:dev'
+      - '8080:8080'
+  frontend-prod:
+    image: nicolasf1/plantaiapp:1.0.1
+    depends_on:
+      - cotiledon-prod
+    environment:
+      - VITE_URL_ENDPOINT_BACKEND=http://cotiledon-prod:8080
+    ports:
+      - '5173:80'
