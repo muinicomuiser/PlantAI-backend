@@ -8,7 +8,9 @@ export declare class CarroComprasController {
     findByCarroId(id: number): Promise<GetCarroComprasDto>;
     findByUserId(id: number): Promise<GetCarroComprasDto>;
     createCarro(idUsuario: number): Promise<boolean>;
-    deleteCarro(idCarro: number): Promise<boolean>;
+    deleteCarro(idCarro: number): Promise<{
+        message: string;
+    }>;
     addProductToCarro(idCarro: number, addProductDto: AddProductCarro): Promise<import("../dto/get-carro-producto.dto").GetCarroProductoDto>;
     updateProductQuantity(idCarro: number, updateDto: UpdateProductCarro): Promise<UpdateProductCarro>;
     removeProductCarro(idCarro: number, idProducto: number): Promise<boolean>;

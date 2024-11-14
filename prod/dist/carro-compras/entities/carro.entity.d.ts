@@ -9,5 +9,6 @@ export declare class CarroCompra {
     usuario: Usuario;
     carroProductos: CarroProducto[];
     pedido: Pedido;
+    deletedAt?: Date;
     constructor(idUsuario: number);
 }

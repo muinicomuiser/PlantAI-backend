@@ -120,19 +120,8 @@ let CarroComprasService = class CarroComprasService {
         return true;
     }
     async deleteCarro(idCarro) {
-        const carroProducto = await this.carroProductoRepository.find({
-            where: {
-                idCarro: idCarro,
-            },
-        });
-        await this.carroProductoRepository.remove(carroProducto);
-        const carroEncontrado = await this.carroComprasRepository.findOne({
-            where: {
-                id: idCarro,
-            },
-        });
-        await this.carroComprasRepository.remove(carroEncontrado);
-        return true;
+        await this.carroComprasRepository.softDelete(idCarro);
+        return { message: `Carro con ID ${idCarro} eliminado con éxito` };
     }
 };
 exports.CarroComprasService = CarroComprasService;
