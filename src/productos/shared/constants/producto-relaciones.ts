@@ -10,6 +10,7 @@ export const PRODUCTO_RELATIONS = [
   'planta.habitoCrecimiento',
   'planta.tipoRiego',
   'planta.color',
+  'accesorio.color',
   'accesorio.tipoAccesorio',
   'accesorio.marca',
   'insumo.tipoInsumo',
