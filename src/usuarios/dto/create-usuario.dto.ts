@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsISO8601,
@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 
 export class CreateUsuarioDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'qwerty123' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -18,7 +18,7 @@ export class CreateUsuarioDto {
   })
   contrasena: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Juanito' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -26,7 +26,7 @@ export class CreateUsuarioDto {
   })
   nombre: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Perez' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -34,7 +34,7 @@ export class CreateUsuarioDto {
   })
   apellido: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Juanelo Rabioso' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(50, {
@@ -42,41 +42,41 @@ export class CreateUsuarioDto {
   })
   nombreUsuario: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'bulbasaur1991@hotmail.com' })
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ example: '98745632' })
   @IsOptional()
-  @IsString()
   @Matches(/^[0-9]+$/, {
     message: 'El teléfono solo debe contener números',
   })
+  @IsString()
   telefono?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional({ example: 'Masculino' })
   @IsOptional()
-  @IsString()
   @MaxLength(50, {
     message: 'El género no puede tener más de 50 caracteres',
   })
+  @IsString()
   genero?: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
+  @ApiProperty({ example: '12345897-2' })
   @Matches(/^\d{7,8}-[0-9kK]$/, {
     message: 'El RUT debe tener el formato 11111111-1 o 1111111-1',
   })
+  @IsString()
+  @IsNotEmpty()
   rut: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '1991-12-25' })
   @IsISO8601()
   @IsNotEmpty()
   fechaNacimiento: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 3 })
   @IsNotEmpty()
   tipoUsuarioId: number;
 }
