@@ -14,35 +14,31 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuariosController = void 0;
 const common_1 = require("@nestjs/common");
-const usuarios_service_1 = require("../service/usuarios.service");
-const update_usuario_dto_1 = require("../dto/update-usuario.dto");
-const create_usuario_dto_1 = require("../dto/create-usuario.dto");
 const swagger_1 = require("@nestjs/swagger");
-const output_userDTO_1 = require("../dto/output-userDTO");
-const output_pedido_dto_1 = require("../../pedidos/dto/output-pedido.dto");
-const update_carro_compra_dto_1 = require("../../carro-compras/dto/update-carro-compra.dto");
 const create_pedido_dto_1 = require("../../pedidos/dto/create-pedido.dto");
+const create_usuario_dto_1 = require("../dto/create-usuario.dto");
+const output_userDTO_1 = require("../dto/output-userDTO");
+const update_usuario_dto_1 = require("../dto/update-usuario.dto");
+const usuarios_service_1 = require("../service/usuarios.service");
+const validar_crear_usuario_pipe_1 = require("../pipe/validar-crear-usuario.pipe");
 let UsuariosController = class UsuariosController {
     constructor(usuariosService) {
         this.usuariosService = usuariosService;
     }
-    findAll() {
-        return this.usuariosService.findAll();
+    async findAll() {
+        return await this.usuariosService.findAll();
     }
-    findOne(id) {
-        return this.usuariosService.findOne(id);
+    async findById(id) {
+        return await this.usuariosService.findById(id);
     }
-    createUser(usuario) {
-        return this.usuariosService.createUser(usuario);
+    async create(createUsuarioDTO) {
+        return await this.usuariosService.createUser(createUsuarioDTO);
     }
-    updateOne(id, usuario) {
-        return this.usuariosService.updateOne(id, usuario);
+    async updateOne(id, updateUsuarioDto) {
+        return await this.usuariosService.updateOne(id, updateUsuarioDto);
     }
-    deleteOne(id) {
-        return this.usuariosService.deleteOne(id);
-    }
-    updateCarro(idUsuario, carro) {
-        return this.usuariosService.updateCarro(idUsuario, carro);
+    async deleteOne(id) {
+        return await this.usuariosService.deleteUser(id);
     }
     addPedido(pedido, idUsuario) {
         return this.usuariosService.addPedido(idUsuario, pedido);
@@ -63,13 +59,13 @@ __decorate([
         type: output_userDTO_1.OutputUserDTO,
     }),
     (0, swagger_1.ApiResponse)({
-        status: 404,
-        description: 'No hay usuarios registrados',
+        status: 418,
+        description: 'No hay teteras registradas',
     }),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsuariosController.prototype, "findAll", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Obtiene un Usuario según ID' }),
@@ -83,49 +79,64 @@ __decorate([
         description: 'No hay un usuario con ese id',
     }),
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], UsuariosController.prototype, "findOne", null);
+    __metadata("design:returntype", Promise)
+], UsuariosController.prototype, "findById", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Crea un usuario' }),
     (0, swagger_1.ApiResponse)({
         status: 201,
         description: 'Usuario creado',
+        type: output_userDTO_1.OutputUserDTO,
     }),
     (0, swagger_1.ApiResponse)({
         status: 400,
         description: 'Error al crear usuario',
     }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'El email ya está registrado',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'El nombre de usuario ya está registrado',
+    }),
+    (0, swagger_1.ApiBody)({ type: create_usuario_dto_1.CreateUsuarioDto }),
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)(validar_crear_usuario_pipe_1.ValidarCrearUsuarioPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_usuario_dto_1.CreateUsuarioDto]),
-    __metadata("design:returntype", void 0)
-], UsuariosController.prototype, "createUser", null);
+    __metadata("design:returntype", Promise)
+], UsuariosController.prototype, "create", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualiza un usuario' }),
     (0, swagger_1.ApiResponse)({
-        status: 201,
+        status: 204,
         description: 'Usuario actualizado',
+        type: output_userDTO_1.OutputUserDTO,
     }),
     (0, swagger_1.ApiResponse)({
         status: 400,
         description: 'No se ha podido actualizar el usuario',
     }),
+    (0, swagger_1.ApiBody)({ type: update_usuario_dto_1.UpdateUsuarioDto }),
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, update_usuario_dto_1.UpdateUsuarioDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsuariosController.prototype, "updateOne", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Elimina un usuario según su id' }),
     (0, swagger_1.ApiResponse)({
-        status: 200,
+        status: 204,
         description: 'Usuario eliminado',
+        schema: {
+            example: { message: 'Usuario con ID 1 eliminado con éxito' },
+        },
     }),
     (0, swagger_1.ApiResponse)({
         status: 404,
@@ -135,27 +146,10 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UsuariosController.prototype, "deleteOne", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Actualiza el carro de un usuario' }),
-    (0, swagger_1.ApiResponse)({
-        status: 201,
-        description: 'Carro actualizado',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: 400,
-        description: 'Error al actualizar el carro',
-    }),
-    (0, common_1.Patch)('updateCarro/:idUsuario/'),
-    __param(0, (0, common_1.Param)('idUsuario')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, update_carro_compra_dto_1.UpdateCarroCompraDto]),
-    __metadata("design:returntype", void 0)
-], UsuariosController.prototype, "updateCarro", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Agrega un pedido a un usuario' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Agrega un pedido a un usuario NO IMPLEMENTADO' }),
     (0, swagger_1.ApiResponse)({
         status: 201,
         description: 'Pedido añadido',
@@ -172,11 +166,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsuariosController.prototype, "addPedido", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Obtiene los pedidos realizados según usuario' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Obtiene los pedidos realizados según usuario NO IMPLEMENTADO',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Devuelve la lista de pedidos de un usuario',
-        type: output_pedido_dto_1.OutputPedidoDto,
     }),
     (0, swagger_1.ApiResponse)({
         status: 404,
@@ -189,9 +184,11 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsuariosController.prototype, "findPedidos", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Modifica el medio de pago de un usuario' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Modifica el medio de pago de un usuario NO IMPLEMENTADO',
+    }),
     (0, swagger_1.ApiResponse)({
-        status: 201,
+        status: 204,
         description: 'Medio de pago modificado',
     }),
     (0, swagger_1.ApiResponse)({

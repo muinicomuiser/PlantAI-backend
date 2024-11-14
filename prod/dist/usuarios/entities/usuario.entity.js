@@ -10,12 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Usuario = void 0;
-const carros_entity_1 = require("../../carro-compras/entities/carros.entity");
 const pedido_entity_1 = require("../../pedidos/entities/pedido.entity");
 const direccion_entity_1 = require("./direccion.entity");
 const tipo_usuario_entity_1 = require("./tipo_usuario.entity");
 const usuarios_medio_pago_entity_1 = require("./usuarios_medio_pago.entity");
 const typeorm_1 = require("typeorm");
+const carro_entity_1 = require("../../carro-compras/entities/carro.entity");
 let Usuario = class Usuario {
 };
 exports.Usuario = Usuario;
@@ -65,7 +65,7 @@ __decorate([
 ], Usuario.prototype, "direccion", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => tipo_usuario_entity_1.TipoUsuario),
-    (0, typeorm_1.JoinColumn)({ name: 'id' }),
+    (0, typeorm_1.JoinColumn)({ name: 'id_tipo_usuario' }),
     __metadata("design:type", tipo_usuario_entity_1.TipoUsuario)
 ], Usuario.prototype, "tipoUsuario", void 0);
 __decorate([
@@ -73,13 +73,17 @@ __decorate([
     __metadata("design:type", Array)
 ], Usuario.prototype, "usuarioMedioPago", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => carros_entity_1.CarroCompra, (carro) => carro.usuario),
+    (0, typeorm_1.OneToMany)(() => carro_entity_1.CarroCompra, (carro) => carro.usuario),
     __metadata("design:type", Array)
 ], Usuario.prototype, "carros", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => pedido_entity_1.Pedido, (pedido) => pedido.usuario),
     __metadata("design:type", Array)
 ], Usuario.prototype, "pedidos", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)({ name: 'fecha_eliminacion' }),
+    __metadata("design:type", Date)
+], Usuario.prototype, "deletedAt", void 0);
 exports.Usuario = Usuario = __decorate([
     (0, typeorm_1.Entity)({ name: 'usuarios' })
 ], Usuario);

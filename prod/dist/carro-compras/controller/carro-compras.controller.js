@@ -14,91 +14,135 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarroComprasController = void 0;
 const common_1 = require("@nestjs/common");
-const carro_compras_service_1 = require("../service/carro-compras.service");
-const create_carro_compra_dto_1 = require("../dto/create-carro-compra.dto");
 const swagger_1 = require("@nestjs/swagger");
-const update_carro_compra_dto_1 = require("../dto/update-carro-compra.dto");
-const output_carro_compras_dto_1 = require("../dto/output-carro-compras.dto");
+const get_carro_compras_dto_1 = require("../dto/get-carro-compras.dto");
+const carro_compras_service_1 = require("../service/carro-compras.service");
+const validar_carro_existe_pipe_1 = require("../pipe/validar-carro-existe.pipe");
+const add_product_carro_1 = require("../dto/add-product-carro");
+const update_product_carro_1 = require("../dto/update-product-carro");
+const validar_producto_existente_pipe_1 = require("../pipe/validar-producto-existente.pipe");
+const validar_carro_activo_existente_pipe_1 = require("../pipe/validar-carro-activo-existente.pipe");
+const validar_usuario_existe_pipe_1 = require("../../usuarios/pipe/validar-usuario-existe.pipe");
 let CarroComprasController = class CarroComprasController {
     constructor(carroComprasService) {
         this.carroComprasService = carroComprasService;
     }
-    createCarro(carro) {
-        return this.carroComprasService.createCarro(carro);
+    async findByCarroId(id) {
+        return await this.carroComprasService.findByCarroId(+id);
     }
-    findByCarroId(id) {
-        return this.carroComprasService.findByCarroId(id);
+    async findByUserId(id) {
+        return await this.carroComprasService.findByUserId(+id);
     }
-    findByUserId(id) {
-        return this.carroComprasService.findByUserId(id);
+    createCarro(idUsuario) {
+        return this.carroComprasService.createCarro(idUsuario);
     }
-    deleteCarro(id) {
-        return this.carroComprasService.deleteCarro(id);
+    deleteCarro(idCarro) {
+        return this.carroComprasService.deleteCarro(idCarro);
     }
-    updateCarro(carro, id) {
-        return this.carroComprasService.updateCarro(id, carro);
+    async addProductToCarro(idCarro, addProductDto) {
+        return await this.carroComprasService.addProductToCarro(idCarro, addProductDto);
+    }
+    async updateProductQuantity(idCarro, updateDto) {
+        return await this.carroComprasService.updateProductQuantity(idCarro, updateDto);
+    }
+    async removeProductCarro(idCarro, idProducto) {
+        return await this.carroComprasService.removeProductCarro(idCarro, idProducto);
     }
 };
 exports.CarroComprasController = CarroComprasController;
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Crea un carro de compras' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Carro creado' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Error al crear carro' }),
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_carro_compra_dto_1.CreateCarroCompraDto]),
-    __metadata("design:returntype", void 0)
-], CarroComprasController.prototype, "createCarro", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Busca un carro de compras por id' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Carro encontrado',
-        type: output_carro_compras_dto_1.OutputCarroComprasDto,
+        type: get_carro_compras_dto_1.GetCarroComprasDto,
     }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Carro no encontrado' }),
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CarroComprasController.prototype, "findByCarroId", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Busca un carro de compras por id de usuario' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Carro encontrado',
-        type: output_carro_compras_dto_1.OutputCarroComprasDto,
+        type: get_carro_compras_dto_1.GetCarroComprasDto,
     }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Carro no encontrado' }),
     (0, common_1.Get)('user/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe, validar_usuario_existe_pipe_1.ValidarUsuarioExistePipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], CarroComprasController.prototype, "findByUserId", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Crea un carro de compras' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Carro creado' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'Error al crear carro. El usuario no puede tener más de un carro activo.',
+    }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'No existe un usuario con el ID' }),
+    (0, common_1.Post)(':idUsuario'),
+    __param(0, (0, common_1.Param)('idUsuario', common_1.ParseIntPipe, validar_usuario_existe_pipe_1.ValidarUsuarioExistePipe, validar_carro_activo_existente_pipe_1.ValidarCarroActivoPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
-], CarroComprasController.prototype, "findByUserId", null);
+], CarroComprasController.prototype, "createCarro", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Borra un carro de compras' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Carro borrado' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Carro no encontrado' }),
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], CarroComprasController.prototype, "deleteCarro", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Actualiza un carro de compras' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Carro actualizado' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Carro no encontrado' }),
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Param)('id')),
+    (0, swagger_1.ApiOperation)({ summary: 'Agrega un producto al carro de compras' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Producto agregado' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Producto no ha sido agregado' }),
+    (0, swagger_1.ApiBody)({ type: add_product_carro_1.AddProductCarro }),
+    (0, common_1.Post)('add/:idCarro'),
+    __param(0, (0, common_1.Param)('idCarro', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_carro_compra_dto_1.UpdateCarroCompraDto, Number]),
-    __metadata("design:returntype", void 0)
-], CarroComprasController.prototype, "updateCarro", null);
+    __metadata("design:paramtypes", [Number, add_product_carro_1.AddProductCarro]),
+    __metadata("design:returntype", Promise)
+], CarroComprasController.prototype, "addProductToCarro", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Actualiza la cantidad de un producto determinado' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Cantidad actualizada' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'No ha sido actualizada la cantidad',
+    }),
+    (0, swagger_1.ApiBody)({ type: update_product_carro_1.UpdateProductCarro }),
+    (0, common_1.Patch)('updateProducto/:idCarro'),
+    __param(0, (0, common_1.Param)('idCarro', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, update_product_carro_1.UpdateProductCarro]),
+    __metadata("design:returntype", Promise)
+], CarroComprasController.prototype, "updateProductQuantity", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Elimina un producto del carro' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Producto eliminado del carro' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'El producto no ha podido ser eliminado',
+    }),
+    (0, common_1.Delete)('remove/:idCarro/:idProducto'),
+    __param(0, (0, common_1.Param)('idCarro', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
+    __param(1, (0, common_1.Param)('idProducto', common_1.ParseIntPipe, validar_producto_existente_pipe_1.ProductoExistentePipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], CarroComprasController.prototype, "removeProductCarro", null);
 exports.CarroComprasController = CarroComprasController = __decorate([
     (0, swagger_1.ApiTags)('Carro de compras'),
     (0, common_1.Controller)('carro-compras'),

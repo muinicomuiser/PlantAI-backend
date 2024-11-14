@@ -33,8 +33,10 @@ export class GetAccesorioDto {
   // relaciones
   @ApiProperty({ description: 'Marca' })
   marca: string;
+
   @ApiProperty({ description: 'Tipo de accesorio' })
   tipoAccesorio: string;
+
   @ApiProperty({ description: 'Color' })
   color: string;
 }

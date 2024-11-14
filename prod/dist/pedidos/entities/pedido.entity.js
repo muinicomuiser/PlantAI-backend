@@ -10,13 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pedido = void 0;
-const carros_entity_1 = require("../../carro-compras/entities/carros.entity");
 const medio_pago_entity_1 = require("../../commons/entities/medio_pago.entity");
 const estado_pedido_entity_1 = require("./estado_pedido.entity");
 const tipo_despacho_entity_1 = require("./tipo_despacho.entity");
 const typeorm_1 = require("typeorm");
 const usuario_entity_1 = require("../../usuarios/entities/usuario.entity");
 const pagos_entity_1 = require("../../commons/entities/pagos.entity");
+const carro_entity_1 = require("../../carro-compras/entities/carro.entity");
 let Pedido = class Pedido {
 };
 exports.Pedido = Pedido;
@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Pedido.prototype, "idUsuario", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'fecha_creacion' }),
+    (0, typeorm_1.Column)({ name: 'fecha_creacion', type: 'date' }),
     __metadata("design:type", Date)
 ], Pedido.prototype, "fechaCreacion", void 0);
 __decorate([
@@ -49,7 +49,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Pedido.prototype, "idCarro", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ name: 'fecha_entrega', type: 'date' }),
     __metadata("design:type", Date)
 ], Pedido.prototype, "fechaEntrega", void 0);
 __decorate([
@@ -73,12 +73,13 @@ __decorate([
     __metadata("design:type", tipo_despacho_entity_1.TipoDespacho)
 ], Pedido.prototype, "tipoDespacho", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => carros_entity_1.CarroCompra),
+    (0, typeorm_1.OneToOne)(() => carro_entity_1.CarroCompra),
     (0, typeorm_1.JoinColumn)({ name: 'id_carro' }),
-    __metadata("design:type", carros_entity_1.CarroCompra)
+    __metadata("design:type", carro_entity_1.CarroCompra)
 ], Pedido.prototype, "carro", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => pagos_entity_1.Pago, (pago) => pago.pedido),
+    (0, typeorm_1.JoinColumn)({ name: 'id' }),
     __metadata("design:type", pagos_entity_1.Pago)
 ], Pedido.prototype, "Pago", void 0);
 exports.Pedido = Pedido = __decorate([

@@ -18,8 +18,10 @@ Este proyecto es un API RESTful desarrollada con NestJS que permite gestionar el
 6. [Estructura del Proyecto](#estructura-del-proyecto)
 7. [Documentación de la API](#documentacion-api)
 8. [Flujo de Trabajo](#flujo-trabajo)
-9. [Contacto](#contacto)
+9. [Base de datos y MER](#base-datos)
+10. [Contacto](#contacto)
 
+<a name="requisitos-previos"></a>
 ## 1. Requisitos Previos
 
 Antes de ejecutar el proyecto, asegúrate de tener
@@ -29,6 +31,7 @@ instalados los siguientes componentes:
 - **NestJS CLI**: `npm install -g @nestjs/cli`
 - **TypeORM**: yarn add @nest/typeorm
 
+<a name="instalacion"></a>
 ## 2. Instalación
 
 1. Clona el repositorio:
@@ -46,18 +49,13 @@ cd grupo-3-backend
 3. Instala las dependencias:
 
 ```bash
-npm install
+yarn install
 ```
 
+<a name="configuracion"></a>
 ## 3. Configuración
 
-1. Se deben completar las siguientes variables de
-   entorno:
-
-- PORT: Número del puerto.
-- AMBIENTE: Indicar el nombre del ambiente de trabajo.
-
-2. Completar el archivo .env en la raíz del proyecto,
+1. Completar el archivo .env en la raíz del proyecto,
    configurando las siguientes variables de entorno (tomar el archivo .env.example como referencia):
 
 - PORT: 3000
@@ -68,7 +66,7 @@ npm install
 - DB_PASSWORD="contraseña"
 - DB_DATABASE="plantai_db"
 
-3. En caso que se ejecute en ambiente productivo:
+2. En caso que se ejecute en ambiente productivo:
 
 - PORT: 8080
 - AMBIENTE: production
@@ -78,6 +76,7 @@ npm install
 - DB_PASSWORD="contraseña"
 - DB_DATABASE="plantai_db"
 
+<a name="ejecucion-desarrollo"></a>
 ## 4. Ejecución - Desarrollo
 
 Para ejecutar el proyecto en modo desarrollo, usa el
@@ -87,8 +86,10 @@ siguiente comando, desde la ruta grupo-3-backend:
 docker compose up -d
 ```
 
-La base de datos se cargará automáticamente al gestor utilizado.
+La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
+La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
+<a name="ejecucion-produccion"></a>
 ## 5. Ejecución - Producción
 
 Para ejecutar el proyecto en modo producción, usa el
@@ -99,14 +100,18 @@ cd prod
 docker compose up -d
 ```
 
-La base de datos se cargará automáticamente al gestor utilizado.
+La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
+La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
+<a name="estructura-del-proyecto"></a>
 ## 6. Estructura del Proyecto
 
 ```bash
 src/
 │
 ├── app.module.ts # Módulo raíz de la aplicación
+├── app.service.ts # Módulo raíz de la aplicación
+├── app.controller.ts # Módulo raíz de la aplicación
 ├── main.ts # Punto de entrada del servidor
 ├── auth/ # ruta de módulo de la funcionalidad autenticación
 │ └── controller/ # Controladores de funcionalidad autenticación
@@ -122,13 +127,26 @@ src/
 │ └── controller/ # Controladores de funcionalidad autenticación
 │ │ └── carro-compras.controller.ts #controlador de funcionalidad carro compras
 │ ├── dto # DTO de la funcionalidad carro compras
+│ │ ├── add-product-carro.dto.ts #dto de actualización carro de compra
 │ │ ├── create-carro-compra.dto.ts #dto creación carro de compras
-│ │ ├── output-carro-compra.dto.ts #dto de salida carro de compra
-│ │ └── update-carro-compra.dto.ts #actualización de carro de compras
+│ │ ├── get-carro-compra.dto.ts #dto consulta carro de compras
+│ │ ├── get-carro-producto.dto.ts #dto consulta prodctos en carro de compras
+│ │ ├── update-carro-compra.dto.ts #dto actualización carro de compras
+│ │ └── update-product-carro.dto.ts #actualización de productos en el carro de compra
 │ ├── entities # entidades de funcionalidad carro-compras
-│ │ └── carro-compra.entity.ts # entidad carro compras
+│ │ ├── carro_producto.entity.ts #entidad qeu relaciona carro de compras con productos
+│ │ └── carro.entity.ts # entidad carro compras
+│ ├── mapper # mapper dto salida carro de compra
+│ │ └── carro-compras.mapper.ts # mapper dto salida carro compras
+│ ├── pipe # validaciones carro de compra
+│ │ ├── validar-carro-activo-existente.ts #validacion carro activo
+│ │ ├── validar-carro-existe.pipe.ts #validacion consulta carro
+│ │ └── validar-producto-existente.pipe.ts # valida la exitencia de productos
 │ ├── service # servicios de la funcionalidad carro de compra
 │ │ └── carro-compras.service.ts # servicio carro de compras
+│ ├── shared # elementos compartidos en carro compras
+│ │ └── constants
+│ │ │ └── carro-relaciones.ts #relaciones de carro compras con productos.
 │ └── carro-compras.module.ts # módulo de la funcionalidad carro de compras
 ├── catalogo/ # ruta de módulo de la funcionalidad catalogo
 │ └── controller/ # Controladores de funcionalidad catalogo
@@ -151,19 +169,52 @@ src/
 │ └── modelse3 # información general del equipo desarrollador.
 ├── pedidos/ # ruta de módulo de la funcionalidad carro de compras
 │ └── controller/ # Controladores de funcionalidad autenticación
+│ │ ├── catalogo.controller.ts #controlador de la fucionalidad catalogo
 │ │ └── pedidos.controller.ts #controlador de funcionalidad pedidos
 │ ├── dto # DTO de la funcionalidad pedidos
-│ │ ├── create-pedidos.dto.ts #dto creación pedidos
-│ │ ├── output-pedidos.dto.ts #dto de salida pedidos
-│ │ └── update-pedidos.dto.ts #actualización pedidos
+│ │ ├── accesorio #Carpeta DTO accesorios
+│ │ │ └── get-accesorio.dto.ts # DTO salida accesorioss
+│ │ ├── catalogo #Carpeta DTO catálogo
+│ │ │ └── paginacion.dto.ts # DTO paginacion de catalogo
+│ │ ├── categoria #Carpeta DTO categorias
+│ │ │ └── get-categoria.dto.ts # DTO salida categoria
+│ │ ├── insumo #Carpeta DTO insumos
+│ │ │ └── get-insumo.dto.ts # DTO salida insumo
+│ │ ├── macetero #Carpeta DTO macetero
+│ │ │ └── get-macetero.dto.ts # DTO salida macetero
+│ │ ├── planta #Carpeta DTO planta
+│ │ │ └── get-planta.dto.ts # DTO salida planta
+│ │ └── producto #Carpeta DTO macetero
+│ │ │ ├── create-producto.dto.ts # DTO creacion producto
+│ │ │ └── update-producto.dto.ts # DTO para actualizar producto
 │ ├── entities # entidades de funcionalidad pedidos
-│ │ ├── despacho.enum.ts #enum de entidad
-│ │ ├── estado.enum.ts #enum de entidad
-│ │ ├── pago.enum.ts #enum de entidad
-│ │ └── pedidos.entity.ts # entidad carro compras
-│ ├── service # servicios de la funcionalidad pedidos
-│ │ └── pedidos.service.ts # servicio pedidos
-│ └── pedidos.module.ts # módulo de la funcionalidad pedidos
+│ │ ├── accesorios #carpeta contenedora de entidades accesorios
+│ │ │ ├── accesorio.entity.ts # enntidad accesorio
+│ │ │ └── tipo_accesorio.entity.ts # entidad tipo accesorio
+│ │ ├── insumos #carpeta contenedora de entidades insumos
+│ │ │ ├── insumo.entity.ts # entidad insumo
+│ │ │ └── tipo_insumo.entity.ts # entidad tipo insumo
+│ │ ├── maceteros #carpeta contenedora de entidades maceteros
+│ │ │ ├── maceteros.entity.ts # enntidad macetero
+│ │ │ └── tipo_macetero.entity.ts # entidad tipo macetero
+│ │ ├── plantas #carpeta contenedora de entidades plantas
+│ │ │ ├── especie.entity.ts # entidad insumo
+│ │ │ ├── fotoperiodo.entity.ts # entidad fotoperiodo
+│ │ │ ├── habito_crecimiento.entity.ts # entidad tipo de crecimiento
+│ │ │ ├── planta.entity.ts # entidad planta
+│ │ │ └── tipo_riego.entity.ts # entidad tipo riego
+│ │ ├── categoria.entity.ts #entidad categoria
+│ │ ├── etiqueta.entity.ts #emtodad etiquetas
+│ │ └── productos.entity.ts #entidad de productos
+│ ├── mapper # contenedor de mapper productos
+│ │ └── entity-to-dto-producto.ts # mapper de dto salida productos
+│ ├── service # contenedor de mapper productos
+│ │ ├── catalogo.service.ts # servicio de catalogo.
+│ │ └── productos.service.ts # servicio deproductos.
+│ ├── shared
+│ │ └── constants
+│ │ │ └──  producto-relaciones.ts # relaciones de la entidad productos
+│ ├── productos.module.ts #Modulo productos.
 └── usuarios/ # ruta de módulo de la funcionalidad usuarios
 │ └── controller/ # Controladores de funcionalidad usuarios
 │ │ └── usuarios.controller.ts # Controlador de funcionalidad usuarios
@@ -172,13 +223,21 @@ src/
 │ │ ├── output-usuarios.dto.ts #dto de salida usuarios
 │ │ └── update-usuarios.dto.ts #actualización usuarios
 │ ├── entities # entidades del módulo usuarios
-│ │ └── usuarios.entity.ts # entidad usuarios
+│ │ ├── direccion.entity.ts #entidad direccion.
+│ │ ├── tipo_usuario.entity.ts #entidad tipo usuario.
+│ │ ├── usuarios.entity.ts # entidad usuarios.
+│ │ └── usuarios_medio_pago.entity.ts # entidad medio de pagos
+│ ├── mapper # servicios de la funcionalidad usuarios
+│ │ └── entity-to-dto-usuarios.ts # mapper de dto output usuario
+│ ├── pipe # servicios de la funcionalidad usuarios
+│ │ └── validar-usuario-existente.pipe.ts # mapper de dto output usuario
 │ ├── service # servicios de la funcionalidad usuarios
 │ │ └── usuarios.service.ts # servicio usuarios
 │ └── usuarios.module.ts # módulo de la funcionalidad usuarios
 
 ```
 
+<a name="documentacion-api"></a>
 ## 7. Documentación de la API (Swagger)
 
 Swagger está habilitado en este proyecto. Puedes acceder
@@ -188,12 +247,13 @@ servidor.
 1. Inicia el proyecto con el comando:
 
 ```bash
-npm run start:dev
+yarn start:dev
 ```
 
 2. Accede a Swagger en tu navegador:
    http://localhost:3000/api
 
+<a name="flujo-trabajo"></a>
 ## 8. Flujo de Trabajo
 
 En este proyecto, seguimos un flujo de trabajo basado en
@@ -228,15 +288,18 @@ contener una descripción clara de los cambios y cualquier
 instrucción necesaria para probarlos.
 Una vez realizada la aprovación se realizará el merge.
 
-## 9.Base de datos y MER
+<a name="base-datos"></a>
+## 9. Base de datos y MER
 
-Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER puede encontrarla en la carpeta MER y los script SQL en la carpeta sql.
-para configurar la base de datos seguir el siguiente flujo:
+Para el proyecto la base de datos utilizada es MySQL Puede encontrar la documentación del MER en el directorio __Diagramas__ y los script SQL en el directorio __sql__.
+Para iniciar la base de datos ejecuta los archivos del directorio __sql__, siguiendo el orden numérico:
 
-1. Ejecutar el script de SQL creacion.plantai_db.sql
-2. Ejecutar el script de SQL creacion.data.sql
+- V0.0.1...
+- V0.0.2...
+- ...
 
-## 10.Contacto
+<a name="contacto"></a>
+## 10. Contacto
 
 Si tienes alguna pregunta, puedes contactarnos a través
 de:

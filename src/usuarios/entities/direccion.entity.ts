@@ -24,7 +24,9 @@ export class Direccion {
   @Column({ name: 'id_usuario' })
   idUsuario: number;
 
-  @ManyToOne(() => Usuario)
+  @ManyToOne(() => Usuario, (usuario) => usuario.direccion, {
+    // onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'id_usuario' })
   usuario: Usuario;
 }

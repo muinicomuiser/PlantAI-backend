@@ -10,26 +10,72 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUsuarioDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
-const create_usuario_dto_1 = require("./create-usuario.dto");
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-class UpdateUsuarioDto extends (0, mapped_types_1.PartialType)(create_usuario_dto_1.CreateUsuarioDto) {
+class UpdateUsuarioDto {
 }
 exports.UpdateUsuarioDto = UpdateUsuarioDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'New Name' }),
+    (0, swagger_1.ApiPropertyOptional)({ example: 'Jhon' }),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateUsuarioDto.prototype, "name", void 0);
+], UpdateUsuarioDto.prototype, "nombre", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'asdfg' }),
+    (0, swagger_1.ApiPropertyOptional)({ example: 'Smith' }),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateUsuarioDto.prototype, "password", void 0);
+], UpdateUsuarioDto.prototype, "apellido", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'updateduser@gmail.com' }),
+    (0, swagger_1.ApiPropertyOptional)({ example: 'clave1234' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUsuarioDto.prototype, "contrasena", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'jhon.smith' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUsuarioDto.prototype, "nombreUsuario", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'jhon.smith@gmail.com' }),
     (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUsuarioDto.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: '12345678' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUsuarioDto.prototype, "telefono", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'Masculino' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateUsuarioDto.prototype, "genero", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: '12345678-9' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.Matches)(/^\d{7,8}-[0-9kK]$/, {
+        message: 'El RUT debe tener el formato 11111111-1 o 1111111-1',
+    }),
+    __metadata("design:type", String)
+], UpdateUsuarioDto.prototype, "rut", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: '1999-12-12' }),
+    (0, class_validator_1.IsISO8601)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Date)
+], UpdateUsuarioDto.prototype, "fechaNacimiento", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 3 }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UpdateUsuarioDto.prototype, "tipoUsuarioId", void 0);
 //# sourceMappingURL=update-usuario.dto.js.map

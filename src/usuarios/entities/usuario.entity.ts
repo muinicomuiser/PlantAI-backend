@@ -1,16 +1,17 @@
-import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
 import { TipoUsuario } from './tipo_usuario.entity';
 import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
 
 @Entity({ name: 'usuarios' })
 export class Usuario {
@@ -41,7 +42,7 @@ export class Usuario {
 
   /**Many to One*/
   @ManyToOne(() => TipoUsuario)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'id_tipo_usuario' })
   tipoUsuario: TipoUsuario; //  a través de: id_tipo_usuario;
 
   /* One to Many */
@@ -58,4 +59,8 @@ export class Usuario {
   /**One to Many */
   @OneToMany(() => Pedido, (pedido) => pedido.usuario)
   pedidos: Pedido[];
+
+  /**Propiedad para el soft delete */
+  @DeleteDateColumn({ name: 'fecha_eliminacion' })
+  deletedAt?: Date;
 }

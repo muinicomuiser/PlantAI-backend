@@ -11,7 +11,7 @@ services:
       - MYSQL_DATABASE=plantai_db
       - MYSQL_HOST=database-prod
     ports:
-      - '3306:3306' # Exponiendo el puerto 3306 al host
+      - '3312:3306' # Exponiendo el puerto 3306 al host
 
   cotiledon-prod:
     image: nicolasf1/cotiledonapp:1.0.1

@@ -44,7 +44,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Direccion.prototype, "idUsuario", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => usuario_entity_1.Usuario),
+    (0, typeorm_1.ManyToOne)(() => usuario_entity_1.Usuario, (usuario) => usuario.direccion, {}),
     (0, typeorm_1.JoinColumn)({ name: 'id_usuario' }),
     __metadata("design:type", usuario_entity_1.Usuario)
 ], Direccion.prototype, "usuario", void 0);

@@ -19,7 +19,7 @@ export class CatalogoService {
     paginacionDto: PaginacionDto,
   ): Promise<{ data: GetProductoDto[]; totalItems: number }> {
     const { page, pageSize } = paginacionDto;
-    const limit = pageSize || 10;
+    const limit = pageSize;
     const offset = (page - 1) * limit;
     const [result, totalItems] = await this.productoRepository.findAndCount({
       take: limit,

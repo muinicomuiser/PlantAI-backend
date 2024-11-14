@@ -1,8 +1,8 @@
-import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
 import { TipoUsuario } from './tipo_usuario.entity';
 import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
 export declare class Usuario {
     id: number;
     contrasena: string;
@@ -19,4 +19,5 @@ export declare class Usuario {
     usuarioMedioPago: UsuarioMedioPago[];
     carros: CarroCompra[];
     pedidos: Pedido[];
+    deletedAt?: Date;
 }

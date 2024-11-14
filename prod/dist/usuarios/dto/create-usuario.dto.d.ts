@@ -1,6 +1,12 @@
 export declare class CreateUsuarioDto {
-    name: string;
-    password: string;
+    contrasena: string;
+    nombre: string;
+    apellido: string;
+    nombreUsuario: string;
     email: string;
-    constructor(name: string, password: string, email: string);
+    telefono?: string;
+    genero?: string;
+    rut: string;
+    fechaNacimiento: string;
+    tipoUsuarioId: number;
 }

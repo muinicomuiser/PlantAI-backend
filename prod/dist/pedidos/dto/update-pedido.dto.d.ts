@@ -1,6 +1,5 @@
-export declare class UpdatePedidoDto {
-    estado: string;
-    tipoDespacho: string;
-    tipoPago: string;
-    fechaEntrega: Date;
+import { CreatePedidoDto } from './create-pedido.dto';
+declare const UpdatePedidoDto_base: import("@nestjs/common").Type<Partial<CreatePedidoDto>>;
+export declare class UpdatePedidoDto extends UpdatePedidoDto_base {
 }
+export {};

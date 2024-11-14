@@ -1,0 +1,18 @@
+Carro:
+    - Al buscar por id Usuario: Retorna el carro activo, donde la fecha_cierre sea null.
+
+    Falta:
+        Un endpoint que cierre un carro, o verificar que ese proceso se haga al crear un pedido a partir de un carro.
+
+Productos:
+    Falta:
+        Agregar un get de opciones de atributos por categorías. Que devuelva toda la tabla.
+
+Cambios:
+    - Nombres a entidades y dto de Carro
+    - Nombres de scripts sql
+
+Correcciones:
+    A la versión 1.0.2
+        Documentar los campos requeridos y opcionales en el dto de crear usuario
+        Validar los campos requeridos y opcionales en el dto de crear usuario

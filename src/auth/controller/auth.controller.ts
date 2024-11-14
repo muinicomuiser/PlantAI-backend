@@ -15,7 +15,7 @@ export class AuthController {
   // Registrar un usuario
   @ApiOperation({ summary: 'Registro de usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente' })
-  @ApiResponse({ status: 404, description: 'Error al registrar el usuario' })
+  @ApiResponse({ status: 400, description: 'Error al registrar el usuario' })
   @Post('registro')
   register(@Body() createUser: CreateUsuarioDto) {
     return this.authService.register(createUser);
@@ -24,7 +24,7 @@ export class AuthController {
   // Loguear un usuario
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({ status: 201, description: 'Usuario logueado exitosamente' })
-  @ApiResponse({ status: 404, description: 'Error al loguear el usuario' })
+  @ApiResponse({ status: 401, description: 'Error al loguear el usuario' })
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);

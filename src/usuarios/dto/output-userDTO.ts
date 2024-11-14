@@ -1,29 +1,36 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { OutputCarroComprasDto } from 'src/carro-compras/dto/output-carro-compras.dto';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
 
 export class OutputUserDTO {
-  @ApiProperty({ example: 'New Name' })
-  public name: string;
+  @ApiProperty({ example: 1 })
+  id: number;
 
-  @ApiProperty({ example: 'updateduser@gmail.com' })
-  public email: string;
+  @ApiProperty({ example: 'Jhon' })
+  nombre: string;
 
-  @ApiProperty()
-  public carrito: OutputCarroComprasDto;
+  @ApiProperty({ example: 'Smith' })
+  apellido: string;
 
-  @ApiProperty()
-  public pedidos: Pedido[];
+  @ApiProperty({ example: 'jhon.smith' })
+  nombreUsuario: string;
 
-  constructor(
-    name: string,
-    email: string,
-    carrito: OutputCarroComprasDto,
-    pedido: Pedido[],
-  ) {
-    this.name = name;
-    this.email = email;
-    this.carrito = carrito;
-    this.pedidos = pedido;
-  }
+  @ApiProperty({ example: 'jhon.smith@gmail.com' })
+  email: string;
+
+  @ApiProperty({ example: '12345678' })
+  telefono: string;
+
+  @ApiProperty({ example: 'Masculino' })
+  genero: string;
+
+  @ApiProperty({ example: '12345678-9' })
+  rut: string;
+
+  @ApiProperty({ example: '1999-12-12' })
+  fechaNacimiento: Date;
+
+  @ApiProperty({ example: 'Cliente' })
+  tipoUsuario: string;
+
+  @ApiProperty({ example: ['Calle Falsa 123', 'Avenida Siempreviva 742'] })
+  direcciones: string[];
 }

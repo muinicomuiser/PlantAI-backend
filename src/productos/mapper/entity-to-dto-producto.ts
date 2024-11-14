@@ -58,11 +58,12 @@ export class ProductoMapper {
       };
     }
     if (producto.accesorio) {
+      console.log(producto);
       productoDto.accesorio = {
         idProducto: producto.accesorio.idProducto,
         idMarca: producto.accesorio.idMarca,
         idTipoAccesorio: producto.accesorio.idTipoAccesorio,
-        idColor: producto.accesorio.color.id,
+        idColor: producto.accesorio.idColor,
         marca: producto.accesorio.marca.nombre,
         tipoAccesorio: producto.accesorio.tipoAccesorio.tipo,
         color: producto.accesorio.color.color,

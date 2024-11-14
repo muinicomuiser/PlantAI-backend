@@ -11,30 +11,51 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OutputUserDTO = void 0;
 const swagger_1 = require("@nestjs/swagger");
-const output_carro_compras_dto_1 = require("../../carro-compras/dto/output-carro-compras.dto");
 class OutputUserDTO {
-    constructor(name, email, carrito, pedido) {
-        this.name = name;
-        this.email = email;
-        this.carrito = carrito;
-        this.pedidos = pedido;
-    }
 }
 exports.OutputUserDTO = OutputUserDTO;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'New Name' }),
-    __metadata("design:type", String)
-], OutputUserDTO.prototype, "name", void 0);
+    (0, swagger_1.ApiProperty)({ example: 1 }),
+    __metadata("design:type", Number)
+], OutputUserDTO.prototype, "id", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'updateduser@gmail.com' }),
+    (0, swagger_1.ApiProperty)({ example: 'Jhon' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "nombre", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Smith' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "apellido", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'jhon.smith' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "nombreUsuario", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'jhon.smith@gmail.com' }),
     __metadata("design:type", String)
 ], OutputUserDTO.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", output_carro_compras_dto_1.OutputCarroComprasDto)
-], OutputUserDTO.prototype, "carrito", void 0);
+    (0, swagger_1.ApiProperty)({ example: '12345678' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "telefono", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiProperty)({ example: 'Masculino' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "genero", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '12345678-9' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "rut", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '1999-12-12' }),
+    __metadata("design:type", Date)
+], OutputUserDTO.prototype, "fechaNacimiento", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Cliente' }),
+    __metadata("design:type", String)
+], OutputUserDTO.prototype, "tipoUsuario", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: ['Calle Falsa 123', 'Avenida Siempreviva 742'] }),
     __metadata("design:type", Array)
-], OutputUserDTO.prototype, "pedidos", void 0);
+], OutputUserDTO.prototype, "direcciones", void 0);
 //# sourceMappingURL=output-userDTO.js.map

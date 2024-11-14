@@ -33,7 +33,7 @@ exports.AuthController = AuthController;
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Registro de usuario' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Usuario registrado exitosamente' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Error al registrar el usuario' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Error al registrar el usuario' }),
     (0, common_1.Post)('registro'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -43,7 +43,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Login de usuario' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Usuario logueado exitosamente' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Error al loguear el usuario' }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: 'Error al loguear el usuario' }),
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

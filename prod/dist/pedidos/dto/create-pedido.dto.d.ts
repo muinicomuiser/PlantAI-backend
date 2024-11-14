@@ -1,8 +1,9 @@
-import { CarroCompra } from 'src/carro-compras/entities/carros.entity';
 export declare class CreatePedidoDto {
-    idusuario: number;
-    tipoDespacho: string;
-    tipoPago: string;
-    carrito: CarroCompra;
+    idUsuario: number;
+    fechaCreacion: Date;
+    idMedioPago: number;
+    idEstado: number;
+    idTipoDespacho: number;
+    idCarro: number;
     fechaEntrega: Date;
 }

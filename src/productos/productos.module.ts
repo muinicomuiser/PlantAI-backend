@@ -20,6 +20,8 @@ import { TipoInsumo } from './entities/insumos/tipo_insumo.entity';
 import { TipoMacetero } from './entities/maceteros/tipo_macetero.entity';
 import { Marca } from 'src/commons/entities/marca.entity';
 import { ColorProducto } from 'src/commons/entities/color.entity';
+import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
+import { Etiqueta } from './entities/etiqueta.entity';
 
 @Module({
   imports: [
@@ -39,10 +41,11 @@ import { ColorProducto } from 'src/commons/entities/color.entity';
       TipoMacetero,
       Marca,
       ColorProducto,
+      CarroProducto
     ]),
   ],
   controllers: [ProductosController, CatalogoController],
   providers: [ProductosService, CatalogoService],
   exports: [ProductosService],
 })
-export class ProductosModule {}
+export class ProductosModule { }

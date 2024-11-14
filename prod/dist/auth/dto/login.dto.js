@@ -21,7 +21,7 @@ __decorate([
     __metadata("design:type", String)
 ], LoginDto.prototype, "username", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiProperty)({ minLength: 6 }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6),
     __metadata("design:type", String)
