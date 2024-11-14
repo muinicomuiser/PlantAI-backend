@@ -1,36 +1,36 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class OutputUserDTO {
-  @ApiProperty()
+  @ApiProperty({ example: 1 })
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Jhon' })
   nombre: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Smith' })
   apellido: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'jhon.smith' })
   nombreUsuario: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'jhon.smith@gmail.com' })
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '12345678' })
   telefono: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Masculino' })
   genero: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '12345678-9' })
   rut: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '1999-12-12' })
   fechaNacimiento: Date;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Cliente' })
   tipoUsuario: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: ['Calle Falsa 123', 'Avenida Siempreviva 742'] })
   direcciones: string[];
 }

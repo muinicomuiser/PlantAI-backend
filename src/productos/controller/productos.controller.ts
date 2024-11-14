@@ -19,8 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
-import { CreateProductoDto } from '../dto/create-producto.dto';
-import { UpdateProductoDto } from '../dto/update-producto.dto';
+
+import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { CreateProductoDto } from '../dto/producto/create-producto.dto';
+import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -86,8 +88,10 @@ export class ProductosController {
     description: 'No ha sido posible crear el producto',
   })
   @Post()
-  createProduct(@Body() createProductoDto: CreateProductoDto) {
-    return this.productosService.create();
+  createProduct(
+    @Body() createProductoDto: CreateProductoDto,
+  ): Promise<GetProductoDto> {
+    return this.productosService.create(createProductoDto);
   }
 
   // Actualizar un producto
@@ -103,10 +107,10 @@ export class ProductosController {
   @ApiParam({ name: 'id', type: Number })
   @Patch(':id')
   updateProduct(
-    @Param('id') id: number,
+    @Param('id', ProductoExistentePipe) id: number,
     @Body() updateProductoDto: UpdateProductoDto,
-  ) {
-    return this.productosService.update();
+  ): Promise<GetProductoDto> {
+    return this.productosService.update(id, updateProductoDto);
   }
 
   // Eliminar un producto
@@ -120,7 +124,7 @@ export class ProductosController {
     description: 'No existe un producto con ese id',
   })
   @Delete(':id')
-  deleteOne(@Param('id') id: number) {
+  deleteOne(@Param('id', ProductoExistentePipe) id: number) {
     return this.productosService.deleteOne(id);
   }
 }
