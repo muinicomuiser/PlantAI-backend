@@ -3,6 +3,7 @@ import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { CarroProducto } from './carro_producto.entity';
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -37,6 +38,10 @@ export class CarroCompra {
   /**One to One */
   @OneToOne(() => Pedido, (pedido) => pedido.carro)
   pedido: Pedido;
+
+  /**Propiedad para el soft delete */
+  @DeleteDateColumn({ name: 'fecha_eliminacion' })
+  deletedAt?: Date;
 
   constructor(idUsuario: number) {
     this.idUsuario = idUsuario;

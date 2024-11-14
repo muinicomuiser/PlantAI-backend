@@ -50,6 +50,10 @@ __decorate([
     (0, typeorm_1.OneToOne)(() => pedido_entity_1.Pedido, (pedido) => pedido.carro),
     __metadata("design:type", pedido_entity_1.Pedido)
 ], CarroCompra.prototype, "pedido", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)({ name: 'fecha_eliminacion' }),
+    __metadata("design:type", Date)
+], CarroCompra.prototype, "deletedAt", void 0);
 exports.CarroCompra = CarroCompra = __decorate([
     (0, typeorm_1.Entity)({ name: 'carros' }),
     __metadata("design:paramtypes", [Number])

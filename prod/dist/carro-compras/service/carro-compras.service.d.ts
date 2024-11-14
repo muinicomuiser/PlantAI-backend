@@ -16,5 +16,7 @@ export declare class CarroComprasService {
     addProductToCarro(idCarro: number, addProductDto: AddProductCarro): Promise<import("../dto/get-carro-producto.dto").GetCarroProductoDto>;
     updateProductQuantity(idCarro: number, updateDto: UpdateProductCarro): Promise<UpdateProductCarro>;
     removeProductCarro(idCarro: number, idProducto: number): Promise<boolean>;
-    deleteCarro(idCarro: number): Promise<boolean>;
+    deleteCarro(idCarro: number): Promise<{
+        message: string;
+    }>;
 }
