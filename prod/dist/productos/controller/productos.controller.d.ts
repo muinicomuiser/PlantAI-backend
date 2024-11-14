@@ -8,5 +8,5 @@ export declare class ProductosController {
     getById(id: number): Promise<GetProductoDto>;
     createProduct(createProductoDto: CreateProductoDto): Promise<GetProductoDto>;
     updateProduct(id: number, updateProductoDto: UpdateProductoDto): Promise<GetProductoDto>;
-    deleteOne(id: number): Promise<import("typeorm").DeleteResult>;
+    deleteOne(id: number): Promise<import("../entities/producto.entity").Producto>;
 }

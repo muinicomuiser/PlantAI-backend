@@ -20,6 +20,7 @@ const create_usuario_dto_1 = require("../dto/create-usuario.dto");
 const output_userDTO_1 = require("../dto/output-userDTO");
 const update_usuario_dto_1 = require("../dto/update-usuario.dto");
 const usuarios_service_1 = require("../service/usuarios.service");
+const validar_crear_usuario_pipe_1 = require("../pipe/validar-crear-usuario.pipe");
 let UsuariosController = class UsuariosController {
     constructor(usuariosService) {
         this.usuariosService = usuariosService;
@@ -94,9 +95,17 @@ __decorate([
         status: 400,
         description: 'Error al crear usuario',
     }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'El email ya está registrado',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'El nombre de usuario ya está registrado',
+    }),
     (0, swagger_1.ApiBody)({ type: create_usuario_dto_1.CreateUsuarioDto }),
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)(validar_crear_usuario_pipe_1.ValidarCrearUsuarioPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_usuario_dto_1.CreateUsuarioDto]),
     __metadata("design:returntype", Promise)

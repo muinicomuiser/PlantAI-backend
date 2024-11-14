@@ -3,9 +3,11 @@ import { Repository } from 'typeorm';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
 export declare class ProductosService {
     private readonly productoRepository;
-    constructor(productoRepository: Repository<Producto>);
+    private readonly carroProductoRepository;
+    constructor(productoRepository: Repository<Producto>, carroProductoRepository: Repository<CarroProducto>);
     getById(id: number): Promise<GetProductoDto>;
     getByFilters(): {
         mensaje: string;
@@ -13,5 +15,5 @@ export declare class ProductosService {
     getAll(): Promise<GetProductoDto[]>;
     create(createProductoDto: CreateProductoDto): Promise<GetProductoDto>;
     update(id: number, updateProductoDto: UpdateProductoDto): Promise<GetProductoDto>;
-    deleteOne(id: number): Promise<import("typeorm").DeleteResult>;
+    deleteOne(idProducto: number): Promise<Producto>;
 }

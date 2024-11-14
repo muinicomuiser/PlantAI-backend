@@ -28,6 +28,7 @@ const tipo_insumo_entity_1 = require("./entities/insumos/tipo_insumo.entity");
 const tipo_macetero_entity_1 = require("./entities/maceteros/tipo_macetero.entity");
 const marca_entity_1 = require("../commons/entities/marca.entity");
 const color_entity_1 = require("../commons/entities/color.entity");
+const carro_producto_entity_1 = require("../carro-compras/entities/carro_producto.entity");
 let ProductosModule = class ProductosModule {
 };
 exports.ProductosModule = ProductosModule;
@@ -50,6 +51,7 @@ exports.ProductosModule = ProductosModule = __decorate([
                 tipo_macetero_entity_1.TipoMacetero,
                 marca_entity_1.Marca,
                 color_entity_1.ColorProducto,
+                carro_producto_entity_1.CarroProducto
             ]),
         ],
         controllers: [productos_controller_1.ProductosController, catalogo_controller_1.CatalogoController],
