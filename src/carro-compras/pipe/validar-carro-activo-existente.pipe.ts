@@ -15,17 +15,16 @@ export class ValidarCarroActivoPipe implements PipeTransform {
   constructor(
     @InjectRepository(CarroCompra)
     private readonly carroRepository: Repository<CarroCompra>,
-  ) { }
+  ) {}
 
   async transform(value: any, metadata: ArgumentMetadata) {
-    const carroEncontrado: boolean =
-      await this.carroRepository.existsBy({
-        idUsuario: value,
-        fecha_cierre: IsNull(),
-      })
+    const carroEncontrado: boolean = await this.carroRepository.existsBy({
+      idUsuario: value,
+      fecha_cierre: IsNull(),
+    });
 
     if (carroEncontrado) {
-      throw new BadRequestException('No puede tener más de un carro activo')
+      throw new BadRequestException('No puede tener más de un carro activo');
     }
     return value;
   }

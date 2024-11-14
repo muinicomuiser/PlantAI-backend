@@ -12,4 +12,4 @@ import { Direccion } from './entities/direccion.entity';
   providers: [UsuariosService],
   exports: [UsuariosService],
 })
-export class UsuariosModule { }
+export class UsuariosModule {}

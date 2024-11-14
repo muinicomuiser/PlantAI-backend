@@ -106,7 +106,7 @@ __decorate([
     (0, swagger_1.ApiResponse)({
         status: 204,
         description: 'Usuario actualizado',
-        type: output_userDTO_1.OutputUserDTO
+        type: output_userDTO_1.OutputUserDTO,
     }),
     (0, swagger_1.ApiResponse)({
         status: 400,

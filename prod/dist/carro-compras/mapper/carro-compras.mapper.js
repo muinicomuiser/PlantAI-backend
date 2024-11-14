@@ -19,7 +19,7 @@ class CarroComprasMapper {
         carroDto.carroProductos = this.arrayCarroProductosEntityToDto(carro.carroProductos);
         carroDto.id = carro.id;
         carroDto.idUsuario = carro.idUsuario;
-        carroDto.precioTotal = carroDto.carroProductos.reduce((acumulador, valorActual) => acumulador + (valorActual.producto.precio * valorActual.cantidadProducto), 0);
+        carroDto.precioTotal = carroDto.carroProductos.reduce((acumulador, valorActual) => acumulador + valorActual.producto.precio * valorActual.cantidadProducto, 0);
         return carroDto;
     }
 }

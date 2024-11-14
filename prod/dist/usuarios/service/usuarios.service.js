@@ -16,9 +16,9 @@ exports.UsuariosService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const entitty_to_dto_usuarios_1 = require("../mapper/entitty-to-dto-usuarios");
 const tipo_usuario_entity_1 = require("../entities/tipo_usuario.entity");
 const usuario_entity_1 = require("../entities/usuario.entity");
+const entitty_to_dto_usuarios_1 = require("../mapper/entitty-to-dto-usuarios");
 let UsuariosService = class UsuariosService {
     constructor(usuariosRepository, tipoUsuarioRepository) {
         this.usuariosRepository = usuariosRepository;
@@ -94,11 +94,14 @@ let UsuariosService = class UsuariosService {
         return (0, entitty_to_dto_usuarios_1.toOutputUserDTO)(usuarioActualizado);
     }
     async deleteUser(id) {
-        const usuario = await this.usuariosRepository.findOne({ where: { id } });
+        const usuario = await this.usuariosRepository.findOne({
+            where: { id },
+            relations: { direccion: true },
+        });
         if (!usuario) {
             throw new common_1.NotFoundException(`Usuario con ID ${id} no encontrado`);
         }
-        await this.usuariosRepository.delete(id);
+        await this.usuariosRepository.softDelete(id);
         return { message: `Usuario con ID ${id} eliminado con éxito` };
     }
     findPedidos(idUsuario) {

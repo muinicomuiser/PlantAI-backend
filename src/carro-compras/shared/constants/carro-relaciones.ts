@@ -7,4 +7,3 @@ export const CARRO_RELATIONS = PRODUCTO_RELATIONS.map(
 export const CARRO_PRODUCTOS_RELATIONS = PRODUCTO_RELATIONS.map(
   (relacionProducto) => `producto.${relacionProducto}`,
 );
-

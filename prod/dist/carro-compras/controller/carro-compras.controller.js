@@ -81,7 +81,10 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Crea un carro de compras' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Carro creado' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Error al crear carro. El usuario no puede tener más de un carro activo.' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'Error al crear carro. El usuario no puede tener más de un carro activo.',
+    }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'No existe un usuario con el ID' }),
     (0, common_1.Post)(':idUsuario'),
     __param(0, (0, common_1.Param)('idUsuario', common_1.ParseIntPipe, validar_usuario_existe_pipe_1.ValidarUsuarioExistePipe, validar_carro_activo_existente_pipe_1.ValidarCarroActivoPipe)),
@@ -114,7 +117,10 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualiza la cantidad de un producto determinado' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Cantidad actualizada' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'No ha sido actualizada la cantidad' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'No ha sido actualizada la cantidad',
+    }),
     (0, swagger_1.ApiBody)({ type: update_product_carro_1.UpdateProductCarro }),
     (0, common_1.Patch)('updateProducto/:idCarro'),
     __param(0, (0, common_1.Param)('idCarro', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
@@ -126,7 +132,10 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Elimina un producto del carro' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Producto eliminado del carro' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'El producto no ha podido ser eliminado' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'El producto no ha podido ser eliminado',
+    }),
     (0, common_1.Delete)('remove/:idCarro/:idProducto'),
     __param(0, (0, common_1.Param)('idCarro', common_1.ParseIntPipe, validar_carro_existe_pipe_1.ValidarCarroExistePipe)),
     __param(1, (0, common_1.Param)('idProducto', common_1.ParseIntPipe, validar_producto_existente_pipe_1.ProductoExistentePipe)),

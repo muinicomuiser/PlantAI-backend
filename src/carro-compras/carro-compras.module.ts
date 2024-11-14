@@ -8,8 +8,10 @@ import { CarroProducto } from './entities/carro_producto.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CarroCompra, Producto, CarroProducto, Usuario])],
+  imports: [
+    TypeOrmModule.forFeature([CarroCompra, Producto, CarroProducto, Usuario]),
+  ],
   controllers: [CarroComprasController],
   providers: [CarroComprasService],
 })
-export class CarroComprasModule { }
+export class CarroComprasModule {}

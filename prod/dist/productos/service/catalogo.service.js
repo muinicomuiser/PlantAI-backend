@@ -25,7 +25,7 @@ let CatalogoService = class CatalogoService {
     }
     async findAll(paginacionDto) {
         const { page, pageSize } = paginacionDto;
-        const limit = pageSize || 10;
+        const limit = pageSize;
         const offset = (page - 1) * limit;
         const [result, totalItems] = await this.productoRepository.findAndCount({
             take: limit,

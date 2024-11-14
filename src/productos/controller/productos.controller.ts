@@ -7,16 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 
@@ -52,30 +45,30 @@ export class ProductosController {
 
   // Obtener todos los productos
   // Filtrar por (nombre, familia, fotoperiodo, tipoRiego, petFriendly, color)
-  @ApiOperation({ summary: 'Busca productos por filtros.' })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Devuelve todos los productos que coincidan con los parámetros. Si no hay parámetros, los devuelve todos.',
-    type: GetProductoDto,
-  })
-  @ApiQuery({ name: 'nombre', required: false })
-  @ApiQuery({ name: 'familia', required: false })
-  @ApiQuery({ name: 'fotoperiodo', required: false })
-  @ApiQuery({ name: 'tiporiego', required: false })
-  @ApiQuery({ name: 'petfriendly', enum: ['true', 'false'], required: false })
-  @ApiQuery({ name: 'color', required: false })
-  @Get()
-  getByFilters(
-    @Query('nombre') nombre: string,
-    @Query('familia') familia: string,
-    @Query('fotoperiodo') fotoperiodo: string,
-    @Query('tiporiego') tipoRiego: string,
-    @Query('petfriendly') petFriendly: string,
-    @Query('color') color: string,
-  ) {
-    return this.productosService.getByFilters();
-  }
+  // @ApiOperation({ summary: 'Busca productos por filtros.' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description:
+  //     'Devuelve todos los productos que coincidan con los parámetros. Si no hay parámetros, los devuelve todos.',
+  //   type: GetProductoDto,
+  // })
+  // @ApiQuery({ name: 'nombre', required: false })
+  // @ApiQuery({ name: 'familia', required: false })
+  // @ApiQuery({ name: 'fotoperiodo', required: false })
+  // @ApiQuery({ name: 'tiporiego', required: false })
+  // @ApiQuery({ name: 'petfriendly', enum: ['true', 'false'], required: false })
+  // @ApiQuery({ name: 'color', required: false })
+  // @Get()
+  // getByFilters(
+  //   @Query('nombre') nombre: string,
+  //   @Query('familia') familia: string,
+  //   @Query('fotoperiodo') fotoperiodo: string,
+  //   @Query('tiporiego') tipoRiego: string,
+  //   @Query('petfriendly') petFriendly: string,
+  //   @Query('color') color: string,
+  // ) {
+  //   return this.productosService.getByFilters();
+  // }
 
   // Crear un producto
   @ApiOperation({ summary: 'Crea un producto.' })

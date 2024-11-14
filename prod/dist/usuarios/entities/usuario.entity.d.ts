@@ -19,4 +19,5 @@ export declare class Usuario {
     usuarioMedioPago: UsuarioMedioPago[];
     carros: CarroCompra[];
     pedidos: Pedido[];
+    deletedAt?: Date;
 }

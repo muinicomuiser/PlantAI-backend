@@ -19,6 +19,7 @@ const producto_entity_1 = require("../entities/producto.entity");
 const typeorm_2 = require("typeorm");
 const entity_to_dto_producto_1 = require("../mapper/entity-to-dto-producto");
 const producto_relaciones_1 = require("../shared/constants/producto-relaciones");
+const ent_to_dto_aux_1 = require("../mapper/ent-to-dto-aux");
 let ProductosService = class ProductosService {
     constructor(productoRepository) {
         this.productoRepository = productoRepository;
@@ -39,14 +40,16 @@ let ProductosService = class ProductosService {
         });
         return productos.map((producto) => entity_to_dto_producto_1.ProductoMapper.entityToDto(producto));
     }
-    create() {
-        return { mensaje: 'endpoint en desarrollo' };
+    async create(createProductoDto) {
+        const newProducto = await this.productoRepository.save(createProductoDto);
+        return ent_to_dto_aux_1.ProductoMapperAux.entityToDtoAux(newProducto);
     }
-    update() {
-        return { mensaje: 'endpoint en desarrollo' };
+    async update(id, updateProductoDto) {
+        await this.productoRepository.update(id, updateProductoDto);
+        return this.getById(id);
     }
-    deleteOne(id) {
-        return { mensaje: 'endpoint en desarrollo' };
+    async deleteOne(id) {
+        return this.productoRepository.delete(id);
     }
 };
 exports.ProductosService = ProductosService;

@@ -17,7 +17,7 @@ export class UsuariosService {
     private readonly usuariosRepository: Repository<Usuario>,
     @InjectRepository(TipoUsuario)
     private readonly tipoUsuarioRepository: Repository<TipoUsuario>,
-  ) { }
+  ) {}
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -113,7 +113,10 @@ export class UsuariosService {
   /**Elimina un usuario según su id */
   async deleteUser(id: number): Promise<{ message: string }> {
     //verificar id
-    const usuario = await this.usuariosRepository.findOne({ where: { id }, relations: { direccion: true } });
+    const usuario = await this.usuariosRepository.findOne({
+      where: { id },
+      relations: { direccion: true },
+    });
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }

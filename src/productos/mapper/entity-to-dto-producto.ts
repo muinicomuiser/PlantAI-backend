@@ -58,7 +58,7 @@ export class ProductoMapper {
       };
     }
     if (producto.accesorio) {
-      console.log(producto)
+      console.log(producto);
       productoDto.accesorio = {
         idProducto: producto.accesorio.idProducto,
         idMarca: producto.accesorio.idMarca,

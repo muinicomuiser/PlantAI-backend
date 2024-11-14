@@ -57,16 +57,17 @@ let CarroComprasService = class CarroComprasService {
     async addProductToCarro(idCarro, addProductDto) {
         const stockProducto = await this.productoRepository.findOne({
             where: {
-                id: addProductDto.productoId
-            }
+                id: addProductDto.productoId,
+            },
         });
-        if (!stockProducto || stockProducto.cantidad < addProductDto.cantidadProducto) {
+        if (!stockProducto ||
+            stockProducto.cantidad < addProductDto.cantidadProducto) {
             throw new common_1.BadRequestException('Stock insuficiente');
         }
         let carroProducto = await this.carroProductoRepository.findOne({
             where: {
                 idCarro: idCarro,
-                idProducto: addProductDto.productoId
+                idProducto: addProductDto.productoId,
             },
             relations: [...carro_relaciones_1.CARRO_PRODUCTOS_RELATIONS],
         });
@@ -80,8 +81,7 @@ let CarroComprasService = class CarroComprasService {
                 cantidadProducto: addProductDto.cantidadProducto,
             });
         }
-        ;
-        let carroProductGuardado = await this.carroProductoRepository.save(carroProducto);
+        const carroProductGuardado = await this.carroProductoRepository.save(carroProducto);
         return carro_compras_mapper_1.CarroComprasMapper.carroProductoEntityToDto(carroProductGuardado);
     }
     async updateProductQuantity(idCarro, updateDto) {
@@ -89,16 +89,15 @@ let CarroComprasService = class CarroComprasService {
             where: {
                 idCarro: idCarro,
                 idProducto: updateDto.productoId,
-            }
+            },
         });
         if (!carroProducto) {
             throw new common_1.NotFoundException('Producto no encontrado en el carro');
         }
-        ;
         const stockProducto = await this.productoRepository.findOne({
             where: {
-                id: updateDto.productoId
-            }
+                id: updateDto.productoId,
+            },
         });
         if (!stockProducto || stockProducto.cantidad < updateDto.cantidadProducto) {
             throw new common_1.BadRequestException('Stock insuficiente');
@@ -112,26 +111,25 @@ let CarroComprasService = class CarroComprasService {
             where: {
                 idCarro: idCarro,
                 idProducto: idProducto,
-            }
+            },
         });
         if (!carroProducto) {
             throw new common_1.NotFoundException('Producto no encontrado en carrito');
         }
-        ;
         await this.carroProductoRepository.remove(carroProducto);
         return true;
     }
     async deleteCarro(idCarro) {
         const carroProducto = await this.carroProductoRepository.find({
             where: {
-                idCarro: idCarro
-            }
+                idCarro: idCarro,
+            },
         });
         await this.carroProductoRepository.remove(carroProducto);
         const carroEncontrado = await this.carroComprasRepository.findOne({
             where: {
-                id: idCarro
-            }
+                id: idCarro,
+            },
         });
         await this.carroComprasRepository.remove(carroEncontrado);
         return true;

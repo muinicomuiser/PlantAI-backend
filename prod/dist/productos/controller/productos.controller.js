@@ -17,8 +17,9 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const productos_service_1 = require("../service/productos.service");
 const get_producto_dto_1 = require("../dto/producto/get-producto.dto");
-const create_producto_dto_1 = require("../dto/create-producto.dto");
-const update_producto_dto_1 = require("../dto/update-producto.dto");
+const update_producto_dto_1 = require("../dto/producto/update-producto.dto");
+const create_producto_dto_1 = require("../dto/producto/create-producto.dto");
+const validar_producto_existente_pipe_1 = require("../../carro-compras/pipe/validar-producto-existente.pipe");
 let ProductosController = class ProductosController {
     constructor(productosService) {
         this.productosService = productosService;
@@ -26,14 +27,11 @@ let ProductosController = class ProductosController {
     async getById(id) {
         return await this.productosService.getById(+id);
     }
-    getByFilters(nombre, familia, fotoperiodo, tipoRiego, petFriendly, color) {
-        return this.productosService.getByFilters();
-    }
     createProduct(createProductoDto) {
-        return this.productosService.create();
+        return this.productosService.create(createProductoDto);
     }
     updateProduct(id, updateProductoDto) {
-        return this.productosService.update();
+        return this.productosService.update(id, updateProductoDto);
     }
     deleteOne(id) {
         return this.productosService.deleteOne(id);
@@ -59,30 +57,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductosController.prototype, "getById", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Busca productos por filtros.' }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        description: 'Devuelve todos los productos que coincidan con los parámetros. Si no hay parámetros, los devuelve todos.',
-        type: get_producto_dto_1.GetProductoDto,
-    }),
-    (0, swagger_1.ApiQuery)({ name: 'nombre', required: false }),
-    (0, swagger_1.ApiQuery)({ name: 'familia', required: false }),
-    (0, swagger_1.ApiQuery)({ name: 'fotoperiodo', required: false }),
-    (0, swagger_1.ApiQuery)({ name: 'tiporiego', required: false }),
-    (0, swagger_1.ApiQuery)({ name: 'petfriendly', enum: ['true', 'false'], required: false }),
-    (0, swagger_1.ApiQuery)({ name: 'color', required: false }),
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)('nombre')),
-    __param(1, (0, common_1.Query)('familia')),
-    __param(2, (0, common_1.Query)('fotoperiodo')),
-    __param(3, (0, common_1.Query)('tiporiego')),
-    __param(4, (0, common_1.Query)('petfriendly')),
-    __param(5, (0, common_1.Query)('color')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String]),
-    __metadata("design:returntype", void 0)
-], ProductosController.prototype, "getByFilters", null);
-__decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Crea un producto.' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
@@ -96,7 +70,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_producto_dto_1.CreateProductoDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ProductosController.prototype, "createProduct", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Actualiza un producto.' }),
@@ -110,11 +84,11 @@ __decorate([
     }),
     (0, swagger_1.ApiParam)({ name: 'id', type: Number }),
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', validar_producto_existente_pipe_1.ProductoExistentePipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, update_producto_dto_1.UpdateProductoDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ProductosController.prototype, "updateProduct", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Elimina un producto según su id' }),
@@ -127,7 +101,7 @@ __decorate([
         description: 'No existe un producto con ese id',
     }),
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', validar_producto_existente_pipe_1.ProductoExistentePipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)

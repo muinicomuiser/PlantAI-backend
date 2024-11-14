@@ -38,7 +38,8 @@ export class CarroComprasMapper {
     carroDto.id = carro.id;
     carroDto.idUsuario = carro.idUsuario;
     carroDto.precioTotal = carroDto.carroProductos.reduce(
-      (acumulador, valorActual) => acumulador + (valorActual.producto.precio * valorActual.cantidadProducto),
+      (acumulador, valorActual) =>
+        acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
       0,
     ); /**Comprobar si funciona*/
     return carroDto;

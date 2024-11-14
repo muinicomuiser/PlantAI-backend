@@ -10,7 +10,13 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
@@ -21,7 +27,7 @@ import { UsuariosService } from '../service/usuarios.service';
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) { }
+  constructor(private readonly usuariosService: UsuariosService) {}
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -51,7 +57,9 @@ export class UsuariosController {
     description: 'No hay un usuario con ese id',
   })
   @Get(':id')
-  async findById(@Param('id', ParseIntPipe) id: number): Promise<OutputUserDTO> {
+  async findById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<OutputUserDTO> {
     return await this.usuariosService.findById(id);
   }
 
@@ -79,7 +87,7 @@ export class UsuariosController {
   @ApiResponse({
     status: 204,
     description: 'Usuario actualizado',
-    type: OutputUserDTO
+    type: OutputUserDTO,
   })
   @ApiResponse({
     status: 400,

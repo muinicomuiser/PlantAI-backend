@@ -12,7 +12,7 @@ export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) { }
+  ) {}
 
   /**Retorna todos los productos */
   async findAll(

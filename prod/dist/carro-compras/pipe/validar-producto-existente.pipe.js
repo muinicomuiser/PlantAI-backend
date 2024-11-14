@@ -22,7 +22,9 @@ let ProductoExistentePipe = class ProductoExistentePipe {
         this.productoRepository = productoRepository;
     }
     async transform(value, metadata) {
-        const existe = await this.productoRepository.existsBy({ id: value });
+        const existe = await this.productoRepository.existsBy({
+            id: value,
+        });
         if (!existe) {
             throw new common_1.NotFoundException('No existe el producto');
         }

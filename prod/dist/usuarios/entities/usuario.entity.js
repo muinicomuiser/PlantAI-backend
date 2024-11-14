@@ -80,6 +80,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => pedido_entity_1.Pedido, (pedido) => pedido.usuario),
     __metadata("design:type", Array)
 ], Usuario.prototype, "pedidos", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)({ name: 'fecha_eliminacion' }),
+    __metadata("design:type", Date)
+], Usuario.prototype, "deletedAt", void 0);
 exports.Usuario = Usuario = __decorate([
     (0, typeorm_1.Entity)({ name: 'usuarios' })
 ], Usuario);
