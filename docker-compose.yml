@@ -8,7 +8,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_DATABASE}
     ports:
-      - '3312:3306'
+      - '3312:${DB_PORT}'
 
   flyway:
     image: 'flyway/flyway:${VERSION_FLYWAY}'

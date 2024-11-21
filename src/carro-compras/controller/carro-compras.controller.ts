@@ -24,6 +24,7 @@ import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
 import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 import { CarroComprasService } from '../service/carro-compras.service';
 import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
+import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
@@ -123,7 +124,7 @@ export class CarroComprasController {
   @Patch('updateProducto/:idCarro')
   async updateProductQuantity(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Body() updateDto: UpdateProductCarro,
+    @Body(ProductoExistentePipe<UpdateProductCarro>) updateDto: UpdateProductCarro,
   ) {
     return await this.carroComprasService.updateProductQuantity(
       idCarro,
@@ -145,7 +146,7 @@ export class CarroComprasController {
   @Delete('removeProducto/:idCarro/:idProducto')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
     idProducto: number,
   ) {
     return await this.carroComprasService.removeProductCarro(
@@ -156,8 +157,18 @@ export class CarroComprasController {
 
 
   // - Llenar carro / reemplazar contenido de carro
-  // @Put(':idCarro')
-  // async replaceProductosCarro() {
-  // }
-
+  // Considerar validar productos dentro de un dto
+  @ApiOperation({ summary: 'Reemplaza el contenido de un carro de compras.' })
+  @ApiResponse({ status: 200, description: 'Contenido reemplazado con éxito.', type: [GetCarroProductoDto] })
+  @ApiResponse({ status: 400, description: 'Error al modificar el contenido del carro.' })
+  @ApiResponse({ status: 404, description: 'El producto no existe.' })
+  @ApiBody({ type: UpdateContenidoCarroDto })
+  @Put('replaceProductos/:idCarro')
+  async replaceProductosCarro(
+    @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
+    @Body(ProductoExistentePipe<UpdateContenidoCarroDto>) updateCarroDto: UpdateContenidoCarroDto
+  ): Promise<GetCarroProductoDto[]> {
+    const carroProductosDto: GetCarroProductoDto[] = await this.carroComprasService.replaceProductosCarro(+idCarro, updateCarroDto)
+    return carroProductosDto
+  }
 }

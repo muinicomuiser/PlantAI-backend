@@ -5,9 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
-import { IsNull, Repository } from 'typeorm';
+import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
+import { In, IsNull, Repository } from 'typeorm';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
+import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
 import { UpdateProductCarro } from '../dto/update-product-carro';
 import { CarroCompra } from '../entities/carro.entity';
 import { CarroProducto } from '../entities/carro_producto.entity';
@@ -16,7 +18,7 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import {
   CARRO_RELATIONS,
 } from '../shared/constants/carro-relaciones';
-import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
+import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
 
 @Injectable()
 export class CarroComprasService {
@@ -156,5 +158,34 @@ export class CarroComprasService {
   async deleteCarro(idCarro: number) {
     await this.carroComprasRepository.softDelete(idCarro);
     return { message: `Carro con ID ${idCarro} eliminado con éxito` };
+  }
+
+  async replaceProductosCarro(idCarro: number, updateCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
+    const idsProductos: number[] = updateCarroDto.productosCarro.map(pc => pc.productoId)
+    const productosEncontrados: Producto[] = await this.productoRepository.find({
+      relations: [...PRODUCTO_RELATIONS],
+      where: {
+        id: In(idsProductos)
+      }
+    })
+    await this.carroProductoRepository.delete({
+      idCarro: idCarro
+    })
+    const nuevosCarroProductos: CarroProducto[] = []
+    updateCarroDto.productosCarro.forEach(productoCarro => {
+      const nuevoCarroProducto: CarroProducto = new CarroProducto()
+      nuevoCarroProducto.idCarro = idCarro
+      nuevoCarroProducto.idProducto = productoCarro.productoId
+      nuevoCarroProducto.cantidadProducto = productoCarro.cantidadProducto
+      nuevosCarroProductos.push(nuevoCarroProducto)
+    })
+    console.log(nuevosCarroProductos)
+    await this.carroProductoRepository.save(nuevosCarroProductos);
+
+    nuevosCarroProductos.forEach(carroProducto => {
+      carroProducto.producto = productosEncontrados.find(producto => producto.id == carroProducto.idProducto)
+    })
+    return CarroComprasMapper.arrayCarroProductosEntityToDto(nuevosCarroProductos)
+    // nuevoCarroProducto.producto = productos.find(prod => prod.id == productoCarro.productoId)
   }
 }

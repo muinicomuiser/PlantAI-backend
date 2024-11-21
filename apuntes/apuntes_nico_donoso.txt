@@ -26,7 +26,7 @@ Carro:
             POST /carro-compras/:id_usuario
     
         - Llenar carro / reemplazar contenido de carro
-            PUT /carro-compras/:id_carro
+            PUT /replaceProductos/carro-compras/:id_carro
     
         - Agregar producto a carro
             POST /carro-compras/addProducto/:id_carro
