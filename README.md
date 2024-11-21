@@ -57,24 +57,26 @@ yarn install
 
 1. Completar el archivo .env en la raíz del proyecto,
    configurando las siguientes variables de entorno (tomar el archivo .env.example como referencia):
-
-- PORT: 3000
-- AMBIENTE: dev
-- DB_HOST="localhost"
-- DB_PORT=3308
-- DB_USERNAME="usuarioDev"
-- DB_PASSWORD="contraseña"
-- DB_DATABASE="plantai_db"
+```
+PORT: 3000
+AMBIENTE: dev
+DB_HOST="localhost"
+DB_PORT=3308
+DB_USERNAME="usuarioDev"
+DB_PASSWORD="contraseña"
+DB_DATABASE="plantai_db"
+```
 
 2. En caso que se ejecute en ambiente productivo:
-
-- PORT: 8080
-- AMBIENTE: production
-- DB_HOST="localhost"
-- DB_PORT=3308
-- DB_USERNAME="usuarioProd"
-- DB_PASSWORD="contraseña"
-- DB_DATABASE="plantai_db"
+```
+PORT: 8080
+AMBIENTE: production
+DB_HOST="localhost"
+DB_PORT=3308
+DB_USERNAME="usuarioProd"
+DB_PASSWORD="contraseña"
+DB_DATABASE="plantai_db"
+```
 
 <a name="ejecucion-desarrollo"></a>
 ## 4. Ejecución - Desarrollo
