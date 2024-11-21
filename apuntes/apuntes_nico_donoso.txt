@@ -1,18 +1,41 @@
-Carro:
-    - Al buscar por id Usuario: Retorna el carro activo, donde la fecha_cierre sea null.
-
-    Falta:
-        Un endpoint que cierre un carro, o verificar que ese proceso se haga al crear un pedido a partir de un carro.
 
 Productos:
     Falta:
         Agregar un get de opciones de atributos por categorías. Que devuelva toda la tabla.
 
-Cambios:
-    - Nombres a entidades y dto de Carro
-    - Nombres de scripts sql
-
 Correcciones:
-    A la versión 1.0.2
+    A la versión 1.9.2
         Documentar los campos requeridos y opcionales en el dto de crear usuario
         Validar los campos requeridos y opcionales en el dto de crear usuario
+
+Carro:
+    - Al buscar por id Usuario: Retorna el carro activo, donde la fecha_cierre sea null.
+
+    Estructura propuesta:
+
+        - Obtener por id
+            GET /carro-compras/:id
+    
+        - Obtener por id_usuario
+            GET /carro-compras/user/:id
+    
+        - Eliminar por id
+            DELETE /carro-compras/:id
+    
+        - Crear un carro nuevo a un usuario
+            POST /carro-compras/:id_usuario
+    
+        - Llenar carro / reemplazar contenido de carro
+            PUT /carro-compras/:id_carro
+    
+        - Agregar producto a carro
+            POST /carro-compras/addProducto/:id_carro
+    
+        - Actualizar cantidad de producto
+            PATCH /carro-compras/updateProducto/:id_carro
+    
+        - Eliminar producto de carro
+            DELETE /carro-compras/removeProducto/:id_carro
+
+    Falta:
+        Un endpoint que cierre un carro, o verificar que ese proceso se haga al crear un pedido a partir de un carro.

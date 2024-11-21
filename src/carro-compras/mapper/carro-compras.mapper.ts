@@ -32,16 +32,21 @@ export class CarroComprasMapper {
    */
   static carroEntityToDto(carro: CarroCompra): GetCarroComprasDto {
     const carroDto: GetCarroComprasDto = new GetCarroComprasDto();
-    carroDto.carroProductos = this.arrayCarroProductosEntityToDto(
-      carro.carroProductos,
-    );
     carroDto.id = carro.id;
     carroDto.idUsuario = carro.idUsuario;
-    carroDto.precioTotal = carroDto.carroProductos.reduce(
-      (acumulador, valorActual) =>
-        acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
-      0,
-    ); /**Comprobar si funciona*/
+    if (carro.carroProductos) {
+      carroDto.carroProductos = this.arrayCarroProductosEntityToDto(
+        carro.carroProductos,
+      );
+      carroDto.precioTotal = carroDto.carroProductos.reduce(
+        (acumulador, valorActual) =>
+          acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
+        0,
+      ); /**Comprobar si funciona*/
+    }
+    else {
+      carroDto.carroProductos = []
+    }
     return carroDto;
   }
 }

@@ -26,11 +26,6 @@ services:
     environment:
       - PORT=${API_PORT}
       - AMBIENTE=${AMBIENTE}
-      # - DB_HOST=${DB_HOST}
-      # - DB_PORT=${DB_PORT}
-      # - DB_USERNAME=${DB_USERNAME}
-      # - DB_PASSWORD=${DB_PASSWORD}
-      # - DB_DATABASE=${DB_DATABASE}
     ports:
       - '3000:${API_PORT}'
     command: 'yarn start:dev'

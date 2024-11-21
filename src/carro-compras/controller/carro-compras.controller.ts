@@ -7,30 +7,29 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
-  ApiParam,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { CreateCarroCompraDto } from '../dto/create-carro-compra.dto';
-import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
-import { UpdateCarroCompraDto } from '../dto/update-carro-compra.dto';
-import { CarroComprasService } from '../service/carro-compras.service';
-import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
-import { AddProductCarro } from '../dto/add-product-carro';
-import { UpdateProductCarro } from '../dto/update-product-carro';
-import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
-import { ValidarCarroActivoPipe } from '../pipe/validar-carro-activo-existente.pipe';
 import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
+import { AddProductCarro } from '../dto/add-product-carro';
+import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
+import { UpdateProductCarro } from '../dto/update-product-carro';
+import { ValidarCarroActivoPipe } from '../pipe/validar-carro-activo-existente.pipe';
+import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
+import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
+import { CarroComprasService } from '../service/carro-compras.service';
+import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) {}
+  constructor(private readonly carroComprasService: CarroComprasService) { }
 
   // Obtener carro de compras por id
   @ApiOperation({ summary: 'Busca un carro de compras por id' })
@@ -68,7 +67,7 @@ export class CarroComprasController {
 
   // Crear carro de compras
   @ApiOperation({ summary: 'Crea un carro de compras' })
-  @ApiResponse({ status: 201, description: 'Carro creado' })
+  @ApiResponse({ status: 201, description: 'Carro creado', type: GetCarroComprasDto })
   @ApiResponse({
     status: 400,
     description:
@@ -89,7 +88,7 @@ export class CarroComprasController {
   }
 
   // Eliminar carro de compras
-  @ApiOperation({ summary: 'Borra un carro de compras' })
+  @ApiOperation({ summary: 'Elimina un carro de compras' })
   @ApiResponse({ status: 200, description: 'Carro borrado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Delete(':id')
@@ -100,10 +99,10 @@ export class CarroComprasController {
   }
 
   @ApiOperation({ summary: 'Agrega un producto al carro de compras' })
-  @ApiResponse({ status: 201, description: 'Producto agregado' })
+  @ApiResponse({ status: 201, description: 'Producto agregado', type: GetCarroProductoDto })
   @ApiResponse({ status: 400, description: 'Producto no ha sido agregado' })
   @ApiBody({ type: AddProductCarro })
-  @Post('add/:idCarro')
+  @Post('addProducto/:idCarro')
   async addProductToCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
     @Body() addProductDto: AddProductCarro,
@@ -138,7 +137,12 @@ export class CarroComprasController {
     status: 400,
     description: 'El producto no ha podido ser eliminado',
   })
-  @Delete('remove/:idCarro/:idProducto')
+  @ApiResponse({
+    status: 404,
+    description: 'Carro o producto no encontrado',
+  })
+
+  @Delete('removeProducto/:idCarro/:idProducto')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
@@ -149,4 +153,11 @@ export class CarroComprasController {
       idProducto,
     );
   }
+
+
+  // - Llenar carro / reemplazar contenido de carro
+  // @Put(':idCarro')
+  // async replaceProductosCarro() {
+  // }
+
 }
