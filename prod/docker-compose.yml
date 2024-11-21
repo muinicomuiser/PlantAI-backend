@@ -5,28 +5,23 @@ services:
     volumes:
       - ./db/data_prod:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=clave123
-      - MYSQL_DATABASE=plantai_db
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
     ports:
-      - '3312:3306'
+      - '3312:${DB_PORT}'
 
   flyway:
     image: 'flyway/flyway:${VERSION_FLYWAY}'
     volumes:
       - ./sql:/flyway/sql
-    command: -url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE} -user=${DB_USERNAME} -password=${DB_PASSWORD} -connectRetries=60 migrate
+    command: [ '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false', '-user=${DB_USERNAME}', '-password=${DB_PASSWORD}', '-connectRetries=60', 'migrate' ]
 
   cotiledon-prod:
     image: nicolasf1/cotiledonapp:1.9.2
     depends_on:
       - database-prod
     environment:
-      - PORT=${API_PORT}
       - AMBIENTE=${AMBIENTE}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_DATABASE}
+      - PORT=${API_PORT}
     ports:
       - '8080:${API_PORT}'
