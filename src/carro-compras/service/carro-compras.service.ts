@@ -137,32 +137,34 @@ export class CarroComprasService {
   }
 
 
-  /*********REVISAR*************************************************
-   * Si el método addProducto permite sumar la cantidad al agregar un producto repetido, significa que
-   * en front ven dos pestañas con el mismo producto o no??
-   * En ese caso, si tienen el mismo producto dos veces, uno con 3 y uno con 4 unidades,
-   * si quieren eliminar el de 3 unidades, el método removeProductCarro va a eliminar los dos.
-   * Confirmar con front y mobile.
-   * Posible solución: que el path sea 'removeProducto/:idCarro/:idProducto/:cantidad'
-   * O que en el body vaya un UpdateProductCarro, y si la cantidad es igual o mayor, se elimina, con path removeProducto/:idCarro
-   *************************************/
-  async removeProductCarro(idCarro: number, idProducto: number) {
-    const carroProducto = await this.carroProductoRepository.findOne({
-      where: {
-        idCarro: idCarro,
-        idProducto: idProducto,
-      },
-    });
+  async removeProductCarro(idCarro: number, updateProductoCarro: UpdateProductCarro): Promise<UpdateProductCarro> {
+    try {
+      const carroProducto = await this.carroProductoRepository.findOne({
+        where: {
+          idCarro: idCarro,
+          idProducto: updateProductoCarro.productoId,
+        },
+        relations: [...CARRO_PRODUCTOS_RELATIONS]
+      });
 
-    if (!carroProducto) {
-      throw new NotFoundException('Producto no encontrado en carro');
+      if (!carroProducto) {
+        throw new NotFoundException('Producto no encontrado en carro');
+      }
+      if (carroProducto.cantidadProducto <= updateProductoCarro.cantidadProducto) {
+        await this.carroProductoRepository.remove(carroProducto);
+      }
+      else {
+        carroProducto.cantidadProducto -= updateProductoCarro.cantidadProducto
+        this.carroProductoRepository.save(carroProducto)
+      }
+      return updateProductoCarro;
     }
-
-    await this.carroProductoRepository.remove(carroProducto);
-    return true;
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException(error.message)
+    }
   }
 
-  //Implementar para usuario administrador
   async deleteCarro(idCarro: number) {
     await this.carroComprasRepository.softDelete(idCarro);
     return { message: `Carro con ID ${idCarro} eliminado con éxito` };

@@ -48,10 +48,7 @@ export class CarroComprasController {
   }
 
   // Obtener carro de compras por id de usuario
-  /**Validar que usuario existe y que carro existe.
-   * Son todos los carros o solo el activo?
-   * Se asume que este método solo trae el carro activo
-   */
+  // Se asume que este método solo trae el carro activo
   @ApiOperation({ summary: 'Busca un carro de compras por id de usuario' })
   @ApiResponse({
     status: 200,
@@ -99,6 +96,7 @@ export class CarroComprasController {
     return this.carroComprasService.deleteCarro(idCarro);
   }
 
+  // - Agregar producto al carro
   @ApiOperation({ summary: 'Agrega un producto al carro de compras' })
   @ApiResponse({ status: 201, description: 'Producto agregado', type: GetCarroProductoDto })
   @ApiResponse({ status: 400, description: 'Producto no ha sido agregado' })
@@ -114,6 +112,7 @@ export class CarroComprasController {
     );
   }
 
+  // - Cambiar cantidad de producto de carro
   @ApiOperation({ summary: 'Actualiza la cantidad de un producto determinado' })
   @ApiResponse({ status: 200, description: 'Cantidad actualizada' })
   @ApiResponse({
@@ -132,8 +131,9 @@ export class CarroComprasController {
     );
   }
 
+  // - Remover producto del carro
   @ApiOperation({ summary: 'Elimina un producto del carro' })
-  @ApiResponse({ status: 201, description: 'Producto eliminado del carro' })
+  @ApiResponse({ status: 201, description: 'Producto eliminado del carro', type: UpdateProductCarro })
   @ApiResponse({
     status: 400,
     description: 'El producto no ha podido ser eliminado',
@@ -142,16 +142,18 @@ export class CarroComprasController {
     status: 404,
     description: 'Carro o producto no encontrado',
   })
-
+  @ApiBody({ type: UpdateProductCarro })
   @Delete('removeProducto/:idCarro')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
-    idProducto: number,
-  ) {
+    @Body(ProductoExistentePipe<UpdateProductCarro>) updateProductoCarro: UpdateProductCarro
+    // @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
+    // idProducto: number,
+  ): Promise<UpdateProductCarro> {
     return await this.carroComprasService.removeProductCarro(
       idCarro,
-      idProducto,
+      updateProductoCarro
+      // idProducto,
     );
   }
 
