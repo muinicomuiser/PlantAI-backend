@@ -143,7 +143,7 @@ export class CarroComprasController {
     description: 'Carro o producto no encontrado',
   })
 
-  @Delete('removeProducto/:idCarro/:idProducto')
+  @Delete('removeProducto/:idCarro')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
@@ -157,7 +157,6 @@ export class CarroComprasController {
 
 
   // - Llenar carro / reemplazar contenido de carro
-  // Considerar validar productos dentro de un dto
   @ApiOperation({ summary: 'Reemplaza el contenido de un carro de compras.' })
   @ApiResponse({ status: 200, description: 'Contenido reemplazado con éxito.', type: [GetCarroProductoDto] })
   @ApiResponse({ status: 400, description: 'Error al modificar el contenido del carro.' })

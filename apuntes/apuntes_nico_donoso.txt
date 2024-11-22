@@ -10,6 +10,13 @@ Correcciones:
 
 Carro:
     - Al buscar por id Usuario: Retorna el carro activo, donde la fecha_cierre sea null.
+    - Al reemplazar un carro y enviar productos repetidos, los junta en un mismo registro.
+    - Cambio contenido en la versión 1.10.0
+        Eliminar producto de carro
+        Delete  /carro-compras/removeProducto/:id_carro
+        Ahora tendrá body tipo UpdateProductCarro. Se restará la cantidad y si la cantidad entrante coincide con la registrada, se elimina el registro.
+        Esto para permitir que los carros guardados en local puedan contener productos repetidos y que al eliminar uno no se borre el registro completo del 
+        producto en Back.
 
     Estructura propuesta:
 

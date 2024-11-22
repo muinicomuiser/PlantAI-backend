@@ -32,7 +32,7 @@ export class CarroComprasService {
   ) { }
 
   //Implementar para usuario administrador
-  async createCarro(idUsuario: number) /* : Promise<GetCarroComprasDto> */ {
+  async createCarro(idUsuario: number): Promise<GetCarroComprasDto> {
     const nuevoCarro = new CarroCompra(idUsuario);
     const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
     return CarroComprasMapper.carroEntityToDto(carroGuardado);
@@ -69,20 +69,20 @@ export class CarroComprasService {
   }
 
   async addProductToCarro(idCarro: number, addProductDto: AddProductCarro) {
-    //verificar stock disponible
-    const stockProducto = await this.productoRepository.findOne({
+    const producto = await this.productoRepository.findOne({
       where: {
         id: addProductDto.productoId,
       },
       relations: [...PRODUCTO_RELATIONS]
     });
 
-    if (
-      !stockProducto ||
-      stockProducto.cantidad < addProductDto.cantidadProducto
-    ) {
-      throw new BadRequestException('Stock insuficiente');
-    }
+    /////El stock del carro se verificará en Front y Mobile
+    // if (
+    //   !producto ||
+    //   producto.cantidad < addProductDto.cantidadProducto
+    // ) {
+    //   throw new BadRequestException('Stock insuficiente');
+    // }
 
     //busca en el carro si ya existe un producto agregado
     let carroProducto = await this.carroProductoRepository.findOne({
@@ -104,7 +104,7 @@ export class CarroComprasService {
     }
     const carroProductGuardado =
       await this.carroProductoRepository.save(carroProducto);
-    carroProductGuardado.producto = stockProducto
+    carroProductGuardado.producto = producto
     return CarroComprasMapper.carroProductoEntityToDto(carroProductGuardado);
   }
 
@@ -120,24 +120,32 @@ export class CarroComprasService {
     if (!carroProducto) {
       throw new NotFoundException('Producto no encontrado en el carro');
     }
-    //verificar stock disponible
-    const stockProducto = await this.productoRepository.findOne({
+    const producto = await this.productoRepository.findOne({
       where: {
         id: updateDto.productoId,
       },
       relations: [...PRODUCTO_RELATIONS]
     });
-
-    if (!stockProducto || stockProducto.cantidad < updateDto.cantidadProducto) {
-      throw new BadRequestException('Stock insuficiente');
-    }
+    /////El stock del carro se verificará en Front y Mobile
+    // if (!producto || producto.cantidad < updateDto.cantidadProducto) {
+    //   throw new BadRequestException('Stock insuficiente');
+    // }
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
     const carroProductoActualizado = await this.carroProductoRepository.save(carroProducto);
-    carroProductoActualizado.producto = stockProducto
+    carroProductoActualizado.producto = producto
     return CarroComprasMapper.carroProductoEntityToDto(carroProductoActualizado)
-    // return updateDto;
   }
 
+
+  /*********REVISAR*************************************************
+   * Si el método addProducto permite sumar la cantidad al agregar un producto repetido, significa que
+   * en front ven dos pestañas con el mismo producto o no??
+   * En ese caso, si tienen el mismo producto dos veces, uno con 3 y uno con 4 unidades,
+   * si quieren eliminar el de 3 unidades, el método removeProductCarro va a eliminar los dos.
+   * Confirmar con front y mobile.
+   * Posible solución: que el path sea 'removeProducto/:idCarro/:idProducto/:cantidad'
+   * O que en el body vaya un UpdateProductCarro, y si la cantidad es igual o mayor, se elimina, con path removeProducto/:idCarro
+   *************************************/
   async removeProductCarro(idCarro: number, idProducto: number) {
     const carroProducto = await this.carroProductoRepository.findOne({
       where: {
@@ -161,31 +169,58 @@ export class CarroComprasService {
   }
 
   async replaceProductosCarro(idCarro: number, updateCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
-    const idsProductos: number[] = updateCarroDto.productosCarro.map(pc => pc.productoId)
-    const productosEncontrados: Producto[] = await this.productoRepository.find({
-      relations: [...PRODUCTO_RELATIONS],
-      where: {
-        id: In(idsProductos)
+    try {
+      const idProductos: number[] = updateCarroDto.productosCarro.map(productoCarro => productoCarro.productoId)
+      if (idProductos.length == 0) {
+        return []
       }
-    })
-    await this.carroProductoRepository.delete({
-      idCarro: idCarro
-    })
-    const nuevosCarroProductos: CarroProducto[] = []
-    updateCarroDto.productosCarro.forEach(productoCarro => {
-      const nuevoCarroProducto: CarroProducto = new CarroProducto()
-      nuevoCarroProducto.idCarro = idCarro
-      nuevoCarroProducto.idProducto = productoCarro.productoId
-      nuevoCarroProducto.cantidadProducto = productoCarro.cantidadProducto
-      nuevosCarroProductos.push(nuevoCarroProducto)
-    })
-    console.log(nuevosCarroProductos)
-    await this.carroProductoRepository.save(nuevosCarroProductos);
+      /**Verificar productos repetidos */
+      const setIds: Set<Number> = new Set(idProductos)
+      if (setIds.size !== idProductos.length) {
+        const carroProductosFiltrados: UpdateProductCarro[] = []
+        setIds.forEach(id => {
+          const carroProductosPorId: UpdateProductCarro[] = updateCarroDto.productosCarro.filter(producto => producto.productoId == id)
+          if (carroProductosPorId.length == 1) {
+            carroProductosFiltrados.push(carroProductosPorId[0])
+          }
+          else {
+            carroProductosPorId[0].cantidadProducto = carroProductosPorId.reduce(
+              (acumulador, valorActual) =>
+                acumulador + valorActual.cantidadProducto,
+              0,
+            )
+            carroProductosFiltrados.push(carroProductosPorId[0])
+          }
+        })
+        updateCarroDto.productosCarro = carroProductosFiltrados
+      }
 
-    nuevosCarroProductos.forEach(carroProducto => {
-      carroProducto.producto = productosEncontrados.find(producto => producto.id == carroProducto.idProducto)
-    })
-    return CarroComprasMapper.arrayCarroProductosEntityToDto(nuevosCarroProductos)
-    // nuevoCarroProducto.producto = productos.find(prod => prod.id == productoCarro.productoId)
+      /**Obtener productos actualizados del carro */
+      const productosEncontrados: Producto[] = await this.productoRepository.find({
+        relations: [...PRODUCTO_RELATIONS],
+        where: {
+          id: In(idProductos)
+        }
+      })
+      await this.carroProductoRepository.delete({
+        idCarro: idCarro
+      })
+      const nuevosCarroProductos: CarroProducto[] = updateCarroDto.productosCarro.map(productoCarro => {
+        const nuevoCarroProducto: CarroProducto = new CarroProducto()
+        nuevoCarroProducto.idCarro = idCarro
+        nuevoCarroProducto.idProducto = productoCarro.productoId
+        nuevoCarroProducto.cantidadProducto = productoCarro.cantidadProducto
+        return nuevoCarroProducto
+      })
+      await this.carroProductoRepository.save(nuevosCarroProductos);
+      nuevosCarroProductos.forEach(carroProducto => {
+        carroProducto.producto = productosEncontrados.find(producto => producto.id == carroProducto.idProducto)
+      })
+      return CarroComprasMapper.arrayCarroProductosEntityToDto(nuevosCarroProductos)
+    }
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al reemplazar contenido del carro')
+    }
   }
 }
