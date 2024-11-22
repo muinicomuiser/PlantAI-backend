@@ -18,18 +18,18 @@ Carro:
         Esto para permitir que los carros guardados en local puedan contener productos repetidos y que al eliminar uno no se borre el registro completo del 
         producto en Back.
 
-    Estructura propuesta:
+    Estructura carro propuesta:
 
-        - Obtener por id
+        - Obtener carro por id
             GET /carro-compras/:id
     
-        - Obtener por id_usuario
+        - Obtener carro por id_usuario
             GET /carro-compras/user/:id
     
-        - Eliminar por id
+        - Eliminar carro por id
             DELETE /carro-compras/:id
     
-        - Crear un carro nuevo a un usuario
+        - Crear carro nuevo vacío a un usuario
             POST /carro-compras/:id_usuario
     
         - Llenar carro / reemplazar contenido de carro
@@ -41,7 +41,7 @@ Carro:
         - Actualizar cantidad de producto
             PATCH /carro-compras/updateProducto/:id_carro
     
-        - Eliminar producto de carro
+        - Eliminar producto de carro / restar cantidad de producto
             DELETE /carro-compras/removeProducto/:id_carro
 
     Falta:
