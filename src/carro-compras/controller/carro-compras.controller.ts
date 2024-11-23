@@ -64,6 +64,10 @@ export class CarroComprasController {
     description: 'Retorna todos los carros',
     type: [GetCarroComprasDto],
   })
+  @ApiResponse({
+    status: 404,
+    description: 'No existe el usuario.',
+  })
   @ApiQuery({ name: 'idUsuario', type: Number, required: false })
   @ApiQuery({ name: 'estado', enum: EstadoCarro, required: false })
   @Get()
