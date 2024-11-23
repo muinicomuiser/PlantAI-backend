@@ -17,8 +17,11 @@ Carro:
         Ahora tendrá body tipo UpdateProductCarro. Se restará la cantidad y si la cantidad entrante coincide con la registrada, se elimina el registro.
         Esto para permitir que los carros guardados en local puedan contener productos repetidos y que al eliminar uno no se borre el registro completo del 
         producto en Back.
-
+    - Ahora los get.carro.dto mostrarán la fecha de creación y de cierre
+    
     Estructura carro propuesta:
+        - Obtener todos los carros activos e inactivos. Filtrar por usuario
+            GET /carro-compras 'query'
 
         - Obtener carro por id
             GET /carro-compras/:id

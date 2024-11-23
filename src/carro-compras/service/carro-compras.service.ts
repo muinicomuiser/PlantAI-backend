@@ -6,10 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { In, IsNull, Repository } from 'typeorm';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
 import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
+import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
 import { UpdateProductCarro } from '../dto/update-product-carro';
 import { CarroCompra } from '../entities/carro.entity';
 import { CarroProducto } from '../entities/carro_producto.entity';
@@ -18,7 +20,6 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import {
   CARRO_RELATIONS,
 } from '../shared/constants/carro-relaciones';
-import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
 
 @Injectable()
 export class CarroComprasService {
@@ -29,6 +30,8 @@ export class CarroComprasService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
     private readonly carroProductoRepository: Repository<CarroProducto>,
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
   ) { }
 
   //Implementar para usuario administrador
@@ -48,6 +51,31 @@ export class CarroComprasService {
         relations: ['carroProductos', ...CARRO_RELATIONS],
       });
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
+  }
+
+  async findAll(idUsuario?: number): Promise<GetCarroComprasDto[]> {
+    let encontrados: CarroCompra[];
+    if (idUsuario) {
+      const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
+      if (usuarioExiste) {
+        encontrados = await this.carroComprasRepository.find({
+          where: {
+            idUsuario: idUsuario,
+          },
+          relations: [...CARRO_RELATIONS]
+        })
+      }
+      else {
+        throw new NotFoundException('No existe un usuario asociado a ese id.')
+      }
+    }
+    else {
+      encontrados = await this.carroComprasRepository.find({
+        relations: [...CARRO_RELATIONS]
+      })
+    }
+    return CarroComprasMapper.arrayCarroEntityToDto(encontrados)
+
   }
 
   /**Retorna un DTO del carro de compras activo de un usuario según su id. */

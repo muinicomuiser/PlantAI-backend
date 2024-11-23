@@ -4,14 +4,18 @@ import {
   Delete,
   Get,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
   Put,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
@@ -25,6 +29,7 @@ import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 import { CarroComprasService } from '../service/carro-compras.service';
 import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
 import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
+import { QueryCarroDto } from '../dto/get-query-carro.dto';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 @ApiTags('Carro de compras')
@@ -32,8 +37,11 @@ import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
 export class CarroComprasController {
   constructor(private readonly carroComprasService: CarroComprasService) { }
 
+
+
+
   // Obtener carro de compras por id
-  @ApiOperation({ summary: 'Busca un carro de compras por id' })
+  @ApiOperation({ summary: 'Admin. Busca un carro de compras por id' })
   @ApiResponse({
     status: 200,
     description: 'Carro encontrado',
@@ -47,9 +55,21 @@ export class CarroComprasController {
     return await this.carroComprasService.findByCarroId(+id);
   }
 
+  // Obtener todos los carros activos e inactivos. Filtrar por usuario.
+  @ApiOperation({ summary: 'Admin. Obtener todos los carros activos y cerrados. Permite filtrar por id de usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna todos los carros',
+    type: [GetCarroComprasDto],
+  })
+  @ApiQuery({ name: 'idUsuario', type: Number, required: false })
+  @Get()
+  async obtenerTodos(@Query() { idUsuario }: QueryCarroDto): Promise<GetCarroComprasDto[]> {
+    return await this.carroComprasService.findAll(idUsuario)
+  }
   // Obtener carro de compras por id de usuario
   // Se asume que este método solo trae el carro activo
-  @ApiOperation({ summary: 'Busca un carro de compras por id de usuario' })
+  @ApiOperation({ summary: 'Cliente. Busca el carro activo de un usuario según id de usuario' })
   @ApiResponse({
     status: 200,
     description: 'Carro encontrado',
@@ -64,7 +84,7 @@ export class CarroComprasController {
   }
 
   // Crear carro de compras
-  @ApiOperation({ summary: 'Crea un carro de compras' })
+  @ApiOperation({ summary: 'Admin. Crea un nuevo carro de compras para un usuario.' })
   @ApiResponse({ status: 201, description: 'Carro creado', type: GetCarroComprasDto })
   @ApiResponse({
     status: 400,
@@ -86,7 +106,7 @@ export class CarroComprasController {
   }
 
   // Eliminar carro de compras
-  @ApiOperation({ summary: 'Elimina un carro de compras' })
+  @ApiOperation({ summary: 'Admin. Elimina un carro de compras' })
   @ApiResponse({ status: 200, description: 'Carro borrado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Delete(':id')
@@ -97,7 +117,7 @@ export class CarroComprasController {
   }
 
   // - Agregar producto al carro
-  @ApiOperation({ summary: 'Agrega un producto al carro de compras' })
+  @ApiOperation({ summary: 'Cliente. Agrega un producto al carro de compras' })
   @ApiResponse({ status: 201, description: 'Producto agregado', type: GetCarroProductoDto })
   @ApiResponse({ status: 400, description: 'Producto no ha sido agregado' })
   @ApiBody({ type: AddProductCarro })
@@ -113,7 +133,7 @@ export class CarroComprasController {
   }
 
   // - Cambiar cantidad de producto de carro
-  @ApiOperation({ summary: 'Actualiza la cantidad de un producto determinado' })
+  @ApiOperation({ summary: 'Cliente. Actualiza la cantidad de un producto determinado' })
   @ApiResponse({ status: 200, description: 'Cantidad actualizada' })
   @ApiResponse({
     status: 400,
@@ -132,7 +152,7 @@ export class CarroComprasController {
   }
 
   // - Remover producto del carro
-  @ApiOperation({ summary: 'Elimina un producto del carro' })
+  @ApiOperation({ summary: 'Cliente. Remueve un producto del carro' })
   @ApiResponse({ status: 201, description: 'Producto eliminado del carro', type: UpdateProductCarro })
   @ApiResponse({
     status: 400,
@@ -159,7 +179,7 @@ export class CarroComprasController {
 
 
   // - Llenar carro / reemplazar contenido de carro
-  @ApiOperation({ summary: 'Reemplaza el contenido de un carro de compras.' })
+  @ApiOperation({ summary: 'Cliente. Reemplaza el contenido de un carro de compras.' })
   @ApiResponse({ status: 200, description: 'Contenido reemplazado con éxito.', type: [GetCarroProductoDto] })
   @ApiResponse({ status: 400, description: 'Error al modificar el contenido del carro.' })
   @ApiResponse({ status: 404, description: 'El producto no existe.' })

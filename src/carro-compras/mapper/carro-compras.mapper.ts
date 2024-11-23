@@ -42,11 +42,17 @@ export class CarroComprasMapper {
         (acumulador, valorActual) =>
           acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
         0,
-      ); /**Comprobar si funciona*/
+      );
     }
     else {
       carroDto.carroProductos = []
     }
+    carroDto.fecha_cierre = carro.fecha_cierre
+    carroDto.fecha_creacion = carro.fecha_creacion
     return carroDto;
+  }
+
+  static arrayCarroEntityToDto(carros: CarroCompra[]): GetCarroComprasDto[] {
+    return carros.map(carro => CarroComprasMapper.carroEntityToDto(carro))
   }
 }
