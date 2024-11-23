@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { In, IsNull, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
 import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
@@ -20,6 +20,7 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import {
   CARRO_RELATIONS,
 } from '../shared/constants/carro-relaciones';
+import { EstadoCarro } from '../dto/estado-carro.enum';
 
 @Injectable()
 export class CarroComprasService {
@@ -53,29 +54,60 @@ export class CarroComprasService {
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
   }
 
-  async findAll(idUsuario?: number): Promise<GetCarroComprasDto[]> {
+  async findAll(idUsuario?: number, estado?: EstadoCarro): Promise<GetCarroComprasDto[]> {
     let encontrados: CarroCompra[];
-    if (idUsuario) {
-      const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
-      if (usuarioExiste) {
+    console.log(estado)
+    console.log(idUsuario)
+    try {
+      if (idUsuario && estado) {
+        const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
+        if (usuarioExiste) {
+          encontrados = await this.carroComprasRepository.find({
+            where: {
+              idUsuario: idUsuario,
+              fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
+            },
+            relations: [...CARRO_RELATIONS]
+          })
+        }
+        else {
+          throw new NotFoundException('No existe un usuario asociado a ese id.')
+        }
+      }
+      else if (estado) {
         encontrados = await this.carroComprasRepository.find({
           where: {
-            idUsuario: idUsuario,
+            fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
           },
           relations: [...CARRO_RELATIONS]
         })
       }
-      else {
-        throw new NotFoundException('No existe un usuario asociado a ese id.')
+      else if (idUsuario) {
+        const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
+        if (usuarioExiste) {
+          encontrados = await this.carroComprasRepository.find({
+            where: {
+              idUsuario: idUsuario,
+            },
+            relations: [...CARRO_RELATIONS]
+          })
+        }
+        else {
+          throw new NotFoundException('No existe un usuario asociado a ese id.')
+        }
       }
-    }
-    else {
-      encontrados = await this.carroComprasRepository.find({
-        relations: [...CARRO_RELATIONS]
-      })
-    }
-    return CarroComprasMapper.arrayCarroEntityToDto(encontrados)
+      else {
 
+        encontrados = await this.carroComprasRepository.find({
+          relations: [...CARRO_RELATIONS]
+        })
+      }
+      return CarroComprasMapper.arrayCarroEntityToDto(encontrados)
+    }
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al obtener carros.', error)
+    }
   }
 
   /**Retorna un DTO del carro de compras activo de un usuario según su id. */

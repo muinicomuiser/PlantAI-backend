@@ -1,9 +1,10 @@
-import { IsBooleanString, IsInt, IsNumberString, IsOptional } from "class-validator";
+import { IsBooleanString, IsEnum, IsInt, IsNumberString, IsOptional } from "class-validator";
+import { EstadoCarro } from "./estado-carro.enum";
 
 export class QueryCarroDto {
-    @IsBooleanString()
+    @IsEnum(EstadoCarro)
     @IsOptional()
-    activo?: boolean | undefined;
+    estado?: EstadoCarro;
 
     @IsNumberString({ no_symbols: true })
     @IsOptional()
