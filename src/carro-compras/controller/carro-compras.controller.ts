@@ -68,10 +68,14 @@ export class CarroComprasController {
     status: 404,
     description: 'No existe el usuario.',
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Estado de query incorrecto.',
+  })
   @ApiQuery({ name: 'idUsuario', type: Number, required: false })
   @ApiQuery({ name: 'estado', enum: EstadoCarro, required: false })
   @Get()
-  async obtenerTodos(@Query() { idUsuario }: QueryCarroDto, @Query() { estado }: QueryCarroDto): Promise<GetCarroComprasDto[]> {
+  async obtenerTodos(@Query(ValidarUsuarioExistePipe) { idUsuario }: QueryCarroDto, @Query() { estado }: QueryCarroDto): Promise<GetCarroComprasDto[]> {
     return await this.carroComprasService.findAll(idUsuario, estado)
   }
 

@@ -56,8 +56,6 @@ export class CarroComprasService {
 
   async findAll(idUsuario?: number, estado?: EstadoCarro): Promise<GetCarroComprasDto[]> {
     let encontrados: CarroCompra[];
-    console.log(estado)
-    console.log(idUsuario)
     try {
       if (idUsuario && estado) {
         const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
