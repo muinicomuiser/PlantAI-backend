@@ -58,19 +58,13 @@ export class CarroComprasService {
     let encontrados: CarroCompra[];
     try {
       if (idUsuario && estado) {
-        const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
-        if (usuarioExiste) {
-          encontrados = await this.carroComprasRepository.find({
-            where: {
-              idUsuario: idUsuario,
-              fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
-            },
-            relations: [...CARRO_RELATIONS]
-          })
-        }
-        else {
-          throw new NotFoundException('No existe un usuario asociado a ese id.')
-        }
+        encontrados = await this.carroComprasRepository.find({
+          where: {
+            idUsuario: idUsuario,
+            fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
+          },
+          relations: [...CARRO_RELATIONS]
+        })
       }
       else if (estado) {
         encontrados = await this.carroComprasRepository.find({
@@ -81,21 +75,14 @@ export class CarroComprasService {
         })
       }
       else if (idUsuario) {
-        const usuarioExiste: boolean = await this.usuarioRepository.existsBy({ id: +idUsuario })
-        if (usuarioExiste) {
-          encontrados = await this.carroComprasRepository.find({
-            where: {
-              idUsuario: idUsuario,
-            },
-            relations: [...CARRO_RELATIONS]
-          })
-        }
-        else {
-          throw new NotFoundException('No existe un usuario asociado a ese id.')
-        }
+        encontrados = await this.carroComprasRepository.find({
+          where: {
+            idUsuario: idUsuario,
+          },
+          relations: [...CARRO_RELATIONS]
+        })
       }
       else {
-
         encontrados = await this.carroComprasRepository.find({
           relations: [...CARRO_RELATIONS]
         })
