@@ -10,6 +10,9 @@
     Historia de Usuario 3: Creación y Edición de Perfiles de Usuarios
         Prioridad: Media
         Controlador: usuarios
+    
+    Historia de Usuario 4: Creación y Edición de usuarios administrativos
+        Prioridad: Baja
 
     Historia de Usuario 5: Implementación de "gestión de productos" Administrador
         Prioridad: Baja

@@ -218,9 +218,6 @@ export class CarroComprasService {
   async replaceProductosCarro(idCarro: number, updateCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
     try {
       const idProductos: number[] = updateCarroDto.productosCarro.map(productoCarro => productoCarro.productoId)
-      if (idProductos.length == 0) {
-        return []
-      }
       /**Verificar productos repetidos */
       const setIds: Set<Number> = new Set(idProductos)
       if (setIds.size !== idProductos.length) {
