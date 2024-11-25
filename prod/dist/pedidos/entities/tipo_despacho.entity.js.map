@@ -1,1 +1,0 @@
-{"version":3,"file":"tipo_despacho.entity.js","sourceRoot":"","sources":["../../../src/pedidos/entities/tipo_despacho.entity.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qCAAiE;AAG1D,IAAM,YAAY,GAAlB,MAAM,YAAY;CAKxB,CAAA;AALY,oCAAY;AAEvB;IADC,IAAA,gCAAsB,GAAE;;wCACd;AAEX;IADC,IAAA,gBAAM,GAAE;;0CACI;uBAJF,YAAY;IADxB,IAAA,gBAAM,EAAC,EAAE,IAAI,EAAE,eAAe,EAAE,CAAC;GACrB,YAAY,CAKxB"}

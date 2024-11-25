@@ -32,4 +32,12 @@ export class GetCarroComprasDto {
 
   @ApiProperty()
   carroProductos: GetCarroProductoDto[];
+
+  @ApiProperty({ description: 'Fecha de creación del carro.' })
+  fecha_creacion: Date;
+
+  @ApiProperty({ description: 'Fecha de compra, cierre del carro.' })
+  @ApiProperty()
+  fecha_cierre: Date;
+
 }

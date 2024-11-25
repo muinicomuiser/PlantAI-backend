@@ -32,16 +32,27 @@ export class CarroComprasMapper {
    */
   static carroEntityToDto(carro: CarroCompra): GetCarroComprasDto {
     const carroDto: GetCarroComprasDto = new GetCarroComprasDto();
-    carroDto.carroProductos = this.arrayCarroProductosEntityToDto(
-      carro.carroProductos,
-    );
     carroDto.id = carro.id;
     carroDto.idUsuario = carro.idUsuario;
-    carroDto.precioTotal = carroDto.carroProductos.reduce(
-      (acumulador, valorActual) =>
-        acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
-      0,
-    ); /**Comprobar si funciona*/
+    if (carro.carroProductos) {
+      carroDto.carroProductos = this.arrayCarroProductosEntityToDto(
+        carro.carroProductos,
+      );
+      carroDto.precioTotal = carroDto.carroProductos.reduce(
+        (acumulador, valorActual) =>
+          acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
+        0,
+      );
+    }
+    else {
+      carroDto.carroProductos = []
+    }
+    carroDto.fecha_cierre = carro.fecha_cierre
+    carroDto.fecha_creacion = carro.fecha_creacion
     return carroDto;
+  }
+
+  static arrayCarroEntityToDto(carros: CarroCompra[]): GetCarroComprasDto[] {
+    return carros.map(carro => CarroComprasMapper.carroEntityToDto(carro))
   }
 }
