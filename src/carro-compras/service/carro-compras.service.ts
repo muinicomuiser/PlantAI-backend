@@ -30,9 +30,7 @@ export class CarroComprasService {
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
-    private readonly carroProductoRepository: Repository<CarroProducto>,
-    @InjectRepository(Usuario)
-    private readonly usuarioRepository: Repository<Usuario>,
+    private readonly carroProductoRepository: Repository<CarroProducto>
   ) { }
 
   //Implementar para usuario administrador
@@ -54,39 +52,13 @@ export class CarroComprasService {
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
   }
 
-  async findAll(idUsuario?: number, estado?: EstadoCarro): Promise<GetCarroComprasDto[]> {
+  async findAll(): Promise<GetCarroComprasDto[]> {
     let encontrados: CarroCompra[];
     try {
-      if (idUsuario && estado) {
-        encontrados = await this.carroComprasRepository.find({
-          where: {
-            idUsuario: idUsuario,
-            fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
-          },
-          relations: [...CARRO_RELATIONS]
-        })
-      }
-      else if (estado) {
-        encontrados = await this.carroComprasRepository.find({
-          where: {
-            fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
-          },
-          relations: [...CARRO_RELATIONS]
-        })
-      }
-      else if (idUsuario) {
-        encontrados = await this.carroComprasRepository.find({
-          where: {
-            idUsuario: idUsuario,
-          },
-          relations: [...CARRO_RELATIONS]
-        })
-      }
-      else {
-        encontrados = await this.carroComprasRepository.find({
-          relations: [...CARRO_RELATIONS]
-        })
-      }
+
+      encontrados = await this.carroComprasRepository.find({
+        relations: [...CARRO_RELATIONS]
+      })
       return CarroComprasMapper.arrayCarroEntityToDto(encontrados)
     }
     catch (error) {
@@ -182,12 +154,12 @@ export class CarroComprasService {
   }
 
 
-  async removeProductCarro(idCarro: number, updateProductoCarro: UpdateProductCarro): Promise<UpdateProductCarro> {
+  async removeProductCarro(idCarro: number, idProducto: number): Promise<GetCarroProductoDto> {
     try {
       const carroProducto = await this.carroProductoRepository.findOne({
         where: {
           idCarro: idCarro,
-          idProducto: updateProductoCarro.productoId,
+          idProducto: idProducto,
         },
         relations: [...CARRO_PRODUCTOS_RELATIONS]
       });
@@ -195,14 +167,14 @@ export class CarroComprasService {
       if (!carroProducto) {
         throw new NotFoundException('Producto no encontrado en carro');
       }
-      if (carroProducto.cantidadProducto <= updateProductoCarro.cantidadProducto) {
-        await this.carroProductoRepository.remove(carroProducto);
-      }
-      else {
-        carroProducto.cantidadProducto -= updateProductoCarro.cantidadProducto
-        this.carroProductoRepository.save(carroProducto)
-      }
-      return updateProductoCarro;
+      await this.carroProductoRepository.remove(carroProducto);
+      // if (carroProducto.cantidadProducto <= updateProductoCarro.cantidadProducto) {
+      // }
+      // else {
+      //   carroProducto.cantidadProducto -= updateProductoCarro.cantidadProducto
+      //   this.carroProductoRepository.save(carroProducto)
+      // }
+      return CarroComprasMapper.carroProductoEntityToDto(carroProducto);
     }
     catch (error) {
       console.error(error)
