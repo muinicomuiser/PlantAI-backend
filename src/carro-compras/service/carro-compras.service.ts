@@ -6,8 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
 import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
@@ -20,7 +19,6 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import {
   CARRO_RELATIONS,
 } from '../shared/constants/carro-relaciones';
-import { EstadoCarro } from '../dto/estado-carro.enum';
 
 @Injectable()
 export class CarroComprasService {
@@ -93,14 +91,6 @@ export class CarroComprasService {
       relations: [...PRODUCTO_RELATIONS]
     });
 
-    /////El stock del carro se verificará en Front y Mobile
-    // if (
-    //   !producto ||
-    //   producto.cantidad < addProductDto.cantidadProducto
-    // ) {
-    //   throw new BadRequestException('Stock insuficiente');
-    // }
-
     //busca en el carro si ya existe un producto agregado
     let carroProducto = await this.carroProductoRepository.findOne({
       where: {
@@ -143,10 +133,6 @@ export class CarroComprasService {
       },
       relations: [...PRODUCTO_RELATIONS]
     });
-    /////El stock del carro se verificará en Front y Mobile
-    // if (!producto || producto.cantidad < updateDto.cantidadProducto) {
-    //   throw new BadRequestException('Stock insuficiente');
-    // }
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
     const carroProductoActualizado = await this.carroProductoRepository.save(carroProducto);
     carroProductoActualizado.producto = producto
@@ -168,12 +154,6 @@ export class CarroComprasService {
         throw new NotFoundException('Producto no encontrado en carro');
       }
       await this.carroProductoRepository.remove(carroProducto);
-      // if (carroProducto.cantidadProducto <= updateProductoCarro.cantidadProducto) {
-      // }
-      // else {
-      //   carroProducto.cantidadProducto -= updateProductoCarro.cantidadProducto
-      //   this.carroProductoRepository.save(carroProducto)
-      // }
       return CarroComprasMapper.carroProductoEntityToDto(carroProducto);
     }
     catch (error) {
