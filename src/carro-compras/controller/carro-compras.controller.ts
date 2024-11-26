@@ -4,33 +4,27 @@ import {
   Delete,
   Get,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
-  Put,
-  Query,
-  ValidationPipe,
+  Put
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
 import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
+import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
+import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
 import { UpdateProductCarro } from '../dto/update-product-carro';
 import { ValidarCarroActivoPipe } from '../pipe/validar-carro-activo-existente.pipe';
 import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
 import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 import { CarroComprasService } from '../service/carro-compras.service';
-import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
-import { UpdateContenidoCarroDto } from '../dto/update-carro-compra.dto';
-import { QueryCarroDto } from '../dto/get-query-carro.dto';
-import { EstadoCarro } from '../dto/estado-carro.enum';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 // @ApiTags('Carro de compras')
@@ -56,27 +50,18 @@ export class CarroComprasController {
     return await this.carroComprasService.findByCarroId(+id);
   }
 
-  // Obtener todos los carros activos e inactivos. Filtrar por usuario y estado de carro.
+  // Obtener todos los carros activos.
   @ApiTags('Carro de compras - Admin')
-  @ApiOperation({ summary: 'Obtener todos los carros activos y cerrados. Filtrar por id de usuario y estado de carro' })
+  @ApiOperation({ summary: 'Obtener todos los carros activos.' })
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los carros',
     type: [GetCarroComprasDto],
   })
-  @ApiResponse({
-    status: 404,
-    description: 'No existe el usuario.',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Estado de query incorrecto.',
-  })
-  @ApiQuery({ name: 'idUsuario', type: Number, required: false })
-  @ApiQuery({ name: 'estado', enum: EstadoCarro, required: false })
+
   @Get()
-  async obtenerTodos(@Query(ValidarUsuarioExistePipe) { idUsuario }: QueryCarroDto, @Query() { estado }: QueryCarroDto): Promise<GetCarroComprasDto[]> {
-    return await this.carroComprasService.findAll(idUsuario, estado)
+  async obtenerTodos(): Promise<GetCarroComprasDto[]> {
+    return await this.carroComprasService.findAll()
   }
 
   // Obtener carro de compras por id de usuario
@@ -171,7 +156,7 @@ export class CarroComprasController {
   // - Remover producto del carro
   @ApiTags('Carro de compras - Cliente')
   @ApiOperation({ summary: 'Remueve un producto del carro' })
-  @ApiResponse({ status: 201, description: 'Producto eliminado del carro', type: UpdateProductCarro })
+  @ApiResponse({ status: 201, description: 'Producto eliminado del carro', type: GetCarroProductoDto })
   @ApiResponse({
     status: 400,
     description: 'El producto no ha podido ser eliminado',
@@ -180,18 +165,15 @@ export class CarroComprasController {
     status: 404,
     description: 'Carro o producto no encontrado',
   })
-  @ApiBody({ type: UpdateProductCarro })
-  @Delete('removeProducto/:idCarro')
+  @Delete('removeProducto/:idCarro/:idProducto')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Body(ProductoExistentePipe<UpdateProductCarro>) updateProductoCarro: UpdateProductCarro
-    // @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
-    // idProducto: number,
-  ): Promise<UpdateProductCarro> {
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
+    idProducto: number,
+  ): Promise<GetCarroProductoDto> {
     return await this.carroComprasService.removeProductCarro(
       idCarro,
-      updateProductoCarro
-      // idProducto,
+      idProducto,
     );
   }
 
