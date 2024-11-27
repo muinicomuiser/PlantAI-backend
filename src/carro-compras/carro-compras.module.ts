@@ -13,5 +13,6 @@ import { Usuario } from 'src/usuarios/entities/usuario.entity';
   ],
   controllers: [CarroComprasController],
   providers: [CarroComprasService],
+  exports: [CarroComprasService]
 })
-export class CarroComprasModule {}
+export class CarroComprasModule { }
