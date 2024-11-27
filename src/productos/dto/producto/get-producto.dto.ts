@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsInt,
   IsNumber,
   IsOptional,
@@ -110,6 +111,13 @@ export class GetProductoDto {
   //   description: 'Etiquetas asociadas al producto',
   // })
   // etiquetas: EtiquetaDto[];
+
+  @ApiProperty({
+    example: true,
+    description: 'Indica si el producto está habilitado',
+  })
+  @IsBoolean()
+  habilitado: boolean;
 
   @ApiProperty({
     type: GetPlantaDto,

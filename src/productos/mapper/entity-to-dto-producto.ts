@@ -18,6 +18,7 @@ export class ProductoMapper {
     productoDto.alto = producto.alto;
     productoDto.largo = producto.largo;
     productoDto.peso = producto.peso;
+    productoDto.habilitado = producto.habilitado;
 
     if (producto.categoria) {
       productoDto.categoria = {
@@ -26,7 +27,7 @@ export class ProductoMapper {
       };
       if (producto.planta) {
         productoDto.planta = {
-          id_producto: producto.planta.id_producto,
+          idProducto: producto.planta.idProducto,
           petFriendly: producto.planta.petFriendly,
           toleranciaTemperatura: producto.planta.toleranciaTemperatura,
           ciclo: producto.planta.ciclo,
@@ -58,7 +59,6 @@ export class ProductoMapper {
       };
     }
     if (producto.accesorio) {
-      console.log(producto);
       productoDto.accesorio = {
         idProducto: producto.accesorio.idProducto,
         idMarca: producto.accesorio.idMarca,
@@ -79,5 +79,23 @@ export class ProductoMapper {
       };
     }
     return productoDto;
+  }
+
+  static DtoToProducto(productoDto: GetProductoDto): Producto {
+    const producto = new Producto();
+    producto.SKU = productoDto.SKU;
+    producto.nombre = productoDto.nombre;
+    producto.precio = productoDto.precio;
+    producto.descripcion = productoDto.descripcion;
+    producto.imagen = productoDto.imagen;
+    producto.cantidad = productoDto.cantidad;
+    producto.unidadesVendidas = productoDto.unidadesVendidas;
+    producto.puntuacion = productoDto.puntuacion;
+    producto.ancho = productoDto.ancho;
+    producto.alto = productoDto.alto;
+    producto.largo = productoDto.largo;
+    producto.peso = productoDto.peso;
+    producto.habilitado = productoDto.habilitado;
+    return producto;
   }
 }

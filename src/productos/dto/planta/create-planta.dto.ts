@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsInt, IsString } from 'class-validator';
 
-export class GetPlantaDto {
-  @ApiProperty({ example: 1, description: 'Identificador único del producto' })
-  @IsInt()
-  idProducto: number;
-
+export class CreatePlantaDto {
   @ApiProperty({
     example: true,
     description: 'Indica si la planta es amigable con las mascotas',

@@ -8,7 +8,6 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { TipoUsuario } from '../entities/tipo_usuario.entity';
 import { Usuario } from '../entities/usuario.entity';
 import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
-import { Direccion } from '../entities/direccion.entity';
 
 @Injectable()
 export class UsuariosService {

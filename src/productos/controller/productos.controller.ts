@@ -117,7 +117,9 @@ export class ProductosController {
     description: 'No existe un producto con ese id',
   })
   @Delete(':id')
-  deleteOne(@Param('id', ProductoExistentePipe) id: number) {
+  deleteOne(
+    @Param('id', ProductoExistentePipe) id: number,
+  ): Promise<GetProductoDto> {
     return this.productosService.deleteOne(id);
   }
 }
