@@ -80,5 +80,5 @@ export class CreateUsuarioDto {
 
   @ApiProperty({ example: 3 })
   @IsNotEmpty()
-  tipoUsuarioId: number;
+  idRol: number;
 }

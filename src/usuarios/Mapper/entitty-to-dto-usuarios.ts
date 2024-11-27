@@ -12,7 +12,7 @@ export function toOutputUserDTO(usuario: Usuario): OutputUserDTO {
     genero: usuario.genero,
     rut: usuario.rut,
     fechaNacimiento: usuario.fechaNacimiento,
-    tipoUsuario: usuario.tipoUsuario.tipo,
+    rol: usuario.rol.nombre,
     direcciones: usuario.direccion?.map((dir) => {
       const direccionCompleta = `${dir.calle}, ${dir.numero}, ${dir.comuna}`;
       return dir.departamento

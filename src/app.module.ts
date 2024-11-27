@@ -11,6 +11,10 @@ import { GlobalMiddleware } from './commons/middleware/global.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+console.log(
+  `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
+); //agrego interfaz para ver que archivo carga
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +24,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           ? `.env.${process.env.AMBIENTE}`
           : `.env.dev`,
     }),
+
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
