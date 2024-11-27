@@ -34,3 +34,6 @@ services:
     ports:
       - '3000:${API_PORT}'
     command: 'yarn start:dev'
+
+# Para levantar solamente los contenedores de base de datos y flyway, usar:
+# docker compose up -d database-dev flyway
