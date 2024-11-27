@@ -23,12 +23,15 @@ import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { UsuariosService } from '../service/usuarios.service';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
+import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) { }
+  constructor(private readonly usuariosService: UsuariosService,
+    private readonly carroComprasService: CarroComprasService
+  ) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -88,7 +91,12 @@ export class UsuariosController {
   async create(
     @Body(ValidarCrearUsuarioPipe) createUsuarioDTO: CreateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    return await this.usuariosService.createUser(createUsuarioDTO);
+    const usuarioCreado: OutputUserDTO = await this.usuariosService.createUser(createUsuarioDTO);
+    /**Insertar un carro nuevo al usuario creado. */
+    const nuevoCarro = this.carroComprasService.createCarro(usuarioCreado.id)
+    return usuarioCreado;
+
+
   }
 
   // Actualizar un usuario según el id

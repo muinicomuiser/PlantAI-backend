@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNumber,
@@ -5,8 +6,14 @@ import {
   IsInt,
   Min,
   Max,
+  IsBoolean,
+  IsOptional,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { CreatePlantaDto } from '../planta/create-planta.dto';
+import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
+import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';
+import { CreateInsumoDto } from '../insumo/Create-insumo.dto';
+import { DeepPartial } from 'typeorm';
 
 export class CreateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
@@ -82,4 +89,36 @@ export class CreateProductoDto {
   @IsNumber()
   @IsPositive()
   peso: number;
+
+  @ApiProperty({ description: 'Habilitado', example: true })
+  @IsBoolean()
+  habilitado: boolean;
+
+  @ApiProperty({
+    description: 'Planta asociada al producto',
+    type: CreatePlantaDto,
+  })
+  @IsOptional()
+  planta?: DeepPartial<CreatePlantaDto>;
+
+  @ApiProperty({
+    description: 'Macetero asociado al producto',
+    type: CreateMaceteroDto,
+  })
+  @IsOptional()
+  macetero?: DeepPartial<CreateMaceteroDto>;
+
+  @ApiProperty({
+    description: 'Accesorio asociado al producto',
+    type: CreateAccesorioDto,
+  })
+  @IsOptional()
+  accesorio?: DeepPartial<CreateAccesorioDto>;
+
+  @ApiProperty({
+    description: 'Insumo asociado al producto',
+    type: CreateInsumoDto,
+  })
+  @IsOptional()
+  insumo?: DeepPartial<CreateInsumoDto>;
 }

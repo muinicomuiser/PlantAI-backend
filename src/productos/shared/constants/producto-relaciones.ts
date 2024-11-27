@@ -1,6 +1,6 @@
 export const PRODUCTO_RELATIONS = [
   'categoria',
-  'etiquetas',
+  //'idEtiquetas',
   'planta',
   'accesorio',
   'macetero',
