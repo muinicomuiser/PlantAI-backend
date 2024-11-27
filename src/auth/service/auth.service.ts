@@ -3,7 +3,7 @@ import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 import { LoginDto } from '../dto/login.dto';
 import { UsuariosService } from 'src/usuarios/service/usuarios.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { toOutputUserDTO } from 'src/usuarios/mapper/entitty-to-dto-usuarios';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
@@ -12,7 +12,7 @@ export class AuthService {
   constructor(
     private readonly usuariosService: UsuariosService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validarUsuario(
     nombreUsuario: string,
