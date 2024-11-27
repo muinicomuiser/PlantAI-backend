@@ -14,33 +14,23 @@ services:
     image: 'flyway/flyway:${VERSION_FLYWAY}'
     volumes:
       - ./sql:/flyway/sql
-    command:
-      [
-        '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false',
-        '-user=${DB_USERNAME}',
-        '-password=${DB_PASSWORD}',
-        '-connectRetries=60',
-        'migrate',
-      ]
+    command: [ '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false', '-user=${DB_USERNAME}', '-password=${DB_PASSWORD}', '-connectRetries=60', 'migrate' ]
 
-  # cotiledon-dev:
-  #   image: 'node:${VERSION_NODE}'
-  #   depends_on:
-  #     - database-dev
-  #   volumes:
-  #     - .:/home/node/nest
-  #   working_dir: /home/node/nest
-  #   environment:
-  #     - PORT=${API_PORT}
-  #     - AMBIENTE=${AMBIENTE}
-  #   ports:
-  #     - '3000:${API_PORT}'
-  #   command: 'yarn start:dev'
-  # frontend-prod:
-  #   image: nicolasf1/plantaiapp:1.0.1
-  #   depends_on:
-  #     - cotiledon-dev
-  #   environment:
-  #     - VITE_URL_ENDPOINT_BACKEND=http://cotiledon-dev:8080
-  #   ports:
-  #     - '5173:80'
+  cotiledon-dev:
+    image: 'node:${VERSION_NODE}'
+    depends_on:
+      - database-dev
+    volumes:
+      - .:/home/node/nest
+    working_dir: /home/node/nest
+    environment:
+      - PORT=${API_PORT}
+      - AMBIENTE=${AMBIENTE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+    ports:
+      - '3000:${API_PORT}'
+    command: 'yarn start:dev'
