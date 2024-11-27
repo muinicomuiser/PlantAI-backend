@@ -12,7 +12,7 @@ import {
 import { CreatePlantaDto } from '../planta/create-planta.dto';
 import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
 import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';
-import { CreateInsumoDto } from '../insumo/Create-insumo.dto';
+import { CreateInsumoDto } from '../insumo/create-insumo.dto';
 import { DeepPartial } from 'typeorm';
 
 export class CreateProductoDto {
