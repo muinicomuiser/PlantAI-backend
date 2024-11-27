@@ -1,5 +1,8 @@
+import { UpdateProductCarro } from 'src/carro-compras/dto/update-product-carro';
+import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { Producto } from '../entities/producto.entity';
+import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 
 export class ProductoMapper {
   static entityToDto(producto: Producto): GetProductoDto {
@@ -81,13 +84,14 @@ export class ProductoMapper {
     return productoDto;
   }
 
-  static DtoToProducto(productoDto: GetProductoDto): Producto {
+  static DtoToProducto(productoDto: CreateProductoDto | UpdateProductoDto): Producto {
     const producto = new Producto();
     producto.SKU = productoDto.SKU;
     producto.nombre = productoDto.nombre;
     producto.precio = productoDto.precio;
     producto.descripcion = productoDto.descripcion;
-    producto.imagen = productoDto.imagen;
+    producto.idCategoria = productoDto.idCategoria
+    // producto.imagen = productoDto.imagen;
     producto.cantidad = productoDto.cantidad;
     producto.unidadesVendidas = productoDto.unidadesVendidas;
     producto.puntuacion = productoDto.puntuacion;

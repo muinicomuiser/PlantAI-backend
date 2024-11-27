@@ -81,6 +81,7 @@ export class ProductosController {
     status: 400,
     description: 'No ha sido posible crear el producto',
   })
+  @ApiBody({ type: CreateProductoDto })
   @Post()
   createProduct(
     @Body() createProductoDto: CreateProductoDto,
@@ -90,6 +91,7 @@ export class ProductosController {
 
   // Actualizar un producto
   @ApiOperation({ summary: 'Actualiza un producto.' })
+  @ApiBody({ type: UpdateProductoDto })
   @ApiResponse({
     status: 200,
     description: 'Actualiza un producto.',

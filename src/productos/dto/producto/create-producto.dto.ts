@@ -14,6 +14,7 @@ import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
 import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';
 import { CreateInsumoDto } from '../insumo/create-insumo.dto';
 import { DeepPartial } from 'typeorm';
+import { UpdateProductImageDto } from './update-product-image.dto';
 
 export class CreateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
@@ -41,11 +42,12 @@ export class CreateProductoDto {
   descripcion: string;
 
   @ApiProperty({
-    description: 'URL de la imagen del producto',
-    example: 'https://www.plantAI.com/imagenes/agatea.jpg',
+    description: 'Imagen en base64',
+    // example: 'https://www.plantAI.com/imagenes/agatea.jpg',
+    type: UpdateProductImageDto
   })
-  @IsString()
-  imagen: string;
+  // @IsString()
+  imagen: UpdateProductImageDto;
 
   @ApiProperty({ description: 'Cantidad disponible del producto', example: 10 })
   @IsNumber()

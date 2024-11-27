@@ -1,30 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
-import { Repository } from 'typeorm';
-import { Producto } from '../entities/producto.entity';
 import { DeepPartial, Repository } from 'typeorm';
+import { GetProductoDto } from '../dto/producto/get-producto.dto';
+import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
-import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
-
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
-import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
-import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
-import { Planta } from '../entities/plantas/planta.entity';
-import { Macetero } from '../entities/maceteros/macetero.entity';
-import { Insumo } from '../entities/insumos/insumo.entity';
 import { Accesorio } from '../entities/accesorios/accesorio.entity';
+import { Categoria } from '../entities/categoria.entity';
 import { Insumo } from '../entities/insumos/insumo.entity';
 import { Macetero } from '../entities/maceteros/macetero.entity';
 import { Planta } from '../entities/plantas/planta.entity';
-import { Producto } from '../entities/producto.entity';
-import { ProductoMapperAux } from '../mapper/ent-to-dto-aux';
-import { ProductoMapper } from '../mapper/entity-to-dto-producto';
-import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
 import { ImageService } from './imagen.service';
 
 @Injectable()
@@ -64,11 +53,13 @@ export class ProductosService {
 
   //
   async create(createProductoDto: CreateProductoDto): Promise<GetProductoDto> {
+    const categoriaProducto: Categoria = await this.productoRepository.manager.getRepository(Categoria).findOneBy({ id: createProductoDto.idCategoria })
     const nuevoProducto = await this.productoRepository.manager.transaction(
       async (transactionalEntityManager) => {
         const newProducto = transactionalEntityManager.create(
           Producto,
-          createProductoDto as DeepPartial<Producto>,
+          ProductoMapper.DtoToProducto(createProductoDto)
+          // createProductoDto as DeepPartial<Producto>,
         );
         if (createProductoDto.planta) {
           newProducto.planta = transactionalEntityManager.create(
@@ -99,6 +90,9 @@ export class ProductosService {
         return productoCreado;
       },
     );
+    nuevoProducto.categoria = categoriaProducto
+    const rutaImagen: string = await this.addProductImage(createProductoDto.imagen, nuevoProducto.id)
+    nuevoProducto.imagen = rutaImagen;
     return ProductoMapper.entityToDto(nuevoProducto);
   }
 
@@ -107,6 +101,7 @@ export class ProductosService {
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     await this.getById(id);
+    const categoriaProducto: Categoria = await this.productoRepository.manager.getRepository(Categoria).findOneBy({ id: updateProductoDto.idCategoria })
     const updateProducto = await this.productoRepository.manager.transaction(
       async (transactionalEntityManager) => {
         const producto = await transactionalEntityManager.findOne(Producto, {
@@ -116,7 +111,8 @@ export class ProductosService {
         transactionalEntityManager.merge(
           Producto,
           producto,
-          updateProductoDto as DeepPartial<Producto>,
+          ProductoMapper.DtoToProducto(updateProductoDto)
+          // updateProductoDto as DeepPartial<Producto>,
         );
         if (updateProductoDto.planta) {
           transactionalEntityManager.merge(
@@ -149,6 +145,11 @@ export class ProductosService {
         return await transactionalEntityManager.save(producto);
       },
     );
+    updateProducto.categoria = categoriaProducto
+    if (updateProductoDto.imagen) {
+      const rutaImagen: string = await this.updateProductImage(updateProductoDto.imagen, id)
+      updateProducto.imagen = rutaImagen;
+    }
     return ProductoMapper.entityToDto(updateProducto);
   }
   /**Elimina un producto según su id */

@@ -16,7 +16,7 @@ export class ImageService {
   async addImage(base64Content: string) {
     //crear uuid para nombre de archivo
     const uuid = uuidv4();
-
+    console.log(base64Content)
     //cortar base64 string
     const baseValido = base64Content.split(",")[1];
 
@@ -27,7 +27,7 @@ export class ImageService {
     //definir la ruta del archivo
     const rutaPadre = `${process.env.RUTA_FISICA}` || `./imagenes/productos`
     const rutaArchivo = `${rutaPadre}/${uuid}.${extension}`
-    const rutaPublica = `${process.env.RUTA_ESTATICOS}${uuid}.${extension}`
+    const rutaPublica = `${process.env.RUTA_ESTATICOS}/${uuid}.${extension}`
     try {
       await FS.mkdir(rutaPadre, { recursive: true })
       await FS.writeFile(rutaArchivo, baseValido, { encoding: 'base64' });
