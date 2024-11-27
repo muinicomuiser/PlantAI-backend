@@ -22,6 +22,7 @@ import { Marca } from 'src/commons/entities/marca.entity';
 import { ColorProducto } from 'src/commons/entities/color.entity';
 import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
 import { Etiqueta } from './entities/etiqueta.entity';
+import { ImageService } from './service/imagen.service';
 
 @Module({
   imports: [
@@ -45,7 +46,7 @@ import { Etiqueta } from './entities/etiqueta.entity';
     ]),
   ],
   controllers: [ProductosController, CatalogoController],
-  providers: [ProductosService, CatalogoService],
+  providers: [ProductosService, CatalogoService, ImageService],
   exports: [ProductosService],
 })
 export class ProductosModule { }

@@ -14,7 +14,14 @@ services:
     image: 'flyway/flyway:${VERSION_FLYWAY}'
     volumes:
       - ./sql:/flyway/sql
-    command: [ '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false', '-user=${DB_USERNAME}', '-password=${DB_PASSWORD}', '-connectRetries=60', 'migrate' ]
+    command:
+      [
+        '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false',
+        '-user=${DB_USERNAME}',
+        '-password=${DB_PASSWORD}',
+        '-connectRetries=60',
+        'migrate'
+      ]
 
   cotiledon-dev:
     image: 'node:${VERSION_NODE}'
@@ -31,6 +38,9 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
+      - RUTA_ESTATICOS=${RUTA_ESTATICOS}
+      - RUTA_FISICA=${RUTA_FISICA}
+
     ports:
       - '3000:${API_PORT}'
     command: 'yarn start:dev'

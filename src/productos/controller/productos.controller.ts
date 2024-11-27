@@ -9,20 +9,21 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
+import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
 
   // Obtener producto por id
   @ApiOperation({ summary: 'Busca un producto por su id' })
@@ -121,5 +122,28 @@ export class ProductosController {
     @Param('id', ProductoExistentePipe) id: number,
   ): Promise<GetProductoDto> {
     return this.productosService.deleteOne(id);
+  }
+
+  //Subir imagen en bas64 a un producto
+  @ApiOperation({ summary: 'Sube una imagen a servidor de estáticos y guarda la ruta en la DB' })
+  @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
+  @ApiResponse({ status: 400, description: 'Error al subir imagen' })
+  @ApiBody({ type: Object })
+
+  @Post('addProductImage/:idProducto')
+  @ApiBody({ type: UpdateProductImageDto })
+  async addProductImage(@Body() base64Content: UpdateProductImageDto, @Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
+    return await this.productosService.addProductImage(base64Content, idProducto);
+  }
+
+  @ApiBody({ type: UpdateProductImageDto })
+  @Patch('updateProductImage/:idProducto')
+  async updateProductImage(@Body() base64Content: UpdateProductImageDto, @Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
+    return await this.productosService.updateProductImage(base64Content, idProducto);
+  }
+
+  @Delete('deleteProductImage/:idProducto')
+  async deleteProductImage(@Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
+    return await this.productosService.deleteProductImage(idProducto);
   }
 }

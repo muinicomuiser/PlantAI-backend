@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { GlobalMiddleware } from './commons/middleware/global.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 console.log(
   `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
@@ -33,6 +34,10 @@ console.log(
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: `${process.env.RUTA_FISICA}` || `./imagenes/productos`,
+      serveRoot: `${process.env.RUTA_ESTATICOS}` || `/estaticos/`
     }),
     ProductosModule,
     CarroComprasModule,
