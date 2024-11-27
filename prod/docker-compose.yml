@@ -21,7 +21,12 @@ services:
     depends_on:
       - database-prod
     environment:
-      - AMBIENTE=${AMBIENTE}
       - PORT=${API_PORT}
+      - AMBIENTE=${AMBIENTE}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
     ports:
       - '8080:${API_PORT}'

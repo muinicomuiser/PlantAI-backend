@@ -15,8 +15,8 @@ import {
 
 @Entity({ name: 'plantas' })
 export class Planta {
-  @PrimaryColumn()
-  id_producto: number;
+  @PrimaryColumn({ name: 'id_producto' })
+  idProducto: number;
 
   @Column({ name: 'pet_friendly' })
   petFriendly: boolean;

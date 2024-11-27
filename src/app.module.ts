@@ -12,6 +12,10 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
+console.log(
+  `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
+); //agrego interfaz para ver que archivo carga
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,6 +25,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
           ? `.env.${process.env.AMBIENTE}`
           : `.env.dev`,
     }),
+
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,

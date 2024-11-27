@@ -40,6 +40,7 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - RUTA_ESTATICOS=${RUTA_ESTATICOS}
       - RUTA_FISICA=${RUTA_FISICA}
+
     ports:
       - '3000:${API_PORT}'
     command: 'yarn start:dev'

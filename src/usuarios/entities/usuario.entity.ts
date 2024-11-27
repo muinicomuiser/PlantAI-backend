@@ -1,6 +1,6 @@
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Direccion } from './direccion.entity';
-import { TipoUsuario } from './tipo_usuario.entity';
+import { Rol } from './rol.entity';
 import { UsuarioMedioPago } from './usuarios_medio_pago.entity';
 import {
   Column,
@@ -41,9 +41,9 @@ export class Usuario {
   direccion: Direccion[];
 
   /**Many to One*/
-  @ManyToOne(() => TipoUsuario)
-  @JoinColumn({ name: 'id_tipo_usuario' })
-  tipoUsuario: TipoUsuario; //  a través de: id_tipo_usuario;
+  @ManyToOne(() => Rol)
+  @JoinColumn({ name: 'id_rol' })
+  rol: Rol; //  a través de: id_rol;
 
   /* One to Many */
   @OneToMany(

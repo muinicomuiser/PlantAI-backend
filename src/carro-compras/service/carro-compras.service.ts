@@ -6,8 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { PRODUCTO_RELATIONS } from 'src/productos/shared/constants/producto-relaciones';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
 import { GetCarroProductoDto } from '../dto/get-carro-producto.dto';
@@ -20,7 +19,6 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import {
   CARRO_RELATIONS,
 } from '../shared/constants/carro-relaciones';
-import { EstadoCarro } from '../dto/estado-carro.enum';
 
 @Injectable()
 export class CarroComprasService {
@@ -30,9 +28,7 @@ export class CarroComprasService {
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
-    private readonly carroProductoRepository: Repository<CarroProducto>,
-    @InjectRepository(Usuario)
-    private readonly usuarioRepository: Repository<Usuario>,
+    private readonly carroProductoRepository: Repository<CarroProducto>
   ) { }
 
   //Implementar para usuario administrador
@@ -54,39 +50,13 @@ export class CarroComprasService {
     return CarroComprasMapper.carroEntityToDto(carroEncontrado);
   }
 
-  async findAll(idUsuario?: number, estado?: EstadoCarro): Promise<GetCarroComprasDto[]> {
+  async findAll(): Promise<GetCarroComprasDto[]> {
     let encontrados: CarroCompra[];
     try {
-      if (idUsuario && estado) {
-        encontrados = await this.carroComprasRepository.find({
-          where: {
-            idUsuario: idUsuario,
-            fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
-          },
-          relations: [...CARRO_RELATIONS]
-        })
-      }
-      else if (estado) {
-        encontrados = await this.carroComprasRepository.find({
-          where: {
-            fecha_cierre: estado == 'ACTIVO' ? IsNull() : Not(IsNull())
-          },
-          relations: [...CARRO_RELATIONS]
-        })
-      }
-      else if (idUsuario) {
-        encontrados = await this.carroComprasRepository.find({
-          where: {
-            idUsuario: idUsuario,
-          },
-          relations: [...CARRO_RELATIONS]
-        })
-      }
-      else {
-        encontrados = await this.carroComprasRepository.find({
-          relations: [...CARRO_RELATIONS]
-        })
-      }
+
+      encontrados = await this.carroComprasRepository.find({
+        relations: [...CARRO_RELATIONS]
+      })
       return CarroComprasMapper.arrayCarroEntityToDto(encontrados)
     }
     catch (error) {
@@ -120,14 +90,6 @@ export class CarroComprasService {
       },
       relations: [...PRODUCTO_RELATIONS]
     });
-
-    /////El stock del carro se verificará en Front y Mobile
-    // if (
-    //   !producto ||
-    //   producto.cantidad < addProductDto.cantidadProducto
-    // ) {
-    //   throw new BadRequestException('Stock insuficiente');
-    // }
 
     //busca en el carro si ya existe un producto agregado
     let carroProducto = await this.carroProductoRepository.findOne({
@@ -171,10 +133,6 @@ export class CarroComprasService {
       },
       relations: [...PRODUCTO_RELATIONS]
     });
-    /////El stock del carro se verificará en Front y Mobile
-    // if (!producto || producto.cantidad < updateDto.cantidadProducto) {
-    //   throw new BadRequestException('Stock insuficiente');
-    // }
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
     const carroProductoActualizado = await this.carroProductoRepository.save(carroProducto);
     carroProductoActualizado.producto = producto
@@ -182,12 +140,12 @@ export class CarroComprasService {
   }
 
 
-  async removeProductCarro(idCarro: number, updateProductoCarro: UpdateProductCarro): Promise<UpdateProductCarro> {
+  async removeProductCarro(idCarro: number, idProducto: number): Promise<GetCarroProductoDto> {
     try {
       const carroProducto = await this.carroProductoRepository.findOne({
         where: {
           idCarro: idCarro,
-          idProducto: updateProductoCarro.productoId,
+          idProducto: idProducto,
         },
         relations: [...CARRO_PRODUCTOS_RELATIONS]
       });
@@ -195,14 +153,8 @@ export class CarroComprasService {
       if (!carroProducto) {
         throw new NotFoundException('Producto no encontrado en carro');
       }
-      if (carroProducto.cantidadProducto <= updateProductoCarro.cantidadProducto) {
-        await this.carroProductoRepository.remove(carroProducto);
-      }
-      else {
-        carroProducto.cantidadProducto -= updateProductoCarro.cantidadProducto
-        this.carroProductoRepository.save(carroProducto)
-      }
-      return updateProductoCarro;
+      await this.carroProductoRepository.remove(carroProducto);
+      return CarroComprasMapper.carroProductoEntityToDto(carroProducto);
     }
     catch (error) {
       console.error(error)
