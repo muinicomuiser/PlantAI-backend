@@ -1,20 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsString,
-  IsNumber,
-  IsPositive,
-  IsInt,
-  Min,
-  Max,
   IsBoolean,
+  IsInt,
+  IsNumber,
   IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  Min
 } from 'class-validator';
-import { CreatePlantaDto } from '../planta/create-planta.dto';
-import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
+import { DeepPartial } from 'typeorm';
 import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';
 import { CreateInsumoDto } from '../insumo/create-insumo.dto';
-import { DeepPartial } from 'typeorm';
-import { UpdateProductImageDto } from './update-product-image.dto';
+import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
+import { CreatePlantaDto } from '../planta/create-planta.dto';
 
 export class CreateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
@@ -43,11 +42,10 @@ export class CreateProductoDto {
 
   @ApiProperty({
     description: 'Imagen en base64',
-    // example: 'https://www.plantAI.com/imagenes/agatea.jpg',
-    type: UpdateProductImageDto
+    example: 'Imagen en base64',
   })
-  // @IsString()
-  imagen: UpdateProductImageDto;
+  @IsOptional()
+  imagen?: string;
 
   @ApiProperty({ description: 'Cantidad disponible del producto', example: 10 })
   @IsNumber()
@@ -101,26 +99,26 @@ export class CreateProductoDto {
     type: CreatePlantaDto,
   })
   @IsOptional()
-  planta?: DeepPartial<CreatePlantaDto>;
+  planta?: CreatePlantaDto;
 
   @ApiProperty({
     description: 'Macetero asociado al producto',
     type: CreateMaceteroDto,
   })
   @IsOptional()
-  macetero?: DeepPartial<CreateMaceteroDto>;
+  macetero?: CreateMaceteroDto;
 
   @ApiProperty({
     description: 'Accesorio asociado al producto',
     type: CreateAccesorioDto,
   })
   @IsOptional()
-  accesorio?: DeepPartial<CreateAccesorioDto>;
+  accesorio?: CreateAccesorioDto;
 
   @ApiProperty({
     description: 'Insumo asociado al producto',
     type: CreateInsumoDto,
   })
   @IsOptional()
-  insumo?: DeepPartial<CreateInsumoDto>;
+  insumo?: CreateInsumoDto;
 }

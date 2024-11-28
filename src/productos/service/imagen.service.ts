@@ -18,24 +18,24 @@ export class ImageService {
     const uuid = uuidv4();
     console.log(base64Content)
     //cortar base64 string
-    const baseValido = base64Content.split(",")[1];
-
-    //extraer extensión de la imagen
-    const tipoArchivo = base64Content.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64/)[1];
-    const extension = tipoArchivo.split('/')[1];
-
-    //definir la ruta del archivo
-    const rutaPadre = `${process.env.RUTA_FISICA}` || `./imagenes/productos`
-    const rutaArchivo = `${rutaPadre}/${uuid}.${extension}`
-    const rutaPublica = `${process.env.RUTA_ESTATICOS}/${uuid}.${extension}`
     try {
+      const baseValido = base64Content.split(",")[1];
+
+      //extraer extensión de la imagen
+      const tipoArchivo = base64Content.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64/)[1];
+      const extension = tipoArchivo.split('/')[1];
+
+      //definir la ruta del archivo
+      const rutaPadre = `${process.env.RUTA_FISICA}` || `./imagenes/productos`
+      const rutaArchivo = `${rutaPadre}/${uuid}.${extension}`
+      const rutaPublica = `${process.env.RUTA_ESTATICOS}/${uuid}.${extension}`
       await FS.mkdir(rutaPadre, { recursive: true })
       await FS.writeFile(rutaArchivo, baseValido, { encoding: 'base64' });
+      return rutaPublica;
     } catch (err) {
       throw new BadRequestException('Error al subir archivo');
     }
 
-    return rutaPublica;
   }
 
   /** Elimina una imagen */

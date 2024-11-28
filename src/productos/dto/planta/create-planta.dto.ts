@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsInt, IsString } from 'class-validator';
 
 export class CreatePlantaDto {
+  idProducto: number;
+
   @ApiProperty({
     example: true,
     description: 'Indica si la planta es amigable con las mascotas',
@@ -62,25 +64,26 @@ export class CreatePlantaDto {
   @IsInt()
   idHabitoCrecimiento: number;
 
-  // Relaciónes
-  @ApiProperty({ description: 'especie de la planta' })
-  especie: string;
 
-  @ApiProperty({ description: 'Color de la planta' })
-  color: string;
+  // // Relaciónes
+  // @ApiProperty({ description: 'especie de la planta' })
+  // especie: string;
 
-  @ApiProperty({
-    description: 'Fotoperiodo de la planta',
-  })
-  fotoPeriodo: string;
+  // @ApiProperty({ description: 'Color de la planta' })
+  // color: string;
 
-  @ApiProperty({
-    description: 'Tipo de riego de la planta',
-  })
-  tipoRiego: string;
+  // @ApiProperty({
+  //   description: 'Fotoperiodo de la planta',
+  // })
+  // fotoPeriodo: string;
 
-  @ApiProperty({
-    description: 'Hábito de crecimiento de la planta',
-  })
-  habitoCrecimiento: string;
+  // @ApiProperty({
+  //   description: 'Tipo de riego de la planta',
+  // })
+  // tipoRiego: string;
+
+  // @ApiProperty({
+  //   description: 'Hábito de crecimiento de la planta',
+  // })
+  // habitoCrecimiento: string;
 }
