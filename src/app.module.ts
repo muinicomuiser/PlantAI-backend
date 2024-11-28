@@ -37,7 +37,7 @@ console.log(
     }),
     ServeStaticModule.forRoot({
       rootPath: `${process.env.RUTA_FISICA}` || `./imagenes/productos`,
-      serveRoot: `${process.env.RUTA_ESTATICOS}` || `/estaticos/`
+      serveRoot: `${process.env.RUTA_ESTATICOS}` || `/estaticos/`,
     }),
     ProductosModule,
     CarroComprasModule,

@@ -4,33 +4,31 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { mapperPedido } from 'src/pedidos/mapper/pedido.mapper';
 import { Repository } from 'typeorm';
-import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { Rol } from '../entities/rol.entity';
 import { Usuario } from '../entities/usuario.entity';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
-import { mapperPedido } from 'src/pedidos/mapper/pedido.mapper';
-import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
-import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
+import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 
 @Injectable()
 export class UsuariosService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuariosRepository: Repository<Usuario>,
-    @InjectRepository(Rol)
-    private readonly rolRepository: Repository<Rol>,
     @InjectRepository(Pedido)
     private readonly pedidosRepository: Repository<Pedido>,
     @InjectRepository(MedioPago)
     private readonly medioPagoRepository: Repository<MedioPago>,
     @InjectRepository(UsuarioMedioPago)
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {

@@ -1,4 +1,4 @@
 export enum EstadoCarro {
-    activo = 'ACTIVO',
-    cerrado = 'CERRADO'
+  activo = 'ACTIVO',
+  cerrado = 'CERRADO',
 }

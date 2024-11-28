@@ -15,7 +15,14 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+
+  ignorePatterns: ['.eslintrc.js',
+    "db",
+    "imagenes",
+    "Diagramas",
+    "sql",
+    "apuntes",
+    "prod"],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',

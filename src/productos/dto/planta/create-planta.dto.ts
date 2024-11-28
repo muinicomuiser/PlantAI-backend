@@ -64,7 +64,6 @@ export class CreatePlantaDto {
   @IsInt()
   idHabitoCrecimiento: number;
 
-
   // // Relaciónes
   // @ApiProperty({ description: 'especie de la planta' })
   // especie: string;

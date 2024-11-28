@@ -1,19 +1,16 @@
 import {
-  Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
-import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
-import { LoginDto } from '../dto/login.dto';
-import { UsuariosService } from 'src/usuarios/service/usuarios.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
-import { toOutputUserDTO } from 'src/usuarios/mapper/entitty-to-dto-usuarios';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcryptjs';
+import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 import { Rol } from 'src/usuarios/entities/rol.entity';
+import { UsuariosService } from 'src/usuarios/service/usuarios.service';
 import { Repository } from 'typeorm';
+import { LoginDto } from '../dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +19,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) {}
+  ) { }
 
   async validarUsuario(
     nombreUsuario: string,

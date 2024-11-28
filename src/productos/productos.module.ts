@@ -41,11 +41,11 @@ import { ImageService } from './service/imagen.service';
       TipoRiego,
       Accesorio,
       TipoAccesorio,
-      CarroProducto
+      CarroProducto,
     ]),
   ],
   controllers: [ProductosController, CatalogoController],
   providers: [ProductosService, CatalogoService, ImageService],
   exports: [ProductosService],
 })
-export class ProductosModule { }
+export class ProductosModule {}

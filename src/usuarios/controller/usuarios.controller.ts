@@ -14,28 +14,26 @@ import {
 import {
   ApiBody,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
+import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
-import { UsuariosService } from '../service/usuarios.service';
-import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
-import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
-import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { Rol } from '../entities/rol.entity';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
-import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
-import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { RolExistsPipe } from '../pipe/rol-exist.pipe';
+import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
+import { UsuariosService } from '../service/usuarios.service';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })

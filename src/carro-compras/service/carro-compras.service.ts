@@ -16,9 +16,7 @@ import { CarroCompra } from '../entities/carro.entity';
 import { CarroProducto } from '../entities/carro_producto.entity';
 import { CarroComprasMapper } from '../mapper/carro-compras.mapper';
 import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-relaciones';
-import {
-  CARRO_RELATIONS,
-} from '../shared/constants/carro-relaciones';
+import { CARRO_RELATIONS } from '../shared/constants/carro-relaciones';
 
 @Injectable()
 export class CarroComprasService {
@@ -28,8 +26,8 @@ export class CarroComprasService {
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
-    private readonly carroProductoRepository: Repository<CarroProducto>
-  ) { }
+    private readonly carroProductoRepository: Repository<CarroProducto>,
+  ) {}
 
   //Implementar para usuario administrador
   async createCarro(idUsuario: number): Promise<GetCarroComprasDto> {
@@ -53,15 +51,13 @@ export class CarroComprasService {
   async findAll(): Promise<GetCarroComprasDto[]> {
     let encontrados: CarroCompra[];
     try {
-
       encontrados = await this.carroComprasRepository.find({
-        relations: [...CARRO_RELATIONS]
-      })
-      return CarroComprasMapper.arrayCarroEntityToDto(encontrados)
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException('Error al obtener carros.', error)
+        relations: [...CARRO_RELATIONS],
+      });
+      return CarroComprasMapper.arrayCarroEntityToDto(encontrados);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('Error al obtener carros.', error);
     }
   }
 
@@ -88,7 +84,7 @@ export class CarroComprasService {
       where: {
         id: addProductDto.productoId,
       },
-      relations: [...PRODUCTO_RELATIONS]
+      relations: [...PRODUCTO_RELATIONS],
     });
 
     //busca en el carro si ya existe un producto agregado
@@ -111,7 +107,7 @@ export class CarroComprasService {
     }
     const carroProductGuardado =
       await this.carroProductoRepository.save(carroProducto);
-    carroProductGuardado.producto = producto
+    carroProductGuardado.producto = producto;
     return CarroComprasMapper.carroProductoEntityToDto(carroProductGuardado);
   }
 
@@ -121,7 +117,7 @@ export class CarroComprasService {
         idCarro: idCarro,
         idProducto: updateDto.productoId,
       },
-      relations: [...CARRO_PRODUCTOS_RELATIONS]
+      relations: [...CARRO_PRODUCTOS_RELATIONS],
     });
 
     if (!carroProducto) {
@@ -131,23 +127,28 @@ export class CarroComprasService {
       where: {
         id: updateDto.productoId,
       },
-      relations: [...PRODUCTO_RELATIONS]
+      relations: [...PRODUCTO_RELATIONS],
     });
     carroProducto.cantidadProducto = updateDto.cantidadProducto;
-    const carroProductoActualizado = await this.carroProductoRepository.save(carroProducto);
-    carroProductoActualizado.producto = producto
-    return CarroComprasMapper.carroProductoEntityToDto(carroProductoActualizado)
+    const carroProductoActualizado =
+      await this.carroProductoRepository.save(carroProducto);
+    carroProductoActualizado.producto = producto;
+    return CarroComprasMapper.carroProductoEntityToDto(
+      carroProductoActualizado,
+    );
   }
 
-
-  async removeProductCarro(idCarro: number, idProducto: number): Promise<GetCarroProductoDto> {
+  async removeProductCarro(
+    idCarro: number,
+    idProducto: number,
+  ): Promise<GetCarroProductoDto> {
     try {
       const carroProducto = await this.carroProductoRepository.findOne({
         where: {
           idCarro: idCarro,
           idProducto: idProducto,
         },
-        relations: [...CARRO_PRODUCTOS_RELATIONS]
+        relations: [...CARRO_PRODUCTOS_RELATIONS],
       });
 
       if (!carroProducto) {
@@ -155,10 +156,9 @@ export class CarroComprasService {
       }
       await this.carroProductoRepository.remove(carroProducto);
       return CarroComprasMapper.carroProductoEntityToDto(carroProducto);
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException(error.message)
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -167,56 +167,69 @@ export class CarroComprasService {
     return { message: `Carro con ID ${idCarro} eliminado con éxito` };
   }
 
-  async replaceProductosCarro(idCarro: number, updateCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
+  async replaceProductosCarro(
+    idCarro: number,
+    updateCarroDto: UpdateContenidoCarroDto,
+  ): Promise<GetCarroProductoDto[]> {
     try {
-      const idProductos: number[] = updateCarroDto.productosCarro.map(productoCarro => productoCarro.productoId)
+      const idProductos: number[] = updateCarroDto.productosCarro.map(
+        (productoCarro) => productoCarro.productoId,
+      );
       /**Verificar productos repetidos */
-      const setIds: Set<Number> = new Set(idProductos)
+      const setIds: Set<number> = new Set(idProductos);
       if (setIds.size !== idProductos.length) {
-        const carroProductosFiltrados: UpdateProductCarro[] = []
-        setIds.forEach(id => {
-          const carroProductosPorId: UpdateProductCarro[] = updateCarroDto.productosCarro.filter(producto => producto.productoId == id)
+        const carroProductosFiltrados: UpdateProductCarro[] = [];
+        setIds.forEach((id) => {
+          const carroProductosPorId: UpdateProductCarro[] =
+            updateCarroDto.productosCarro.filter(
+              (producto) => producto.productoId == id,
+            );
           if (carroProductosPorId.length == 1) {
-            carroProductosFiltrados.push(carroProductosPorId[0])
+            carroProductosFiltrados.push(carroProductosPorId[0]);
+          } else {
+            carroProductosPorId[0].cantidadProducto =
+              carroProductosPorId.reduce(
+                (acumulador, valorActual) =>
+                  acumulador + valorActual.cantidadProducto,
+                0,
+              );
+            carroProductosFiltrados.push(carroProductosPorId[0]);
           }
-          else {
-            carroProductosPorId[0].cantidadProducto = carroProductosPorId.reduce(
-              (acumulador, valorActual) =>
-                acumulador + valorActual.cantidadProducto,
-              0,
-            )
-            carroProductosFiltrados.push(carroProductosPorId[0])
-          }
-        })
-        updateCarroDto.productosCarro = carroProductosFiltrados
+        });
+        updateCarroDto.productosCarro = carroProductosFiltrados;
       }
 
       /**Obtener productos actualizados del carro */
-      const productosEncontrados: Producto[] = await this.productoRepository.find({
-        relations: [...PRODUCTO_RELATIONS],
-        where: {
-          id: In(idProductos)
-        }
-      })
+      const productosEncontrados: Producto[] =
+        await this.productoRepository.find({
+          relations: [...PRODUCTO_RELATIONS],
+          where: {
+            id: In(idProductos),
+          },
+        });
       await this.carroProductoRepository.delete({
-        idCarro: idCarro
-      })
-      const nuevosCarroProductos: CarroProducto[] = updateCarroDto.productosCarro.map(productoCarro => {
-        const nuevoCarroProducto: CarroProducto = new CarroProducto()
-        nuevoCarroProducto.idCarro = idCarro
-        nuevoCarroProducto.idProducto = productoCarro.productoId
-        nuevoCarroProducto.cantidadProducto = productoCarro.cantidadProducto
-        return nuevoCarroProducto
-      })
+        idCarro: idCarro,
+      });
+      const nuevosCarroProductos: CarroProducto[] =
+        updateCarroDto.productosCarro.map((productoCarro) => {
+          const nuevoCarroProducto: CarroProducto = new CarroProducto();
+          nuevoCarroProducto.idCarro = idCarro;
+          nuevoCarroProducto.idProducto = productoCarro.productoId;
+          nuevoCarroProducto.cantidadProducto = productoCarro.cantidadProducto;
+          return nuevoCarroProducto;
+        });
       await this.carroProductoRepository.save(nuevosCarroProductos);
-      nuevosCarroProductos.forEach(carroProducto => {
-        carroProducto.producto = productosEncontrados.find(producto => producto.id == carroProducto.idProducto)
-      })
-      return CarroComprasMapper.arrayCarroProductosEntityToDto(nuevosCarroProductos)
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException('Error al reemplazar contenido del carro')
+      nuevosCarroProductos.forEach((carroProducto) => {
+        carroProducto.producto = productosEncontrados.find(
+          (producto) => producto.id == carroProducto.idProducto,
+        );
+      });
+      return CarroComprasMapper.arrayCarroProductosEntityToDto(
+        nuevosCarroProductos,
+      );
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('Error al reemplazar contenido del carro');
     }
   }
 }
