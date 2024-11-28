@@ -5,13 +5,12 @@
 // import { IsNotEmpty, ValidateNested } from 'class-validator';
 // import { Type } from 'class-transformer';
 
-import { ApiProperty } from "@nestjs/swagger";
-import { UpdateProductCarro } from "./update-product-carro";
-import { ValidateNested } from "class-validator";
-
+import { ApiProperty } from '@nestjs/swagger';
+import { UpdateProductCarro } from './update-product-carro';
+import { ValidateNested } from 'class-validator';
 
 export class UpdateContenidoCarroDto {
   @ApiProperty({ type: UpdateProductCarro, isArray: true })
   @ValidateNested()
-  productosCarro: UpdateProductCarro[]
+  productosCarro: UpdateProductCarro[];
 }

@@ -9,7 +9,13 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 
@@ -25,7 +31,7 @@ import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-prod
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) { }
+  constructor(private readonly productosService: ProductosService) {}
 
   // Obtener producto por id
   @ApiOperation({ summary: 'Busca un producto por su id' })
@@ -86,7 +92,8 @@ export class ProductosController {
   @ApiBody({ type: CreateProductoDto })
   @Post()
   createProduct(
-    @Body(ValidarBase64Pipe, ValidarPropiedadesProductoPipe) createProductoDto: CreateProductoDto,
+    @Body(ValidarBase64Pipe, ValidarPropiedadesProductoPipe)
+    createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.create(createProductoDto);
   }
@@ -106,7 +113,8 @@ export class ProductosController {
   @Patch(':id')
   updateProduct(
     @Param('id', ProductoExistentePipe) id: number,
-    @Body(ValidarBase64Pipe, ValidarPropiedadesProductoPipe) updateProductoDto: UpdateProductoDto,
+    @Body(ValidarBase64Pipe, ValidarPropiedadesProductoPipe)
+    updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.update(id, updateProductoDto);
   }
@@ -129,25 +137,44 @@ export class ProductosController {
   }
 
   //Subir imagen en bas64 a un producto
-  @ApiOperation({ summary: 'Sube una imagen a servidor de estáticos y guarda la ruta en la DB' })
+  @ApiOperation({
+    summary:
+      'Sube una imagen a servidor de estáticos y guarda la ruta en la DB',
+  })
   @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
   @ApiResponse({ status: 400, description: 'Error al subir imagen' })
   @ApiBody({ type: Object })
-
   @Post('addProductImage/:idProducto')
   @ApiBody({ type: UpdateProductImageDto })
-  async addProductImage(@Body() base64Content: UpdateProductImageDto, @Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
-    return await this.productosService.addProductImage(base64Content, idProducto);
+  async addProductImage(
+    @Body() base64Content: UpdateProductImageDto,
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    idProducto: number,
+  ) {
+    return await this.productosService.addProductImage(
+      base64Content,
+      idProducto,
+    );
   }
 
   @ApiBody({ type: UpdateProductImageDto })
   @Patch('updateProductImage/:idProducto')
-  async updateProductImage(@Body() base64Content: UpdateProductImageDto, @Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
-    return await this.productosService.updateProductImage(base64Content, idProducto);
+  async updateProductImage(
+    @Body() base64Content: UpdateProductImageDto,
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    idProducto: number,
+  ) {
+    return await this.productosService.updateProductImage(
+      base64Content,
+      idProducto,
+    );
   }
 
   @Delete('deleteProductImage/:idProducto')
-  async deleteProductImage(@Param('idProducto', ParseIntPipe, ProductoExistentePipe) idProducto: number) {
+  async deleteProductImage(
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    idProducto: number,
+  ) {
     return await this.productosService.deleteProductImage(idProducto);
   }
 }

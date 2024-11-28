@@ -40,19 +40,19 @@ export class CarroComprasMapper {
       );
       carroDto.precioTotal = carroDto.carroProductos.reduce(
         (acumulador, valorActual) =>
-          acumulador + valorActual.producto.precio * valorActual.cantidadProducto,
+          acumulador +
+          valorActual.producto.precio * valorActual.cantidadProducto,
         0,
       );
+    } else {
+      carroDto.carroProductos = [];
     }
-    else {
-      carroDto.carroProductos = []
-    }
-    carroDto.fecha_cierre = carro.fecha_cierre
-    carroDto.fecha_creacion = carro.fecha_creacion
+    carroDto.fecha_cierre = carro.fecha_cierre;
+    carroDto.fecha_creacion = carro.fecha_creacion;
     return carroDto;
   }
 
   static arrayCarroEntityToDto(carros: CarroCompra[]): GetCarroComprasDto[] {
-    return carros.map(carro => CarroComprasMapper.carroEntityToDto(carro))
+    return carros.map((carro) => CarroComprasMapper.carroEntityToDto(carro));
   }
 }

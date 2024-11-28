@@ -84,13 +84,15 @@ export class ProductoMapper {
     return productoDto;
   }
 
-  static DtoToProducto(productoDto: CreateProductoDto | UpdateProductoDto): Producto {
+  static DtoToProducto(
+    productoDto: CreateProductoDto | UpdateProductoDto,
+  ): Producto {
     const producto = new Producto();
     producto.SKU = productoDto.SKU;
     producto.nombre = productoDto.nombre;
     producto.precio = productoDto.precio;
     producto.descripcion = productoDto.descripcion;
-    producto.idCategoria = productoDto.idCategoria
+    producto.idCategoria = productoDto.idCategoria;
     // producto.imagen = productoDto.imagen;
     producto.cantidad = productoDto.cantidad;
     producto.unidadesVendidas = productoDto.unidadesVendidas;

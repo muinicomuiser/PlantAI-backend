@@ -7,14 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Put
+  Put,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags
-} from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 import { AddProductCarro } from '../dto/add-product-carro';
 import { GetCarroComprasDto } from '../dto/get-carro-compras.dto';
@@ -30,9 +25,7 @@ import { CarroComprasService } from '../service/carro-compras.service';
 // @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) { }
-
-
+  constructor(private readonly carroComprasService: CarroComprasService) {}
 
   // Obtener carro de compras por id
   @ApiTags('Carro de compras - Admin')
@@ -58,16 +51,17 @@ export class CarroComprasController {
     description: 'Retorna todos los carros',
     type: [GetCarroComprasDto],
   })
-
   @Get()
   async obtenerTodos(): Promise<GetCarroComprasDto[]> {
-    return await this.carroComprasService.findAll()
+    return await this.carroComprasService.findAll();
   }
 
   // Obtener carro de compras por id de usuario
   // Se asume que este método solo trae el carro activo
   @ApiTags('Carro de compras - Cliente')
-  @ApiOperation({ summary: 'Busca el carro activo de un usuario según id de usuario' })
+  @ApiOperation({
+    summary: 'Busca el carro activo de un usuario según id de usuario',
+  })
   @ApiResponse({
     status: 200,
     description: 'Carro encontrado',
@@ -84,7 +78,11 @@ export class CarroComprasController {
   // Crear carro de compras
   @ApiTags('Carro de compras - Admin')
   @ApiOperation({ summary: 'Crea un nuevo carro de compras para un usuario.' })
-  @ApiResponse({ status: 201, description: 'Carro creado', type: GetCarroComprasDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Carro creado',
+    type: GetCarroComprasDto,
+  })
   @ApiResponse({
     status: 400,
     description:
@@ -119,7 +117,11 @@ export class CarroComprasController {
   // - Agregar producto al carro
   @ApiTags('Carro de compras - Cliente')
   @ApiOperation({ summary: 'Agrega un producto al carro de compras' })
-  @ApiResponse({ status: 201, description: 'Producto agregado', type: GetCarroProductoDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Producto agregado',
+    type: GetCarroProductoDto,
+  })
   @ApiResponse({ status: 400, description: 'Producto no ha sido agregado' })
   @ApiBody({ type: AddProductCarro })
   @Post('addProducto/:idCarro')
@@ -145,7 +147,8 @@ export class CarroComprasController {
   @Patch('updateProducto/:idCarro')
   async updateProductQuantity(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Body(ProductoExistentePipe<UpdateProductCarro>) updateDto: UpdateProductCarro,
+    @Body(ProductoExistentePipe<UpdateProductCarro>)
+    updateDto: UpdateProductCarro,
   ) {
     return await this.carroComprasService.updateProductQuantity(
       idCarro,
@@ -156,7 +159,11 @@ export class CarroComprasController {
   // - Remover producto del carro
   @ApiTags('Carro de compras - Cliente')
   @ApiOperation({ summary: 'Remueve un producto del carro' })
-  @ApiResponse({ status: 201, description: 'Producto eliminado del carro', type: GetCarroProductoDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Producto eliminado del carro',
+    type: GetCarroProductoDto,
+  })
   @ApiResponse({
     status: 400,
     description: 'El producto no ha podido ser eliminado',
@@ -168,7 +175,7 @@ export class CarroComprasController {
   @Delete('removeProducto/:idCarro/:idProducto')
   async removeProductCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe<Number>)
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe<number>)
     idProducto: number,
   ): Promise<GetCarroProductoDto> {
     return await this.carroComprasService.removeProductCarro(
@@ -177,20 +184,31 @@ export class CarroComprasController {
     );
   }
 
-
   // - Llenar carro / reemplazar contenido de carro
   @ApiTags('Carro de compras - Cliente')
   @ApiOperation({ summary: 'Reemplaza el contenido de un carro de compras.' })
-  @ApiResponse({ status: 200, description: 'Contenido reemplazado con éxito.', type: [GetCarroProductoDto] })
-  @ApiResponse({ status: 400, description: 'Error al modificar el contenido del carro.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Contenido reemplazado con éxito.',
+    type: [GetCarroProductoDto],
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al modificar el contenido del carro.',
+  })
   @ApiResponse({ status: 404, description: 'El producto no existe.' })
   @ApiBody({ type: UpdateContenidoCarroDto })
   @Put('replaceProductos/:idCarro')
   async replaceProductosCarro(
     @Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
-    @Body(ProductoExistentePipe<UpdateContenidoCarroDto>) updateCarroDto: UpdateContenidoCarroDto
+    @Body(ProductoExistentePipe<UpdateContenidoCarroDto>)
+    updateCarroDto: UpdateContenidoCarroDto,
   ): Promise<GetCarroProductoDto[]> {
-    const carroProductosDto: GetCarroProductoDto[] = await this.carroComprasService.replaceProductosCarro(+idCarro, updateCarroDto)
-    return carroProductosDto
+    const carroProductosDto: GetCarroProductoDto[] =
+      await this.carroComprasService.replaceProductosCarro(
+        +idCarro,
+        updateCarroDto,
+      );
+    return carroProductosDto;
   }
 }

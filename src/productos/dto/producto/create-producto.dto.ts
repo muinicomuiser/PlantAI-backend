@@ -7,7 +7,7 @@ import {
   IsPositive,
   IsString,
   Max,
-  Min
+  Min,
 } from 'class-validator';
 import { DeepPartial } from 'typeorm';
 import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';

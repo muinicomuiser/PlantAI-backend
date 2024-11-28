@@ -39,5 +39,4 @@ export class GetCarroComprasDto {
   @ApiProperty({ description: 'Fecha de compra, cierre del carro.' })
   @ApiProperty()
   fecha_cierre: Date;
-
 }
