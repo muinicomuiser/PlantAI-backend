@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString } from 'class-validator';
 
 export class CreateMaceteroDto {
+  idProducto: number;
+
   @ApiProperty({
     example: 1,
     description: 'Identificador de la marca',
@@ -40,8 +42,8 @@ export class CreateMaceteroDto {
   litros: number;
 
   // relaciones
-  @ApiProperty({ description: 'Marca' })
-  marca: string;
-  @ApiProperty({ description: 'Tipo de macetero' })
-  tipoMacetero: string;
+  // @ApiProperty({ description: 'Marca' })
+  // marca: string;
+  // @ApiProperty({ description: 'Tipo de macetero' })
+  // tipoMacetero: string;
 }

@@ -53,54 +53,96 @@ export class ProductosService {
 
   //
   async create(createProductoDto: CreateProductoDto): Promise<GetProductoDto> {
-    const categoriaProducto: Categoria = await this.productoRepository.manager.getRepository(Categoria).findOneBy({ id: createProductoDto.idCategoria })
-    const nuevoProducto = await this.productoRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        const newProducto = transactionalEntityManager.create(
-          Producto,
-          ProductoMapper.DtoToProducto(createProductoDto)
-          // createProductoDto as DeepPartial<Producto>,
-        );
+    let imagenNueva: string = null;
+    if (createProductoDto.imagen) {
+      imagenNueva = createProductoDto.imagen
+      createProductoDto.imagen = null
+    }
+    try {
+      const nuevoProducto = await this.productoRepository.manager.transaction(async (transactionalEM) => {
+        const producto: Producto = Object.assign(new Producto(), createProductoDto)
+        const productoGuardado = await transactionalEM.save(producto);
+
+        const productoId = productoGuardado.id;
         if (createProductoDto.planta) {
-          newProducto.planta = transactionalEntityManager.create(
-            Planta,
-            createProductoDto.planta as DeepPartial<Planta>,
-          );
+          const planta: Planta = Object.assign(new Planta(), createProductoDto.planta)
+          planta.idProducto = productoId
+          productoGuardado.planta = await transactionalEM.save(planta);
         }
         if (createProductoDto.macetero) {
-          newProducto.macetero = transactionalEntityManager.create(
-            Macetero,
-            newProducto.macetero as DeepPartial<Macetero>,
-          );
+          const macetero: Macetero = Object.assign(new Macetero(), createProductoDto.macetero)
+          macetero.idProducto = productoId
+          productoGuardado.macetero = await transactionalEM.save(macetero);
         }
         if (createProductoDto.insumo) {
-          newProducto.insumo = transactionalEntityManager.create(
-            Insumo,
-            newProducto.insumo as DeepPartial<Insumo>,
-          );
+          const insumo: Insumo = Object.assign(new Insumo(), createProductoDto.insumo)
+          insumo.idProducto = productoId
+          productoGuardado.insumo = await transactionalEM.save(insumo);
         }
         if (createProductoDto.accesorio) {
-          newProducto.accesorio = transactionalEntityManager.create(
-            Accesorio,
-            newProducto.accesorio as DeepPartial<Accesorio>,
-          );
+          const accesorio: Accesorio = Object.assign(new Accesorio(), createProductoDto.accesorio)
+          accesorio.idProducto = productoId
+          productoGuardado.accesorio = await transactionalEM.save(accesorio);
         }
-        const productoCreado =
-          await transactionalEntityManager.save(newProducto);
-        return productoCreado;
-      },
-    );
-    if (createProductoDto.imagen) {
-      const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto()
-      imagenBase64.base64Content = createProductoDto.imagen
-      const rutaImagen: string = await this.addProductImage(imagenBase64, nuevoProducto.id)
-      nuevoProducto.imagen = rutaImagen;
+        return productoGuardado
+      });
+
+      //////////////////////////////////// VERSIÓN PREVIA///////
+      // const categoriaProducto: Categoria = await this.productoRepository.manager.getRepository(Categoria).findOneBy({ id: createProductoDto.idCategoria })
+      // const nuevoProducto = await this.productoRepository.manager.transaction(
+      //   async (transactionalEntityManager) => {
+      //     const newProducto = transactionalEntityManager.create(
+      //       Producto,
+      //       ProductoMapper.DtoToProducto(createProductoDto)
+      //       // createProductoDto as DeepPartial<Producto>,
+      //     );
+      //     if (createProductoDto.planta) {
+      //       newProducto.planta = transactionalEntityManager.create(
+      //         Planta,
+      //         createProductoDto.planta as Planta,
+      //       );
+      //     }
+      //     if (createProductoDto.macetero) {
+      //       newProducto.macetero = transactionalEntityManager.create(
+      //         Macetero,
+      //         newProducto.macetero as DeepPartial<Macetero>,
+      //       );
+      //     }
+      //     if (createProductoDto.insumo) {
+      //       newProducto.insumo = transactionalEntityManager.create(
+      //         Insumo,
+      //         newProducto.insumo as DeepPartial<Insumo>,
+      //       );
+      //     }
+      //     if (createProductoDto.accesorio) {
+      //       newProducto.accesorio = transactionalEntityManager.create(
+      //         Accesorio,
+      //         newProducto.accesorio as DeepPartial<Accesorio>,
+      //       );
+      //     }
+      //   },
+      // );
+      // const productoCreado =
+      //   await transactionalEntityManager.save(newProducto);
+      // return productoCreado;
+      // nuevoProducto.categoria = categoriaProducto
+      //////////////////////////////////// VERSIÓN PREVIA///////
+
+      if (imagenNueva) {
+        const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto()
+        imagenBase64.base64Content = imagenNueva
+        const rutaImagen: string = await this.addProductImage(imagenBase64, nuevoProducto.id)
+        nuevoProducto.imagen = rutaImagen;
+      }
+      else {
+        nuevoProducto.imagen = null
+      }
+      return await this.getById(nuevoProducto.id)
     }
-    else {
-      nuevoProducto.imagen = null
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al crear producto')
     }
-    nuevoProducto.categoria = categoriaProducto
-    return ProductoMapper.entityToDto(nuevoProducto);
   }
 
   async update(
@@ -112,7 +154,6 @@ export class ProductosService {
       const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto()
       imagenBase64.base64Content = updateProductoDto.imagen
       updateProductoDto.imagen = await this.updateProductImage(imagenBase64, id)
-      console.log(updateProductoDto.imagen)
     }
     // const categoriaProducto: Categoria = await this.productoRepository.manager.getRepository(Categoria).findOneBy({ id: updateProductoDto.idCategoria })
     const updateProducto = await this.productoRepository.manager.transaction(
@@ -178,9 +219,10 @@ export class ProductosService {
       },
     );
 
-    // return ProductoMapper.entityToDto(updateProducto);
     return await this.getById(updateProducto.id);
   }
+
+
   /**Elimina un producto según su id */
   async deleteOne(idProducto: number): Promise<GetProductoDto> {
     const producto = await this.productoRepository.findOne({
@@ -248,9 +290,7 @@ export class ProductosService {
         return this.addProductImage(base64Content, idProducto)
       }
       else {
-        console.log(producto.imagen)
         const rutaArchivoActual = producto.imagen.replace(`${process.env.RUTA_ESTATICOS}`, `${process.env.RUTA_FISICA}/`);
-        console.log(rutaArchivoActual)
         //actualiza la imagen en la carpeta física
         const rutaImagen = await this.imageService.updateImage(base64Content.base64Content, rutaArchivoActual);
 

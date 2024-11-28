@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt } from 'class-validator';
 
 export class CreateInsumoDto {
+  idProducto: number;
+
   @ApiProperty({
     example: 1,
     description: 'identificador del tipo insumo',
@@ -17,8 +19,8 @@ export class CreateInsumoDto {
   idMarca: number;
 
   // relaciones
-  @ApiProperty({ description: 'Tipo de insumo' })
-  tipoInsumo: string;
-  @ApiProperty({ description: 'Marca' })
-  marca: string;
+  // @ApiProperty({ description: 'Tipo de insumo' })
+  // tipoInsumo: string;
+  // @ApiProperty({ description: 'Marca' })
+  // marca: string;
 }

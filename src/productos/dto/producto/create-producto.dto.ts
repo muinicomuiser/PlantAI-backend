@@ -99,26 +99,26 @@ export class CreateProductoDto {
     type: CreatePlantaDto,
   })
   @IsOptional()
-  planta?: DeepPartial<CreatePlantaDto>;
+  planta?: CreatePlantaDto;
 
   @ApiProperty({
     description: 'Macetero asociado al producto',
     type: CreateMaceteroDto,
   })
   @IsOptional()
-  macetero?: DeepPartial<CreateMaceteroDto>;
+  macetero?: CreateMaceteroDto;
 
   @ApiProperty({
     description: 'Accesorio asociado al producto',
     type: CreateAccesorioDto,
   })
   @IsOptional()
-  accesorio?: DeepPartial<CreateAccesorioDto>;
+  accesorio?: CreateAccesorioDto;
 
   @ApiProperty({
     description: 'Insumo asociado al producto',
     type: CreateInsumoDto,
   })
   @IsOptional()
-  insumo?: DeepPartial<CreateInsumoDto>;
+  insumo?: CreateInsumoDto;
 }
