@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -17,21 +18,24 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { UsuariosService } from '../service/usuarios.service';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
+import { RolExistsPipe } from '../pipe/rol-exist.pipe';
+import { Rol } from '../entities/rol.entity';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
+import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService,
-    private readonly carroComprasService: CarroComprasService
-  ) { }
+  constructor(private readonly usuariosService: UsuariosService) {}
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -89,14 +93,10 @@ export class UsuariosController {
   @ApiBody({ type: CreateUsuarioDto })
   @Post()
   async create(
+    @Body('idRol', RolExistsPipe) rol: Rol,
     @Body(ValidarCrearUsuarioPipe) createUsuarioDTO: CreateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    const usuarioCreado: OutputUserDTO = await this.usuariosService.createUser(createUsuarioDTO);
-    /**Insertar un carro nuevo al usuario creado. */
-    const nuevoCarro = this.carroComprasService.createCarro(usuarioCreado.id)
-    return usuarioCreado;
-
-
+    return this.usuariosService.createUser(createUsuarioDTO, rol);
   }
 
   // Actualizar un usuario según el id
@@ -113,10 +113,12 @@ export class UsuariosController {
   @ApiBody({ type: UpdateUsuarioDto })
   @Put(':id')
   async updateOne(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body('idRol', RolExistsPipe) rol: Rol,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    return await this.usuariosService.updateOne(id, updateUsuarioDto);
+    const updateData = { ...updateUsuarioDto, rol };
+    return this.usuariosService.updateOne(id, updateData);
   }
 
   // Eliminar un usuario según el id
@@ -136,60 +138,71 @@ export class UsuariosController {
   async deleteOne(@Param('id') id: number): Promise<{ message: string }> {
     return await this.usuariosService.deleteUser(id);
   }
-
-  // Agregar un pedido
-  @ApiOperation({ summary: 'Agrega un pedido a un usuario NO IMPLEMENTADO' })
-  @ApiResponse({
-    status: 201,
-    description: 'Pedido añadido',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Error al añadir el pedido',
-  })
-  @Post('addPedido/:idUsuario')
-  addPedido(
-    @Body() pedido: CreatePedidoDto,
-    @Param('idUsuario') idUsuario: number,
-  ) {
-    return this.usuariosService.addPedido(idUsuario, pedido);
-  }
-
   //Obtener pedidos de usuario
   @ApiOperation({
-    summary: 'Obtiene los pedidos realizados según usuario NO IMPLEMENTADO',
+    summary: 'Obtiene los pedidos de un usuario según ID',
   })
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de pedidos de un usuario',
+    type: Pedido,
+    isArray: true,
   })
   @ApiResponse({
     status: 404,
     description: 'Error al buscar los pedidos',
   })
   @Get('pedidos/:idUsuario')
-  findPedidos(@Param('idUsuario') idUsuario: number) {
+  async findPedidos(
+    @Param('idUsuario', ParseIntPipe) idUsuario: number,
+  ): Promise<GetPedidoDto[]> {
     return this.usuariosService.findPedidos(idUsuario);
   }
 
-  // Modificar medio de pago
+  // Modificar o agregar medio de pago
   @ApiOperation({
-    summary: 'Modifica el medio de pago de un usuario NO IMPLEMENTADO',
+    summary: 'Modifica o agrega el medio de pago de un usuario',
   })
   @ApiResponse({
     status: 204,
-    description: 'Medio de pago modificado',
+    description: 'Medio de pago modificado o creado',
   })
   @ApiResponse({
     status: 400,
     description: 'Error al modificar el medio de pago',
   })
-  @ApiQuery({ name: 'Tipo de Pago' })
   @Patch('updateMedioPago/:idUsuario')
-  updateMedioPago(
-    @Param('idUsuario') idUsuario: number,
-    @Query() medioPago: string,
+  async updateMedioPago(
+    @Param('idUsuario', ParseIntPipe) idUsuario: number,
+    @Query('medioPago') medioPago: string,
   ) {
-    return this.usuariosService.updateMedioPago(idUsuario, medioPago);
+    const medioPagoEntity =
+      await this.usuariosService.findMedioPagoByName(medioPago);
+    if (!medioPagoEntity) {
+      throw new BadRequestException(
+        `El mediio pago "${medioPago}" no está registrado`,
+      );
+    }
+    return this.usuariosService.updateMedioPago(idUsuario, medioPagoEntity);
+  }
+
+  //Obtener medios de pago de un usuario
+  @ApiOperation({ summary: 'Obtiene los métodos de pago de un usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve la lista de métodos de pago de un usuario',
+    type: MedioPago,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encontró el usuario',
+  })
+  @Get(':idUsuario/metodos-pago')
+  async findMediosPago(
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe)
+    idUsuario: number,
+  ): Promise<MedioPago[]> {
+    return this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
   }
 }

@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 import { LoginDto } from '../dto/login.dto';
 import { UsuariosService } from 'src/usuarios/service/usuarios.service';
@@ -6,13 +11,18 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { toOutputUserDTO } from 'src/usuarios/mapper/entitty-to-dto-usuarios';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Rol } from 'src/usuarios/entities/rol.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usuariosService: UsuariosService,
     private readonly jwtService: JwtService,
-  ) { }
+    @InjectRepository(Rol)
+    private readonly rolRepository: Repository<Rol>,
+  ) {}
 
   async validarUsuario(
     nombreUsuario: string,
@@ -34,7 +44,17 @@ export class AuthService {
       createUsuarioDto.contrasena,
       salt,
     );
-    return this.usuariosService.createUser(createUsuarioDto);
+    // buscar rol en base
+    const rol = await this.rolRepository.findOne({
+      where: { id: createUsuarioDto.idRol },
+    });
+    if (!rol) {
+      throw new NotFoundException(
+        `Rol con ID ${createUsuarioDto.idRol} no existe`,
+      );
+    }
+    //pasar rol al metodo de crea
+    return this.usuariosService.createUser(createUsuarioDto, rol);
   }
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
