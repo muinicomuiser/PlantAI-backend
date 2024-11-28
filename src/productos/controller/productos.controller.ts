@@ -17,6 +17,7 @@ import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
 import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
+import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -84,7 +85,7 @@ export class ProductosController {
   @ApiBody({ type: CreateProductoDto })
   @Post()
   createProduct(
-    @Body() createProductoDto: CreateProductoDto,
+    @Body(ValidarBase64Pipe) createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.create(createProductoDto);
   }
@@ -104,7 +105,7 @@ export class ProductosController {
   @Patch(':id')
   updateProduct(
     @Param('id', ProductoExistentePipe) id: number,
-    @Body() updateProductoDto: UpdateProductoDto,
+    @Body(ValidarBase64Pipe) updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.update(id, updateProductoDto);
   }

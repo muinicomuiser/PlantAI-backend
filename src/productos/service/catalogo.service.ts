@@ -12,7 +12,7 @@ export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) {}
+  ) { }
 
   /**Retorna todos los productos */
   async findAll(
@@ -25,6 +25,9 @@ export class CatalogoService {
       take: limit,
       skip: offset,
       relations: PRODUCTO_RELATIONS,
+      where: {
+        habilitado: true
+      }
     });
     const productos = result.map((producto) =>
       ProductoMapper.entityToDto(producto),
