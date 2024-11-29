@@ -74,7 +74,6 @@ RUTA_FISICA=./ruta/archivos
 
 2. En caso que se ejecute en ambiente productivo:
 ```
-VERSION_NODE="Versión Node"
 VERSION_MYSQL="Versión MYSQL"
 VERSION_FLYWAY="Versión Flyway"
 API_PORT=8080
