@@ -20,6 +20,12 @@ export class ValidarBase64Pipe implements PipeTransform {
         throw new BadRequestException('El formato de imagen no es válido.');
       }
     }
+    if (value.base64Content) {
+      const imagen: string = value.base64Content;
+      if (!imagen.includes(',')) {
+        throw new BadRequestException('El formato de imagen no es válido.');
+      }
+    }
     return value;
   }
 }

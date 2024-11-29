@@ -25,13 +25,23 @@ import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-e
 import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
 import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
 import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
+import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
+import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
+
+
+  @ApiOperation({ summary: 'Retorna todos los productos registrados.' })
+  @ApiResponse({ status: 200, description: 'Retorna todos los productos', type: [GetProductoDto] })
+  @Get()
+  async findAll(): Promise<GetProductoDto[]> {
+    return this.productosService.getAll()
+  }
 
   // Obtener producto por id
   @ApiOperation({ summary: 'Busca un producto por su id' })
@@ -92,7 +102,7 @@ export class ProductosController {
   @ApiBody({ type: CreateProductoDto })
   @Post()
   createProduct(
-    @Body(ValidarBase64Pipe, ValidarPropiedadesProductoPipe)
+    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
     createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.create(createProductoDto);
@@ -113,7 +123,7 @@ export class ProductosController {
   @Patch(':id')
   updateProduct(
     @Param('id', ProductoExistentePipe) id: number,
-    @Body(ValidarBase64Pipe, ValidarPropiedadesProductoPipe)
+    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.update(id, updateProductoDto);
@@ -139,7 +149,7 @@ export class ProductosController {
   //Subir imagen en bas64 a un producto
   @ApiOperation({
     summary:
-      'Sube una imagen a servidor de estáticos y guarda la ruta en la DB',
+      'Sube la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta',
   })
   @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
   @ApiResponse({ status: 400, description: 'Error al subir imagen' })
@@ -147,7 +157,7 @@ export class ProductosController {
   @Post('addProductImage/:idProducto')
   @ApiBody({ type: UpdateProductImageDto })
   async addProductImage(
-    @Body() base64Content: UpdateProductImageDto,
+    @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
     idProducto: number,
   ) {
@@ -157,10 +167,13 @@ export class ProductosController {
     );
   }
 
+  @ApiOperation({ summary: 'Actualizar la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta' })
+  @ApiResponse({ status: 200, description: 'Imagen actualizada con éxito' })
+  @ApiResponse({ status: 400, description: 'Error al actualizar imagen' })
   @ApiBody({ type: UpdateProductImageDto })
   @Patch('updateProductImage/:idProducto')
   async updateProductImage(
-    @Body() base64Content: UpdateProductImageDto,
+    @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
     idProducto: number,
   ) {
@@ -170,9 +183,12 @@ export class ProductosController {
     );
   }
 
+  @ApiOperation({ summary: 'Eliminar la imagen de un producto' })
+  @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
+  @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
   @Delete('deleteProductImage/:idProducto')
   async deleteProductImage(
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe, ValidarImagenProductoExistePipe)
     idProducto: number,
   ) {
     return await this.productosService.deleteProductImage(idProducto);
