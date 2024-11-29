@@ -42,7 +42,7 @@ export class CreateProductoDto {
 
   @ApiProperty({
     description: 'Imagen en base64',
-    example: 'Imagen en base64',
+    example: 'base64',
   })
   @IsOptional()
   imagen?: string;
@@ -53,22 +53,25 @@ export class CreateProductoDto {
   @Min(0)
   cantidad: number;
 
-  @ApiProperty({ description: 'Unidades vendidas del producto', example: 5 })
+  @ApiProperty({ description: 'Unidades vendidas del producto', example: 5, default: 0 })
   @IsNumber()
   @IsInt()
   @Min(0)
-  unidadesVendidas: number;
+  @IsOptional()
+  unidadesVendidas: number = 0;
 
   @ApiProperty({
     description: 'Puntuación del producto',
     minimum: 0,
     maximum: 5,
     example: 3,
+    default: 5
   })
   @IsNumber()
   @Min(0)
   @Max(5)
-  puntuacion: number;
+  @IsOptional()
+  puntuacion: number = 5;
 
   @ApiProperty({ description: 'Ancho del producto en cm', example: 10 })
   @IsNumber()
@@ -90,9 +93,10 @@ export class CreateProductoDto {
   @IsPositive()
   peso: number;
 
-  @ApiProperty({ description: 'Habilitado', example: true })
+  @ApiProperty({ description: 'Habilitado', example: true, default: true })
   @IsBoolean()
-  habilitado: boolean;
+  @IsOptional()
+  habilitado: boolean = true;
 
   @ApiProperty({
     description: 'Planta asociada al producto',
