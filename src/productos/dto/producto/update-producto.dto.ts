@@ -19,14 +19,17 @@ import { UpdateAccesorioDto } from '../accesorio/update-accesorio.dto';
 export class UpdateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
   @IsString()
+  @IsOptional()
   SKU?: string;
 
   @ApiProperty({ description: 'Nombre del producto', example: 'Agatea Verde' })
   @IsString()
+  @IsOptional()
   nombre?: string;
 
   @ApiProperty({ description: 'ID de la categoría', example: 1 })
   @IsInt()
+  @IsOptional()
   idCategoria?: number;
 
   @ApiProperty({ description: 'Precio del producto', example: 1000 })
@@ -101,8 +104,8 @@ export class UpdateProductoDto {
   peso?: number;
 
   @ApiProperty({ description: 'Habilitado', example: true })
-  @IsOptional()
   @IsBoolean()
+  @IsOptional()
   habilitado?: boolean;
 
   @ApiProperty({
