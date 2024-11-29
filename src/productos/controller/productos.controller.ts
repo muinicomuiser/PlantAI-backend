@@ -9,20 +9,39 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
+import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
+import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
+import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
+import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
+import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
+
+
+  @ApiOperation({ summary: 'Retorna todos los productos registrados.' })
+  @ApiResponse({ status: 200, description: 'Retorna todos los productos', type: [GetProductoDto] })
+  @Get()
+  async findAll(): Promise<GetProductoDto[]> {
+    return this.productosService.getAll()
+  }
 
   // Obtener producto por id
   @ApiOperation({ summary: 'Busca un producto por su id' })
@@ -80,15 +99,18 @@ export class ProductosController {
     status: 400,
     description: 'No ha sido posible crear el producto',
   })
+  @ApiBody({ type: CreateProductoDto })
   @Post()
   createProduct(
-    @Body() createProductoDto: CreateProductoDto,
+    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
+    createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.create(createProductoDto);
   }
 
   // Actualizar un producto
   @ApiOperation({ summary: 'Actualiza un producto.' })
+  @ApiBody({ type: UpdateProductoDto })
   @ApiResponse({
     status: 200,
     description: 'Actualiza un producto.',
@@ -101,7 +123,8 @@ export class ProductosController {
   @Patch(':id')
   updateProduct(
     @Param('id', ProductoExistentePipe) id: number,
-    @Body() updateProductoDto: UpdateProductoDto,
+    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
+    updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.update(id, updateProductoDto);
   }
@@ -117,7 +140,57 @@ export class ProductosController {
     description: 'No existe un producto con ese id',
   })
   @Delete(':id')
-  deleteOne(@Param('id', ProductoExistentePipe) id: number) {
+  deleteOne(
+    @Param('id', ProductoExistentePipe) id: number,
+  ): Promise<GetProductoDto> {
     return this.productosService.deleteOne(id);
+  }
+
+  //Subir imagen en bas64 a un producto
+  @ApiOperation({
+    summary:
+      'Sube la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta',
+  })
+  @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
+  @ApiResponse({ status: 400, description: 'Error al subir imagen' })
+  @ApiBody({ type: Object })
+  @Post('addProductImage/:idProducto')
+  @ApiBody({ type: UpdateProductImageDto })
+  async addProductImage(
+    @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    idProducto: number,
+  ) {
+    return await this.productosService.addProductImage(
+      base64Content,
+      idProducto,
+    );
+  }
+
+  @ApiOperation({ summary: 'Actualizar la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta' })
+  @ApiResponse({ status: 200, description: 'Imagen actualizada con éxito' })
+  @ApiResponse({ status: 400, description: 'Error al actualizar imagen' })
+  @ApiBody({ type: UpdateProductImageDto })
+  @Patch('updateProductImage/:idProducto')
+  async updateProductImage(
+    @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+    idProducto: number,
+  ) {
+    return await this.productosService.updateProductImage(
+      base64Content,
+      idProducto,
+    );
+  }
+
+  @ApiOperation({ summary: 'Eliminar la imagen de un producto' })
+  @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
+  @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
+  @Delete('deleteProductImage/:idProducto')
+  async deleteProductImage(
+    @Param('idProducto', ParseIntPipe, ProductoExistentePipe, ValidarImagenProductoExistePipe)
+    idProducto: number,
+  ) {
+    return await this.productosService.deleteProductImage(idProducto);
   }
 }

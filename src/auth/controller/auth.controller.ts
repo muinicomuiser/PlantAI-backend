@@ -17,7 +17,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente' })
   @ApiResponse({ status: 400, description: 'Error al registrar el usuario' })
   @Post('registro')
-  register(@Body() createUser: CreateUsuarioDto) {
+  async register(@Body() createUser: CreateUsuarioDto) {
     return this.authService.register(createUser);
   }
 
@@ -26,7 +26,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Usuario logueado exitosamente' })
   @ApiResponse({ status: 401, description: 'Error al loguear el usuario' })
   @Post('login')
-  login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 }

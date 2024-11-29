@@ -59,13 +59,18 @@ export class Producto {
   @Column()
   peso: number;
 
+  @Column()
+  habilitado: boolean;
+
   /**Many to One */
   @ManyToOne(() => Categoria)
   @JoinColumn({ name: 'id_categoria' })
   categoria: Categoria; // Por Id_categoria
 
   /**Many to Many */
-  @ManyToMany(() => Etiqueta, (etiqueta) => etiqueta.productos)
+  @ManyToMany(() => Etiqueta, (etiqueta) => etiqueta.productos, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable({
     name: 'productos_etiquetas', // Nombre de la tabla intermedia
     joinColumn: { name: 'id_producto', referencedColumnName: 'id' }, // Columna que referencia a la entidad actual (Producto)

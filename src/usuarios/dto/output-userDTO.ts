@@ -29,7 +29,7 @@ export class OutputUserDTO {
   fechaNacimiento: Date;
 
   @ApiProperty({ example: 'Cliente' })
-  tipoUsuario: string;
+  rol: string;
 
   @ApiProperty({ example: ['Calle Falsa 123', 'Avenida Siempreviva 742'] })
   direcciones: string[];

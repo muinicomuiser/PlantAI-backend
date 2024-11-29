@@ -15,13 +15,12 @@ export class ValidarUsuarioExistePipe implements PipeTransform {
     private readonly usuarioRepository: Repository<Usuario>,
   ) {}
 
-  async transform(value: any, metadata: ArgumentMetadata) {
-    const existe: boolean = await this.usuarioRepository.existsBy({
-      id: value,
+  async transform(value: number, metadata: ArgumentMetadata) {
+    const usuarioExiste = await this.usuarioRepository.exist({
+      where: { id: value },
     });
-
-    if (!existe) {
-      throw new NotFoundException('No existe un usuario con ese ID.');
+    if (!usuarioExiste) {
+      throw new NotFoundException(`No existe un usuario con el ID ${value}.`);
     }
     return value;
   }

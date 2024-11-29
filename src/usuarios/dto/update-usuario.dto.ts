@@ -60,5 +60,5 @@ export class UpdateUsuarioDto {
   @ApiPropertyOptional({ example: 3 })
   @IsNumber()
   @IsOptional()
-  tipoUsuarioId?: number;
+  idRol?: number;
 }

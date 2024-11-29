@@ -4,7 +4,7 @@ import { IsBoolean, IsInt, IsString } from 'class-validator';
 export class GetPlantaDto {
   @ApiProperty({ example: 1, description: 'Identificador único del producto' })
   @IsInt()
-  id_producto: number;
+  idProducto: number;
 
   @ApiProperty({
     example: true,

@@ -1,34 +1,39 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
+import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { mapperPedido } from 'src/pedidos/mapper/pedido.mapper';
 import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
-import { TipoUsuario } from '../entities/tipo_usuario.entity';
+import { Rol } from '../entities/rol.entity';
 import { Usuario } from '../entities/usuario.entity';
+import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
 import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
-import { Direccion } from '../entities/direccion.entity';
 
 @Injectable()
 export class UsuariosService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuariosRepository: Repository<Usuario>,
-    @InjectRepository(TipoUsuario)
-    private readonly tipoUsuarioRepository: Repository<TipoUsuario>,
-  ) {}
+    @InjectRepository(Pedido)
+    private readonly pedidosRepository: Repository<Pedido>,
+    @InjectRepository(MedioPago)
+    private readonly medioPagoRepository: Repository<MedioPago>,
+    @InjectRepository(UsuarioMedioPago)
+    private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
     const usuarios = await this.usuariosRepository.find({
-      relations: [
-        'tipoUsuario',
-        'direccion',
-        'usuarioMedioPago',
-        'carros',
-        'pedidos',
-      ],
+      relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
     });
     return usuarios.map(toOutputUserDTO);
   }
@@ -37,13 +42,7 @@ export class UsuariosService {
   async findById(id: number): Promise<OutputUserDTO> {
     const usuario = await this.usuariosRepository.findOne({
       where: { id },
-      relations: [
-        'tipoUsuario',
-        'direccion',
-        'usuarioMedioPago',
-        'carros',
-        'pedidos',
-      ],
+      relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
     });
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
@@ -52,20 +51,13 @@ export class UsuariosService {
   }
 
   /**Crear un usuario */
-  async createUser(createUsuarioDto: CreateUsuarioDto): Promise<OutputUserDTO> {
-    //verificar que el id tipo usuario existe en la entidad
-    const tipoUsuario = await this.tipoUsuarioRepository.findOne({
-      where: { id: createUsuarioDto.tipoUsuarioId },
-    });
-    if (!tipoUsuario) {
-      throw new NotFoundException(
-        `TipoUsuario con ID ${createUsuarioDto.tipoUsuarioId} no existe`,
-      );
-    }
-    //crear nuevo usuario
+  async createUser(
+    createUsuarioDto: CreateUsuarioDto,
+    rol: Rol,
+  ): Promise<OutputUserDTO> {
     const usuario = this.usuariosRepository.create({
       ...createUsuarioDto,
-      tipoUsuario,
+      rol,
     });
     const usuarioCreado = await this.usuariosRepository.save(usuario);
     return toOutputUserDTO(usuarioCreado);
@@ -78,30 +70,11 @@ export class UsuariosService {
   ): Promise<OutputUserDTO> {
     const usuario = await this.usuariosRepository.findOne({
       where: { id },
-      relations: [
-        'tipoUsuario',
-        'direccion',
-        'usuarioMedioPago',
-        'carros',
-        'pedidos',
-      ],
+      relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
     });
     //validacion de id
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-    }
-
-    //validación de tipousuario
-    if (UpdateUsuarioDto.tipoUsuarioId) {
-      const tipoUsuario = await this.tipoUsuarioRepository.findOne({
-        where: { id: UpdateUsuarioDto.tipoUsuarioId },
-      });
-      if (!tipoUsuario) {
-        throw new NotFoundException(
-          `Tipo Usuario con ID ${UpdateUsuarioDto.tipoUsuarioId} no existe`,
-        );
-      }
-      usuario.tipoUsuario = tipoUsuario;
     }
     //actualiza el usuario:
     this.usuariosRepository.merge(usuario, UpdateUsuarioDto);
@@ -127,18 +100,80 @@ export class UsuariosService {
     return { message: `Usuario con ID ${id} eliminado con éxito` };
   }
 
-  /**Retorna los pedidos asociados a un id de usuario */
-  findPedidos(idUsuario: number) {
-    return 'Retorna los pedidos del usuario según el ID';
+  async findByUsername(nombreUsuario: string): Promise<Usuario> {
+    const usuario = await this.usuariosRepository.findOne({
+      where: { nombreUsuario },
+      relations: ['rol'],
+    });
+    if (!usuario) {
+      throw new NotFoundException(
+        `Usuario con nombre de usuario ${nombreUsuario} no encontrado`,
+      );
+    }
+    return usuario;
   }
 
-  /**Agrega un pedido a un usuario según su id */
-  addPedido(idUsuario: number, pedido: CreatePedidoDto) {
-    return 'Agrega un pedido a un usuario';
+  /**Retorna los pedidos asociados a un id de usuario */
+  async findPedidos(idUsuario: number): Promise<GetPedidoDto[]> {
+    const pedidos = await this.pedidosRepository.find({
+      where: { idUsuario },
+      relations: [
+        'medioPago',
+        'estadoPedido',
+        'tipoDespacho',
+        'carro',
+        'usuario',
+        'Pago',
+      ],
+    });
+    if (pedidos.length === 0) {
+      throw new NotFoundException(
+        `No se encontraron pedidos para el usuario con ID ${idUsuario}`,
+      );
+    }
+    return pedidos.map(mapperPedido.toDto);
   }
 
   /**Actualiza el medio de pago de un usuario según su id */
-  updateMedioPago(idUsuario: number, medioPago: string) {
-    return 'Actualiza el Medio de Pago de un usuario';
+  async updateMedioPago(
+    idUsuario: number,
+    medioPago: MedioPago,
+  ): Promise<{ message: string }> {
+    const usuarioMedioPago = await this.usuarioMedioPagoRepository.findOne({
+      where: { idUsuario, idMedioPago: medioPago.id },
+    });
+    if (usuarioMedioPago) {
+      throw new BadRequestException(`Medio de pago ya inscrito`);
+    }
+
+    const nuevaRelacion = this.usuarioMedioPagoRepository.create({
+      idUsuario,
+      idMedioPago: medioPago.id,
+      esPreferido: true,
+    });
+    await this.usuarioMedioPagoRepository.save(nuevaRelacion);
+
+    return { message: `medio de pago habilitado` };
+  }
+  //buscar medio de pago por nombre para traspasarlo a id
+  async findMedioPagoByName(nombre: string): Promise<MedioPago> {
+    const medioPago = await this.medioPagoRepository.findOne({
+      where: { nombre },
+    });
+
+    if (!medioPago) {
+      throw new NotFoundException(`El medio de pago "${nombre}" no existe.`);
+    }
+
+    return medioPago;
+  }
+
+  //Buscar medio de pago por id
+  async findMedioPagoByUsuarioId(idUsuario: number): Promise<MedioPago[]> {
+    const usuarioMediosPago = await this.usuarioMedioPagoRepository.find({
+      where: { idUsuario },
+      relations: ['medioPago'],
+    });
+    return usuarioMediosPago.map((relacion) => relacion.medioPago);
   }
 }

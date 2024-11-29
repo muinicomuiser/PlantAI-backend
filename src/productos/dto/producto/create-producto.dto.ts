@@ -1,12 +1,19 @@
-import {
-  IsString,
-  IsNumber,
-  IsPositive,
-  IsInt,
-  Min,
-  Max,
-} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsBoolean,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
+import { DeepPartial } from 'typeorm';
+import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';
+import { CreateInsumoDto } from '../insumo/create-insumo.dto';
+import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
+import { CreatePlantaDto } from '../planta/create-planta.dto';
 
 export class CreateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
@@ -34,11 +41,11 @@ export class CreateProductoDto {
   descripcion: string;
 
   @ApiProperty({
-    description: 'URL de la imagen del producto',
-    example: 'https://www.plantAI.com/imagenes/agatea.jpg',
+    description: 'Imagen en base64',
+    example: 'base64',
   })
-  @IsString()
-  imagen: string;
+  @IsOptional()
+  imagen?: string;
 
   @ApiProperty({ description: 'Cantidad disponible del producto', example: 10 })
   @IsNumber()
@@ -46,22 +53,25 @@ export class CreateProductoDto {
   @Min(0)
   cantidad: number;
 
-  @ApiProperty({ description: 'Unidades vendidas del producto', example: 5 })
+  @ApiProperty({ description: 'Unidades vendidas del producto', example: 5, default: 0 })
   @IsNumber()
   @IsInt()
   @Min(0)
-  unidadesVendidas: number;
+  @IsOptional()
+  unidadesVendidas: number = 0;
 
   @ApiProperty({
     description: 'Puntuación del producto',
     minimum: 0,
     maximum: 5,
     example: 3,
+    default: 5
   })
   @IsNumber()
   @Min(0)
   @Max(5)
-  puntuacion: number;
+  @IsOptional()
+  puntuacion: number = 5;
 
   @ApiProperty({ description: 'Ancho del producto en cm', example: 10 })
   @IsNumber()
@@ -82,4 +92,37 @@ export class CreateProductoDto {
   @IsNumber()
   @IsPositive()
   peso: number;
+
+  @ApiProperty({ description: 'Habilitado', example: true, default: true })
+  @IsBoolean()
+  @IsOptional()
+  habilitado: boolean = true;
+
+  @ApiProperty({
+    description: 'Planta asociada al producto',
+    type: CreatePlantaDto,
+  })
+  @IsOptional()
+  planta?: CreatePlantaDto;
+
+  @ApiProperty({
+    description: 'Macetero asociado al producto',
+    type: CreateMaceteroDto,
+  })
+  @IsOptional()
+  macetero?: CreateMaceteroDto;
+
+  @ApiProperty({
+    description: 'Accesorio asociado al producto',
+    type: CreateAccesorioDto,
+  })
+  @IsOptional()
+  accesorio?: CreateAccesorioDto;
+
+  @ApiProperty({
+    description: 'Insumo asociado al producto',
+    type: CreateInsumoDto,
+  })
+  @IsOptional()
+  insumo?: CreateInsumoDto;
 }
