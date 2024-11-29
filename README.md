@@ -58,29 +58,34 @@ yarn install
 1. Completar el archivo .env en la raíz del proyecto,
    configurando las siguientes variables de entorno (tomar el archivo .env.example como referencia):
 ```
-VERSION_NODE=22-alpine3.19
-VERSION_MYSQL=8.0
-VERSION_FLYWAY=10.20.1-alpine
+VERSION_NODE="Versión Node"
+VERSION_MYSQL="Versión MYSQL"
+VERSION_FLYWAY="Versión Flyway"
 API_PORT=3000
 AMBIENTE=dev
 DB_HOST="host_db"
 DB_PORT=3306
 DB_USERNAME="usuario_dev"
 DB_PASSWORD="contraseña"
-DB_DATABASE="plantai_db"
+DB_DATABASE="nombre_db"
+RUTA_ESTATICOS=/ruta/estaticos
+RUTA_FISICA=./ruta/archivos
 ```
 
 2. En caso que se ejecute en ambiente productivo:
 ```
-VERSION_MYSQL=8.0
-VERSION_FLYWAY=10.20.1-alpine
+VERSION_NODE="Versión Node"
+VERSION_MYSQL="Versión MYSQL"
+VERSION_FLYWAY="Versión Flyway"
 API_PORT=8080
 AMBIENTE=production
 DB_HOST="host_db"
-DB_PORT=3308
+DB_PORT=3306
 DB_USERNAME="usuario_prod"
 DB_PASSWORD="contraseña"
-DB_DATABASE="plantai_db"
+DB_DATABASE="nombre_db"
+RUTA_ESTATICOS=/ruta/estaticos
+RUTA_FISICA=./ruta/archivos
 ```
 
 <a name="ejecucion-desarrollo"></a>
@@ -93,7 +98,7 @@ siguiente comando, desde la ruta grupo-3-backend:
 docker compose up -d
 ```
 
-La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
+La base de datos se cargará en el puerto 3306, según lo expuesto en el punto anterior.
 La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
 <a name="ejecucion-produccion"></a>
@@ -107,7 +112,7 @@ cd prod
 docker compose up -d
 ```
 
-La base de datos se cargará en el puerto 3308, según lo expuesto en el punto anterior.
+La base de datos se cargará en el puerto 3306, según lo expuesto en el punto anterior.
 La arquitectura de datos del proyecto está construida sobre mySQL, imagen mysql:9-oracle
 
 <a name="estructura-del-proyecto"></a>
