@@ -1,7 +1,7 @@
 Table usuarios{
   id integer [primary key]
   contrasena varchar
-  id_tipo_usuario integer
+  id_rol integer
   nombre varchar
   apellido varchar
   nombre_usuario varchar
@@ -10,6 +10,7 @@ Table usuarios{
   genero varchar
   rut varchar
   fecha_nacimiento date
+  fecha_eliminacion date
 }
 
 
@@ -24,9 +25,9 @@ Table direcciones{
 }
 
 
-Table tipo_usuarios{
+Table roles{
   id integer [primary key]
-  tipo varchar
+  nombre varchar
 }
 
 
@@ -84,6 +85,7 @@ Table carros{
   id integer [primary key]
   fecha_creacion date
   fecha_cierre date  
+  fecha_eliminacion date
 }
 
 
@@ -202,7 +204,7 @@ Table tipo_accesorios{
 
 
 //Usuarios
-Ref: usuarios.id_tipo_usuario > tipo_usuarios.id
+Ref: usuarios.id_rol > roles.id
 Ref: usuarios.id < carros.id_usuario
 Ref: usuarios.id < direcciones.id_usuario
 Ref: usuarios.id < pedidos.id_usuario
