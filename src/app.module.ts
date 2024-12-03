@@ -11,6 +11,7 @@ import { GlobalMiddleware } from './commons/middleware/global.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
 
 console.log(
   `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
@@ -21,9 +22,9 @@ console.log(
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:
-        process.env.AMBIENTE != undefined
+        [process.env.AMBIENTE != undefined
           ? `.env.${process.env.AMBIENTE}`
-          : `.env.dev`,
+          : `.env.dev`, `.env.ia`],
     }),
 
     TypeOrmModule.forRoot({
@@ -45,6 +46,7 @@ console.log(
     UsuariosModule,
     EquipoModule,
     AuthModule,
+    IaconsultasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
