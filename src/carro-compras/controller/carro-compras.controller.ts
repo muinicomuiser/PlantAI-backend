@@ -214,8 +214,8 @@ export class CarroComprasController {
   }
 
   @ApiTags('Carro de compras - Cliente')
-  @ApiOperation({ summary: 'Valida el stock del contenido de un carro. Si hay conflicto devuelve el contenido sin stock, si no, actualiza el carro.' })
-  @ApiResponse({ status: 201, description: 'Stock suficiente y contenido del carro de compras actualizado.' })
+  @ApiOperation({ summary: 'Valida el stock del contenido de un carro. Si hay conflicto, devuelve el máximo por producto en conflicto, si no, actualiza el carro. FINALIZAR COMPRA.' })
+  @ApiResponse({ status: 201, description: 'Stock suficiente y contenido del carro de compras actualizado.', type: [GetCarroProductoDto] })
   @ApiResponse({ status: 400, description: 'Stock insuficiente de uno o más productos.', type: NoStockProductosCarroDto })
   @ApiBody({ type: UpdateContenidoCarroDto })
   @Post('/validateProductosCarro/:idCarro')

@@ -25,7 +25,7 @@ export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) { }
 
   // Crear pedido
-  @ApiOperation({ summary: 'Crea un pedido a partir de un carro de compras' })
+  @ApiOperation({ summary: 'Crea un pedido a partir de un carro de compras. CONFIRMAR PEDIDO / PAGO' })
   @ApiResponse({
     status: 201,
     description: 'Pedido creado con éxito',
