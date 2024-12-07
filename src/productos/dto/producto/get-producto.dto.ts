@@ -7,11 +7,11 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { GetCategoriaDto } from '../categoria/get-categoria.dto';
-import { GetPlantaDto } from '../planta/get-planta.dto';
-import { GetMaceteroDto } from '../macetero/get-macetero.dto';
 import { GetAccesorioDto } from '../accesorio/get-accesorio.dto';
+import { GetCategoriaDto } from '../categoria/get-categoria.dto';
 import { GetInsumoDto } from '../insumo/get-insumo.dto';
+import { GetMaceteroDto } from '../macetero/get-macetero.dto';
+import { GetPlantaDto } from '../planta/get-planta.dto';
 
 export class GetProductoDto {
   @ApiProperty({ example: 1, description: 'Identificador único del producto' })
@@ -57,7 +57,7 @@ export class GetProductoDto {
 
   @ApiProperty({ example: 50, description: 'Cantidad disponible del producto' })
   @IsInt()
-  cantidad: number;
+  stock: number;
 
   @ApiProperty({
     example: 20,

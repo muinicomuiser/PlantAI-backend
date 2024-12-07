@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   Delete,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -14,24 +15,26 @@ import { UpdatePedidoDto } from '../dto/update-pedido.dto';
 import { GetPedidoDto } from '../dto/get-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
 import { DeletePedidoResponseDto } from '../dto/delete-pedido.dto';
+import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
+import { ValidarCarroLlenoPipe } from '../pipe/validar-carro-lleno.pipe';
 
 /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
 @ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {
-  constructor(private readonly pedidosService: PedidosService) {}
+  constructor(private readonly pedidosService: PedidosService) { }
 
   // Crear pedido
-  @ApiOperation({ summary: 'Crea un pedido' })
+  @ApiOperation({ summary: 'Crea un pedido a partir de un carro de compras. CONFIRMAR PEDIDO / PAGO' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Pedido creado con éxito',
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 400, description: 'Problemas para crear el pedido' })
-  @Post()
-  create(@Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
-    return this.pedidosService.create(createPedidoDTO);
+  @Post(':idUsuario')
+  async create(@Param('idUsuario', ValidarUsuarioExistePipe, ValidarCarroLlenoPipe) idUsuario: number, @Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
+    return await this.pedidosService.create(+idUsuario, createPedidoDTO);
   }
 
   // Obtener todos los pedidos
@@ -43,11 +46,12 @@ export class PedidosController {
   @ApiResponse({
     status: 200,
     description: 'Pedidos filtrados por estado o todos los pedidos',
-    type: GetPedidoDto,
+    type: [GetPedidoDto],
   })
   @Get()
-  findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
-    return this.pedidosService.findAll();
+  async findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return await this.pedidosService.findAll();
   }
 
   // Obtener pedidos por id
@@ -59,11 +63,13 @@ export class PedidosController {
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<GetPedidoDto> {
-    return this.pedidosService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<GetPedidoDto> {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return this.pedidosService.findOne(+id);
   }
 
   // Modificar un pedido
+  //***Re desarrollar para ajustar a la estructura nueva de Pedido*/
   @ApiOperation({ summary: 'Modifica pedidos por id' })
   @ApiResponse({
     status: 200,
@@ -75,8 +81,9 @@ export class PedidosController {
   update(
     @Param('id') id: number,
     @Body() updatePedidoDto: UpdatePedidoDto,
-  ): Promise<GetPedidoDto> {
-    return this.pedidosService.update(+id, updatePedidoDto);
+  ) {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return this.pedidosService.update(+id, updatePedidoDto);
   }
 
   // Eliminar un pedido
@@ -88,7 +95,8 @@ export class PedidosController {
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<DeletePedidoResponseDto> {
-    return this.pedidosService.remove(+id);
+  async remove(@Param('id') id: number): Promise<DeletePedidoResponseDto> {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return this.pedidosService.remove(+id);
   }
 }
