@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsString, MaxLength } from 'class-validator';
 
 export class CreatePlantaDto {
   idProducto: number;
@@ -11,10 +11,6 @@ export class CreatePlantaDto {
   @IsBoolean()
   petFriendly: boolean;
 
-  @ApiProperty({ example: 20, description: 'Tolerancia de temperatura' })
-  @IsInt()
-  toleranciaTemperatura: number;
-
   @ApiProperty({
     example: true,
     description: 'Indica si la planta es de ciclo',
@@ -23,18 +19,11 @@ export class CreatePlantaDto {
   ciclo: boolean;
 
   @ApiProperty({
-    example: '1.5m',
-    description: 'Altura de la planta',
+    description: 'Especie de la planta',
   })
+  @MaxLength(50)
   @IsString()
-  altura: string;
-
-  @ApiProperty({
-    example: 1,
-    description: 'Identificador de la especie de la planta',
-  })
-  @IsInt()
-  idEspecie: number;
+  especie: string;
 
   @ApiProperty({
     example: 1,
@@ -64,7 +53,35 @@ export class CreatePlantaDto {
   @IsInt()
   idHabitoCrecimiento: number;
 
-  // // Relaciónes
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador del tamaño de la planta',
+  })
+  @IsInt()
+  idTamano: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador de la tolerancia a la temperatura de la planta',
+  })
+  @IsInt()
+  idToleranciaTemperatura: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador del entorno de la planta',
+  })
+  @IsInt()
+  idEntorno: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador de la iluminación de la planta',
+  })
+  @IsInt()
+  idIluminacion: number;
+
+  // // Relaciones
   // @ApiProperty({ description: 'especie de la planta' })
   // especie: string;
 

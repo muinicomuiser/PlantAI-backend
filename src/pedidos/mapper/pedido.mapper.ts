@@ -1,3 +1,4 @@
+import { GetDireccionEnvioDto } from '../dto/get-direccion-envio.dto';
 import { GetPedidoDto } from '../dto/get-pedido.dto';
 import { GetProductoPedidoDto } from '../dto/get-producto-pedido.dto';
 import { Pedido } from '../entities/pedido.entity';
@@ -23,7 +24,9 @@ export class mapperPedido {
     const productosPedidoDto: GetProductoPedidoDto[] = pedido.productosPedido.map(productoPedido => {
       return Object.assign(new GetProductoPedidoDto(), productoPedido)
     })
+    const direccionDto: GetDireccionEnvioDto = Object.assign(new GetDireccionEnvioDto(), pedido.direccionEnvio)
     pedidoDto.productosPedido = productosPedidoDto
+    pedidoDto.direccionEnvio = direccionDto
     return pedidoDto;
   }
 }

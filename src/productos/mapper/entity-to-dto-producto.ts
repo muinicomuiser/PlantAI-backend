@@ -1,8 +1,7 @@
-import { UpdateProductCarro } from 'src/carro-compras/dto/update-product-carro';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
-import { Producto } from '../entities/producto.entity';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { Producto } from '../entities/producto.entity';
 
 export class ProductoMapper {
   static entityToDto(producto: Producto): GetProductoDto {
@@ -32,19 +31,24 @@ export class ProductoMapper {
         productoDto.planta = {
           idProducto: producto.planta.idProducto,
           petFriendly: producto.planta.petFriendly,
-          toleranciaTemperatura: producto.planta.toleranciaTemperatura,
           ciclo: producto.planta.ciclo,
-          altura: producto.planta.altura,
-          idEspecie: producto.planta.idEspecie,
+          especie: producto.planta.especie,
           idColor: producto.planta.idColor,
           idFotoperiodo: producto.planta.idFotoperiodo,
           idTipoRiego: producto.planta.idTipoRiego,
           idHabitoCrecimiento: producto.planta.idHabitoCrecimiento,
           habitoCrecimiento: producto.planta.habitoCrecimiento.crecimiento,
-          especie: producto.planta.especie.especie,
           color: producto.planta.color.color,
           fotoPeriodo: producto.planta.fotoPeriodo.tipoFotoperiodo,
           tipoRiego: producto.planta.tipoRiego.tipoRiego,
+          idToleranciaTemperatura: producto.planta.idToleranciaTemperatura,
+          idEntorno: producto.planta.idEntorno,
+          idIluminacion: producto.planta.idIluminacion,
+          idTamano: producto.planta.idTamano,
+          entorno: producto.planta.entorno.entorno,
+          iluminacion: producto.planta.iluminacion.iluminacion,
+          toleranciaTemperatura: producto.planta.toleranciaTemperatura.toleranciaTemperatura,
+          tamano: producto.planta.tamano.tamano
         };
       }
     }

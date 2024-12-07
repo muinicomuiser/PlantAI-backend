@@ -8,9 +8,10 @@ import { TipoDespacho } from './entities/tipo_despacho.entity';
 import { PedidosService } from './service/pedidos.service';
 import { ProductoPedido } from './entities/productos_pedido.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { DireccionEnvio } from './entities/direccion-envio.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido, EstadoPedido, TipoDespacho, ProductoPedido, Usuario]), CarroComprasModule],
+  imports: [TypeOrmModule.forFeature([Pedido, EstadoPedido, TipoDespacho, ProductoPedido, Usuario, DireccionEnvio]), CarroComprasModule],
   controllers: [PedidosController],
   providers: [PedidosService],
 })

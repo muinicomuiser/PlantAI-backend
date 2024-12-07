@@ -14,6 +14,7 @@ import {
 import { EstadoPedido } from './estado_pedido.entity';
 import { ProductoPedido } from './productos_pedido.entity';
 import { TipoDespacho } from './tipo_despacho.entity';
+import { DireccionEnvio } from './direccion-envio.entity';
 
 @Entity({ name: 'pedidos' })
 export class Pedido {
@@ -40,6 +41,11 @@ export class Pedido {
 
   @Column({ name: 'fecha_entrega', type: 'date' })
   fechaEntrega: Date;
+
+  @Column({ name: 'receptor' })
+  receptor: string;
+
+
 
   /**Many to One */
   /**Revisar. Por qué traer el usuario desde un pedido. */
@@ -74,4 +80,8 @@ export class Pedido {
 
   @OneToMany(() => ProductoPedido, (productoPedido) => productoPedido.idPedido)
   productosPedido: ProductoPedido[]
+
+  @OneToOne(() => DireccionEnvio, (direccion) => direccion.pedido)
+  @JoinColumn({ name: 'id' })
+  direccionEnvio: DireccionEnvio;
 }

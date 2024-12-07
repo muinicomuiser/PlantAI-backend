@@ -4,6 +4,7 @@ import { Pago } from 'src/commons/entities/pagos.entity';
 import { EstadoPedido } from '../entities/estado_pedido.entity';
 import { TipoDespacho } from '../entities/tipo_despacho.entity';
 import { GetProductoPedidoDto } from './get-producto-pedido.dto';
+import { GetDireccionEnvioDto } from './get-direccion-envio.dto';
 
 export class GetPedidoDto {
   @ApiProperty({ example: 1, description: 'Identificador del pedido' })
@@ -37,6 +38,9 @@ export class GetPedidoDto {
 
   @ApiProperty({ type: [GetProductoPedidoDto] })
   productosPedido: GetProductoPedidoDto[]
+
+  @ApiProperty({ type: GetDireccionEnvioDto })
+  direccionEnvio: GetDireccionEnvioDto;
 
   // pedientes de desarrollo cuando se creen los DTOs
   @ApiProperty()

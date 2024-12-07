@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   Delete,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -49,7 +50,8 @@ export class PedidosController {
   })
   @Get()
   async findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
-    return await this.pedidosService.findAll();
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return await this.pedidosService.findAll();
   }
 
   // Obtener pedidos por id
@@ -61,11 +63,13 @@ export class PedidosController {
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<GetPedidoDto> {
-    return this.pedidosService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<GetPedidoDto> {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return this.pedidosService.findOne(+id);
   }
 
   // Modificar un pedido
+  //***Re desarrollar para ajustar a la estructura nueva de Pedido*/
   @ApiOperation({ summary: 'Modifica pedidos por id' })
   @ApiResponse({
     status: 200,
@@ -77,8 +81,9 @@ export class PedidosController {
   update(
     @Param('id') id: number,
     @Body() updatePedidoDto: UpdatePedidoDto,
-  ): Promise<GetPedidoDto> {
-    return this.pedidosService.update(+id, updatePedidoDto);
+  ) {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return this.pedidosService.update(+id, updatePedidoDto);
   }
 
   // Eliminar un pedido
@@ -90,7 +95,8 @@ export class PedidosController {
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<DeletePedidoResponseDto> {
-    return this.pedidosService.remove(+id);
+  async remove(@Param('id') id: number): Promise<DeletePedidoResponseDto> {
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return this.pedidosService.remove(+id);
   }
 }
