@@ -1,0 +1,47 @@
+Versión 1.11.0 
+
+    Cambios:
+        - Pedido: 
+            Post /pedidos/{idUsuario}
+            CreatePedidoDto ya no tiene las propiedades "idCarro" ni "idUsuario"
+            Ahora el Post /pedidos tiene un param -> /pedidos/{idUsuario}
+            El Post cierra el Carro del usuario y le asigna un carro nuevo activo (sin fecha de cierre).
+            Tabla nueva: productos_pedido
+        - Productos:
+            Propiedad "cantidad" a "stock"
+        
+        ++ Agregado archivo SQL V0.0.11
+
+
+Versión 1.11.1
+    Cambios:
+        - Producto.planta:
+
+            Tablas nuevas: plantas_tolerancia_temperatura, plantas_tamaño, plantas_entorno, plantas_iluminacion.
+            Columnas eliminadas: id_especie, tolerancia_temperatura, altura.
+            Columnas nuevas: id_tamaño, id_entorno, id_iluminacion, id_tolerancia_temperatura, especie.
+
+            Eliminado: idEspecie, altura
+            Agregado: especie(string), tamano(string), idTamano(number), iluminacion(string), idIluminacion(number),
+                toleranciaTemperatura(string), idToleranciaTemperatura(number), entorno(string), idEntorno(number)
+
+        - Pedidos:
+
+            Tabla nueva: direcciones_envio
+            Columna nueva: receptor varchar(50)
+            DTO nuevo: CreateDireccionEnvioDto
+            DTO Pedido: direccionEnvio: CreateDireccionEnvioDto
+            Agregado: receptor(string)
+
+            Pausados métodos GET, PATCH, DELETE
+        
+        - Carro compras:
+        
+            DTO nuevo: NoStockCarroProductosDto <- Contiene todos los productos de un carro cuyo stock es insuficiente. Contiene además la cantidad máxima por producto.
+
+            Agregado: POST carro-compras/validateProductosCarro/{idCarro}
+                Valida el stock del contenido de un carro de compras:
+                    Si el stock es suficiente para todos los productos, reemplaza todo el carro de compras en Back por el carro entrante.
+                    Si no hay stock de uno o más productos, retorna un error con un objeto { productosEnConflicto: [productosCantidad] } dentro del "response"
+
+        ++ Agregado archivo SQL V0.0.12

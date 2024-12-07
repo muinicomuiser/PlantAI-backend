@@ -18,6 +18,7 @@ import { CarroComprasMapper } from '../mapper/carro-compras.mapper';
 import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-relaciones';
 import { CARRO_RELATIONS } from '../shared/constants/carro-relaciones';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
+import { NoStockProductosCarroDto } from '../dto/no-stock-carro-productos.dto';
 
 @Injectable()
 export class CarroComprasService {
@@ -251,6 +252,36 @@ export class CarroComprasService {
     catch (error) {
       console.error(error)
       throw new BadRequestException('Error al cerrar el Carro')
+    }
+  }
+
+  async validateProductosCarro(idCarro: number, contenidoCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
+    try {
+      const idProductos: number[] = contenidoCarroDto.productosCarro.map(productoCarro => productoCarro.productoId)
+      const productos: Producto[] = await this.productoRepository.find({
+        where: {
+          id: In(idProductos)
+        }
+      })
+      const productosConflicto: NoStockProductosCarroDto = new NoStockProductosCarroDto()
+      productosConflicto.productosEnConflicto = []
+      contenidoCarroDto.productosCarro.forEach(productoCarro => {
+        const producto: Producto = productos.find(producto => producto.id == productoCarro.productoId)
+        if (producto.stock < productoCarro.cantidadProducto) {
+          productoCarro.cantidadProducto = producto.stock
+          productosConflicto.productosEnConflicto.push(productoCarro)
+        }
+      })
+      if (productosConflicto.productosEnConflicto.length > 0) {
+        throw new BadRequestException(productosConflicto)
+      }
+      else {
+        return await this.replaceProductosCarro(idCarro, contenidoCarroDto)
+      }
+    }
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException(error)
     }
   }
 }
