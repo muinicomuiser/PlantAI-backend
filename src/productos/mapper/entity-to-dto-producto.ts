@@ -14,7 +14,7 @@ export class ProductoMapper {
     productoDto.precio = producto.precio;
     productoDto.descripcion = producto.descripcion;
     productoDto.imagen = producto.imagen;
-    productoDto.cantidad = producto.cantidad;
+    productoDto.stock = producto.stock;
     productoDto.unidadesVendidas = producto.unidadesVendidas;
     productoDto.puntuacion = producto.puntuacion;
     productoDto.ancho = producto.ancho;
@@ -94,7 +94,7 @@ export class ProductoMapper {
     producto.descripcion = productoDto.descripcion;
     producto.idCategoria = productoDto.idCategoria;
     // producto.imagen = productoDto.imagen;
-    producto.cantidad = productoDto.cantidad;
+    producto.stock = productoDto.stock;
     producto.unidadesVendidas = productoDto.unidadesVendidas;
     producto.puntuacion = productoDto.puntuacion;
     producto.ancho = productoDto.ancho;

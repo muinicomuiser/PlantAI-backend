@@ -9,7 +9,6 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { DeepPartial } from 'typeorm';
 import { CreateAccesorioDto } from '../accesorio/create-accesorio.dto';
 import { CreateInsumoDto } from '../insumo/create-insumo.dto';
 import { CreateMaceteroDto } from '../macetero/create-macetero.dto';
@@ -51,7 +50,7 @@ export class CreateProductoDto {
   @IsNumber()
   @IsInt()
   @Min(0)
-  cantidad: number;
+  stock: number;
 
   @ApiProperty({ description: 'Unidades vendidas del producto', example: 5, default: 0 })
   @IsNumber()

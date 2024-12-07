@@ -3,15 +3,14 @@ import { Transform } from 'class-transformer';
 import { IsInt, ValidateIf } from 'class-validator';
 
 export class CreatePedidoDto {
-  @ApiProperty({ example: 2, description: 'Identificador del usuario' })
-  @IsInt({ message: 'El idUsuario debe ser un número entero' })
-  idUsuario: number;
+  // @ApiProperty({ example: 2, description: 'Identificador del usuario' })
+  // @IsInt({ message: 'El idUsuario debe ser un número entero' })
+  // idUsuario: number;
   @ApiProperty({
     example: '2024-10-12',
     description: 'Fecha de creación del pedido',
   })
   @ValidateIf((o) => o.fechaCreacion)
-  //@IsString({ message: 'La fecha de creación debe ser una fecha válida' })
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   fechaCreacion: Date;
   @ApiProperty({ example: 1, description: 'Identificador del medio de pago' })
@@ -29,21 +28,17 @@ export class CreatePedidoDto {
     description: 'Identificador del tipo de despacho',
   })
   idTipoDespacho: number;
-  @ApiProperty({
-    example: 1,
-    description: 'Identificador del carro de compra',
-  })
-  @IsInt({ message: 'El idCarro debe ser un número entero' })
-  idCarro: number;
+  // @ApiProperty({
+  //   example: 1,
+  //   description: 'Identificador del carro de compra',
+  // })
+  // @IsInt({ message: 'El idCarro debe ser un número entero' })
+  // idCarro: number;
   @ApiProperty({
     example: '2024-10-15',
     description: 'Fecha de entrega del pedido al cliente',
   })
   @ValidateIf((o) => o.fechaCreacion)
-  // //@IsDateString(
-  //   {},
-  //   { message: 'La fecha de entrega debe ser una fecha válida' },
-  // )
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   fechaEntrega: Date;
 }

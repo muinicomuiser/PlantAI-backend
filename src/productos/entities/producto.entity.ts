@@ -39,7 +39,7 @@ export class Producto {
   imagen: string;
 
   @Column()
-  cantidad: number;
+  stock: number;
 
   @Column({ name: 'unidades_vendidas' })
   unidadesVendidas: number;

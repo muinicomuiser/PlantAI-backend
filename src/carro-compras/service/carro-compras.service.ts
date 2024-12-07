@@ -17,6 +17,7 @@ import { CarroProducto } from '../entities/carro_producto.entity';
 import { CarroComprasMapper } from '../mapper/carro-compras.mapper';
 import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-relaciones';
 import { CARRO_RELATIONS } from '../shared/constants/carro-relaciones';
+import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 
 @Injectable()
 export class CarroComprasService {
@@ -27,9 +28,9 @@ export class CarroComprasService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
     private readonly carroProductoRepository: Repository<CarroProducto>,
-  ) {}
+  ) { }
 
-  //Implementar para usuario administrador
+  /**Crea un carro activo a un usuario. */
   async createCarro(idUsuario: number): Promise<GetCarroComprasDto> {
     const nuevoCarro = new CarroCompra(idUsuario);
     const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
@@ -230,6 +231,26 @@ export class CarroComprasService {
     } catch (error) {
       console.error(error);
       throw new BadRequestException('Error al reemplazar contenido del carro');
+    }
+  }
+
+  async closeCarro(idUsuario: number, pedido: CreatePedidoDto): Promise<GetCarroComprasDto> {
+    try {
+      const carroCerrado: CarroCompra = await this.carroComprasRepository.findOne({
+        where: {
+          idUsuario: idUsuario,
+          fecha_cierre: IsNull()
+        },
+        relations: ['carroProductos', ...CARRO_RELATIONS]
+      })
+      console.log(carroCerrado)
+      // carroCerrado.fecha_cierre = pedido.fechaCreacion
+      await this.carroComprasRepository.update({ id: carroCerrado.id }, { fecha_cierre: pedido.fechaCreacion })
+      return CarroComprasMapper.carroEntityToDto(carroCerrado)
+    }
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al cerrar el Carro')
     }
   }
 }

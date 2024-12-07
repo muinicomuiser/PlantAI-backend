@@ -1,17 +1,19 @@
+import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
-import { EstadoPedido } from './estado_pedido.entity';
-import { TipoDespacho } from './tipo_despacho.entity';
+import { Pago } from 'src/commons/entities/pagos.entity';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { Pago } from 'src/commons/entities/pagos.entity';
-import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
+import { EstadoPedido } from './estado_pedido.entity';
+import { ProductoPedido } from './productos_pedido.entity';
+import { TipoDespacho } from './tipo_despacho.entity';
 
 @Entity({ name: 'pedidos' })
 export class Pedido {
@@ -40,6 +42,7 @@ export class Pedido {
   fechaEntrega: Date;
 
   /**Many to One */
+  /**Revisar. Por qué traer el usuario desde un pedido. */
   @ManyToOne(() => Usuario)
   @JoinColumn({ name: 'id_usuario' })
   usuario: Usuario; // Por id_usuario
@@ -68,4 +71,7 @@ export class Pedido {
   @OneToOne(() => Pago, (pago) => pago.pedido)
   @JoinColumn({ name: 'id' })
   Pago: Pago; // Por id_pedido
+
+  @OneToMany(() => ProductoPedido, (productoPedido) => productoPedido.idPedido)
+  productosPedido: ProductoPedido[]
 }

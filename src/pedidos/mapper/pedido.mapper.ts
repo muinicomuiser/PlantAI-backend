@@ -1,4 +1,5 @@
 import { GetPedidoDto } from '../dto/get-pedido.dto';
+import { GetProductoPedidoDto } from '../dto/get-producto-pedido.dto';
 import { Pedido } from '../entities/pedido.entity';
 
 export class mapperPedido {
@@ -12,12 +13,17 @@ export class mapperPedido {
     pedidoDto.idTipoDespacho = pedido.idTipoDespacho;
     pedidoDto.idCarro = pedido.idCarro;
     pedidoDto.fechaEntrega = pedido.fechaEntrega;
-    pedidoDto.usuario = pedido?.usuario;
     pedidoDto.medioPago = pedido?.medioPago;
     pedidoDto.estadoPedido = pedido?.estadoPedido;
     pedidoDto.tipoDespacho = pedido?.tipoDespacho;
-    pedidoDto.carro = pedido?.carro;
     pedidoDto.Pago = pedido?.Pago;
+    // pedidoDto.carro = pedido?.carro;
+    // pedidoDto.usuario = pedido?.usuario;
+
+    const productosPedidoDto: GetProductoPedidoDto[] = pedido.productosPedido.map(productoPedido => {
+      return Object.assign(new GetProductoPedidoDto(), productoPedido)
+    })
+    pedidoDto.productosPedido = productosPedidoDto
     return pedidoDto;
   }
 }

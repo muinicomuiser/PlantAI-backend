@@ -14,24 +14,26 @@ import { UpdatePedidoDto } from '../dto/update-pedido.dto';
 import { GetPedidoDto } from '../dto/get-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
 import { DeletePedidoResponseDto } from '../dto/delete-pedido.dto';
+import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
+import { ValidarCarroLlenoPipe } from '../pipe/validar-carro-lleno.pipe';
 
 /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
 @ApiTags('Pedidos')
 @Controller('pedidos')
 export class PedidosController {
-  constructor(private readonly pedidosService: PedidosService) {}
+  constructor(private readonly pedidosService: PedidosService) { }
 
   // Crear pedido
-  @ApiOperation({ summary: 'Crea un pedido' })
+  @ApiOperation({ summary: 'Crea un pedido a partir de un carro de compras' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Pedido creado con éxito',
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 400, description: 'Problemas para crear el pedido' })
-  @Post()
-  create(@Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
-    return this.pedidosService.create(createPedidoDTO);
+  @Post(':idUsuario')
+  async create(@Param('idUsuario', ValidarUsuarioExistePipe, ValidarCarroLlenoPipe) idUsuario: number, @Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
+    return await this.pedidosService.create(+idUsuario, createPedidoDTO);
   }
 
   // Obtener todos los pedidos
@@ -43,11 +45,11 @@ export class PedidosController {
   @ApiResponse({
     status: 200,
     description: 'Pedidos filtrados por estado o todos los pedidos',
-    type: GetPedidoDto,
+    type: [GetPedidoDto],
   })
   @Get()
-  findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
-    return this.pedidosService.findAll();
+  async findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
+    return await this.pedidosService.findAll();
   }
 
   // Obtener pedidos por id

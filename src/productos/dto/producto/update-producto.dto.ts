@@ -1,20 +1,18 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProductoDto } from './create-producto.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsString,
+  IsBoolean,
   IsInt,
   IsNumber,
-  IsPositive,
   IsOptional,
-  Min,
+  IsPositive,
+  IsString,
   Max,
-  IsBoolean,
+  Min,
 } from 'class-validator';
-import { UpdatePlantaDto } from '../planta/update-planta.dto';
-import { UpdateMaceteroDto } from '../macetero/update-macetero.dto';
-import { UpdateInsumoDto } from '../insumo/update-insumo.dto';
 import { UpdateAccesorioDto } from '../accesorio/update-accesorio.dto';
+import { UpdateInsumoDto } from '../insumo/update-insumo.dto';
+import { UpdateMaceteroDto } from '../macetero/update-macetero.dto';
+import { UpdatePlantaDto } from '../planta/update-planta.dto';
 // export class UpdateProductoDto extends PartialType(CreateProductoDto) {}
 export class UpdateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
@@ -58,7 +56,7 @@ export class UpdateProductoDto {
   @IsInt()
   @Min(0)
   @IsOptional()
-  cantidad?: number;
+  stock?: number;
 
   @ApiProperty({ description: 'Unidades vendidas del producto', example: 5 })
   @IsNumber()
