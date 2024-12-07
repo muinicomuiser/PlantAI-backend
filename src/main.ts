@@ -5,6 +5,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './commons/filter/httpexception.filter';
 import { ConfigService } from '@nestjs/config';
 import { setupSwagger } from './config/swagger/swagger.config';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +19,7 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
-
+  app.use(json({ limit: '1mb' }))
   // Configuración de Swagger
   setupSwagger(app);
 
