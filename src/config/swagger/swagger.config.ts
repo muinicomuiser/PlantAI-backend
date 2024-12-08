@@ -7,6 +7,7 @@ import { ProductosModule } from 'src/productos/productos.module';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
 import { EquipoModule } from 'src/commons/modelse3/equipo/equipo.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { ReviewsModule } from 'src/reviews/reviews.module';
 
 export function setupSwagger(app: INestApplication) {
   const configService: ConfigService = app.get(ConfigService);
@@ -29,7 +30,8 @@ export function setupSwagger(app: INestApplication) {
         '\n Módulo Productos: api/productos\n' +
         '\n Módulo Usuarios: api/usuarios\n' +
         '\n Módulo Equipo: api/equipo\n' +
-        '\n Módulo Autenticación: api/aut',
+        '\n Módulo Autenticación: api/aut\n' +
+        '\n Módulo Reviews: api/reviews',
     )
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
@@ -51,6 +53,7 @@ export function setupSwagger(app: INestApplication) {
     { module: UsuariosModule, path: 'api/usuarios' },
     { module: EquipoModule, path: 'api/equipo' },
     { module: AuthModule, path: 'api/aut' },
+    { module: ReviewsModule, path: 'api/reviews' },
   ];
 
   configs.forEach(({ module, path }) => {

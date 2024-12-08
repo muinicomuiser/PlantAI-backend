@@ -11,6 +11,7 @@ import { GlobalMiddleware } from './commons/middleware/global.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ReviewsModule } from './reviews/reviews.module';
 
 console.log(
   `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
@@ -45,6 +46,7 @@ console.log(
     UsuariosModule,
     EquipoModule,
     AuthModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
