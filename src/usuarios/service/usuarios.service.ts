@@ -15,7 +15,8 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { Rol } from '../entities/rol.entity';
 import { Usuario } from '../entities/usuario.entity';
 import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
-import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
+import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+//import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 
 @Injectable()
 export class UsuariosService {
@@ -28,7 +29,7 @@ export class UsuariosService {
     private readonly medioPagoRepository: Repository<MedioPago>,
     @InjectRepository(UsuarioMedioPago)
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
-  ) { }
+  ) {}
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {

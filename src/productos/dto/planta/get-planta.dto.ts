@@ -99,14 +99,14 @@ export class GetPlantaDto {
   habitoCrecimiento: string;
 
   @ApiProperty()
-  iluminacion: string
+  iluminacion: string;
 
   @ApiProperty()
-  tamano: string
+  tamano: string;
 
   @ApiProperty()
-  toleranciaTemperatura: string
+  toleranciaTemperatura: string;
 
   @ApiProperty()
-  entorno: string
+  entorno: string;
 }

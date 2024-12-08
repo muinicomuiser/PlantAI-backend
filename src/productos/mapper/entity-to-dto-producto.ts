@@ -47,8 +47,9 @@ export class ProductoMapper {
           idTamano: producto.planta.idTamano,
           entorno: producto.planta.entorno.entorno,
           iluminacion: producto.planta.iluminacion.iluminacion,
-          toleranciaTemperatura: producto.planta.toleranciaTemperatura.toleranciaTemperatura,
-          tamano: producto.planta.tamano.tamano
+          toleranciaTemperatura:
+            producto.planta.toleranciaTemperatura.toleranciaTemperatura,
+          tamano: producto.planta.tamano.tamano,
         };
       }
     }

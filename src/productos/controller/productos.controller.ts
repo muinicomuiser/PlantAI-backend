@@ -33,14 +33,17 @@ import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) { }
-
+  constructor(private readonly productosService: ProductosService) {}
 
   @ApiOperation({ summary: 'Retorna todos los productos registrados.' })
-  @ApiResponse({ status: 200, description: 'Retorna todos los productos', type: [GetProductoDto] })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna todos los productos',
+    type: [GetProductoDto],
+  })
   @Get()
   async findAll(): Promise<GetProductoDto[]> {
-    return this.productosService.getAll()
+    return this.productosService.getAll();
   }
 
   // Obtener producto por id
@@ -102,7 +105,11 @@ export class ProductosController {
   @ApiBody({ type: CreateProductoDto })
   @Post()
   createProduct(
-    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
+    @Body(
+      ValidarBase64Pipe,
+      ValidarCategoriaProductoPipe,
+      ValidarPropiedadesProductoPipe,
+    )
     createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.create(createProductoDto);
@@ -123,7 +130,11 @@ export class ProductosController {
   @Patch(':id')
   updateProduct(
     @Param('id', ProductoExistentePipe) id: number,
-    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
+    @Body(
+      ValidarBase64Pipe,
+      ValidarCategoriaProductoPipe,
+      ValidarPropiedadesProductoPipe,
+    )
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     return this.productosService.update(id, updateProductoDto);
@@ -167,7 +178,10 @@ export class ProductosController {
     );
   }
 
-  @ApiOperation({ summary: 'Actualizar la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta' })
+  @ApiOperation({
+    summary:
+      'Actualizar la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta',
+  })
   @ApiResponse({ status: 200, description: 'Imagen actualizada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al actualizar imagen' })
   @ApiBody({ type: UpdateProductImageDto })
@@ -188,7 +202,12 @@ export class ProductosController {
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
   @Delete('deleteProductImage/:idProducto')
   async deleteProductImage(
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe, ValidarImagenProductoExistePipe)
+    @Param(
+      'idProducto',
+      ParseIntPipe,
+      ProductoExistentePipe,
+      ValidarImagenProductoExistePipe,
+    )
     idProducto: number,
   ) {
     return await this.productosService.deleteProductImage(idProducto);
