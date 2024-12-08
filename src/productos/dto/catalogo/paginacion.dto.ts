@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import {
+  ORDENARPOR,
+  ORDENCATALOGO,
+} from 'src/productos/shared/enums/productos.enum';
 
 export class PaginacionDto {
   /**Número de página */
@@ -45,11 +49,11 @@ export class FiltrosCatalogoDto extends PaginacionDto {
   petFriendly?: boolean;
 
   @ApiProperty({
-    description: 'ID de la puntuacion',
+    description: 'puntuacion minima',
     required: false,
   })
   @Transform(({ value }) => parseInt(value))
-  @IsInt({ message: 'El ID de la puntuacion debe ser un número entero' })
+  @IsInt({ message: 'la puntuacion minima debe ser un número entero' })
   @IsOptional()
   puntuacion?: number;
 
@@ -104,6 +108,17 @@ export class FiltrosCatalogoDto extends PaginacionDto {
     required: false,
   })
   @IsString({ message: 'El campo ordenarPor debe ser un string' })
+  @Transform(({ value }) => ORDENARPOR[value])
   @IsOptional()
-  ordenarPor?: string;
+  ordenarPor?: ORDENARPOR;
+
+  @ApiProperty({
+    description:
+      'Indica si se ordenará de forma ascendente o descendente con respecto al campo ordenarPor (asc o desc)',
+    required: false,
+  })
+  @IsString({ message: 'El campo orden debe ser un string' })
+  @IsOptional()
+  @Transform(({ value }) => ORDENCATALOGO[value])
+  orden?: ORDENCATALOGO;
 }
