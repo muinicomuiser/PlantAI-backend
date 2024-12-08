@@ -57,4 +57,12 @@ export class ReviewsService {
     });
     return ReviewMapper.toDtoList(reviews);
   }
+  //TODO: implementar pipe de validacion usuario
+  async getReviewsByUser(idUsuario: number): Promise<OutputReviewDto[]> {
+    const reviews = await this.reviewRepository.find({
+      where: { idUsuario },
+      relations: ['producto'],
+    });
+    return ReviewMapper.toDtoList(reviews);
+  }
 }

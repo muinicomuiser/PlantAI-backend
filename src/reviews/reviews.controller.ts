@@ -46,4 +46,17 @@ export class ReviewsController {
   ): Promise<OutputReviewDto[]> {
     return this.reviewsService.getReviewsByProduct(idProducto);
   }
+
+  @ApiOperation({ summary: 'Obtener todas las reviews de un usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de reviews del usuario',
+    type: [OutputReviewDto],
+  })
+  @Get('usuario/:idUsuario')
+  async getReviewsByUser(
+    @Param('idUsuario', ParseIntPipe) idUsuario: number,
+  ): Promise<OutputReviewDto[]> {
+    return this.reviewsService.getReviewsByUser(idUsuario);
+  }
 }
