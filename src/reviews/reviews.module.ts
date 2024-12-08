@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Review, Producto, Usuario])],
   controllers: [ReviewsController],
-  providers: [ReviewsService],
+  providers: [ReviewsService, ValidarUsuarioExistePipe],
 })
 export class ReviewsModule {}

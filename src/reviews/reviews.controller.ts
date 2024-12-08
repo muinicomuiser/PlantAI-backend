@@ -14,6 +14,7 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Review } from './entities/review.entity';
 import { OutputReviewDto } from './dto/OutputReviewDto';
+import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 
 @ApiTags('Reviews')
 @Controller('reviews')
@@ -28,7 +29,7 @@ export class ReviewsController {
   })
   @Post(':idUsuario')
   async createReview(
-    @Param('idUsuario', ParseIntPipe) idUsuario: number,
+    @Param('idUsuario', ValidarUsuarioExistePipe) idUsuario: number,
     @Body() createReviewDto: CreateReviewDto,
   ): Promise<Review> {
     return this.reviewsService.createReview(idUsuario, createReviewDto);
@@ -55,7 +56,7 @@ export class ReviewsController {
   })
   @Get('usuario/:idUsuario')
   async getReviewsByUser(
-    @Param('idUsuario', ParseIntPipe) idUsuario: number,
+    @Param('idUsuario', ValidarUsuarioExistePipe) idUsuario: number,
   ): Promise<OutputReviewDto[]> {
     return this.reviewsService.getReviewsByUser(idUsuario);
   }
