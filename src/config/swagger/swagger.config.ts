@@ -21,7 +21,8 @@ export function setupSwagger(app: INestApplication) {
   const license = configService.get('npm_package_license');
   const ambiente = configService.get('AMBIENTE');
 
-  const config = new DocumentBuilder()
+  //configuracion global de swagger
+  const globalConfig = new DocumentBuilder()
     .setTitle(`${name} - ${ambiente}`)
     .setDescription(
       description +
@@ -36,16 +37,22 @@ export function setupSwagger(app: INestApplication) {
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
     .setLicense(license, '')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'access-token',
+    )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config, {
-    include: [null],
-  });
-
-  SwaggerModule.setup('api', app, document, {
+  const golbalDocument = SwaggerModule.createDocument(app, globalConfig);
+  SwaggerModule.setup('api', app, golbalDocument, {
     yamlDocumentUrl: 'swagger/yaml',
   });
 
+  // Configuraciones de modulos
   const configs = [
     { module: CarroComprasModule, path: 'api/carro' },
     { module: PedidosModule, path: 'api/pedidos' },
@@ -63,6 +70,10 @@ export function setupSwagger(app: INestApplication) {
       .setVersion(version)
       .setContact(authorName, authorUrl, authorEmail)
       .setLicense(license, '')
+      .addBearerAuth(
+        { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        'access-token',
+      )
       .build();
 
     const modDocument = SwaggerModule.createDocument(app, modConfig, {

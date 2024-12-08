@@ -4,18 +4,21 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
@@ -28,12 +31,16 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
+@ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) { }
+  constructor(private readonly usuariosService: UsuariosService) {}
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -43,12 +50,22 @@ export class UsuariosController {
     type: OutputUserDTO,
   })
   @ApiResponse({
-    status: 418,
-    description: 'No hay teteras registradas',
+    status: 404,
+    description: 'No hay usuarios registrados',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Acceso denegado',
   })
   @Get()
-  async findAll(): Promise<OutputUserDTO[]> {
-    return await this.usuariosService.findAll();
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
+    const users = await this.usuariosService.findAll();
+    if (!users.length) {
+      throw new NotFoundException('No users found.');
+    }
+    return { data: users, message: 'Usuarios obtenidos exitosamente.' };
   }
 
   // Obtener un usuario según su ID

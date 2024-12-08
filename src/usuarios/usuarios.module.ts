@@ -9,6 +9,8 @@ import { CarroComprasModule } from 'src/carro-compras/carro-compras.module';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { UsuarioMedioPago } from './entities/usuarios_medio_pago.entity';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,9 +23,10 @@ import { MedioPago } from 'src/commons/entities/medio_pago.entity';
       MedioPago,
     ]),
     CarroComprasModule,
+    JwtModule.register({}),
   ],
   controllers: [UsuariosController],
-  providers: [UsuariosService],
+  providers: [UsuariosService, RolesGuard],
   exports: [UsuariosService, TypeOrmModule],
 })
 export class UsuariosModule {}
