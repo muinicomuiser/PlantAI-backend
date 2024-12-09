@@ -17,6 +17,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
 

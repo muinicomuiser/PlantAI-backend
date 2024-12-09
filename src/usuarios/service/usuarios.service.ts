@@ -36,6 +36,11 @@ export class UsuariosService {
     const usuarios = await this.usuariosRepository.find({
       relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
     });
+    if (!usuarios.length) {
+      throw new NotFoundException(
+        'No se encntraron usaurios en la base de datos',
+      );
+    }
     return usuarios.map(toOutputUserDTO);
   }
 

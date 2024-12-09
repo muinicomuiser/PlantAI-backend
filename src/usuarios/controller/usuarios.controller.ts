@@ -58,9 +58,6 @@ export class UsuariosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
     const users = await this.usuariosService.findAll();
-    if (!users.length) {
-      throw new NotFoundException('No users found.');
-    }
     return { data: users, message: 'Usuarios obtenidos exitosamente.' };
   }
 
@@ -79,7 +76,7 @@ export class UsuariosController {
   async findById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<OutputUserDTO> {
-    return await this.usuariosService.findById(id);
+    return this.usuariosService.findById(id);
   }
 
   // Crear un usuario

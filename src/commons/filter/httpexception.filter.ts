@@ -3,35 +3,54 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { timestamp } from 'rxjs';
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = exception.getStatus();
 
-    // Imprimir el estatus y el mensaje en la consola:
-    console.log(
-      `Status filterException: ${status} Mensaje: ${exception.message}`,
-    );
+    /**configuración del estado inicial y mensaje. */
 
-    // Obtener la respuesta de la excepción
-    const exceptionResponse = exception.getResponse();
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let responseBody: any = {
+      statysCode: status,
+      message: 'Ocurrió un error interno en el servidor',
+      path: request.url,
+      timestamp: new Date().toISOString(),
+    };
 
-    // Si la respuesta es un objeto, úsalo directamente
-    const responseBody =
-      typeof exceptionResponse === 'object'
-        ? exceptionResponse
-        : {
-            statusCode: status,
-            message: exception.message,
-            path: request.url,
-          };
-
+    // Si es HTTPEXCEPTION se maneja al detalle:
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
+      responseBody =
+        typeof exceptionResponse === 'object'
+          ? {
+              ...exceptionResponse,
+              path: request.url,
+              timestamp: new Date().toISOString(),
+            }
+          : {
+              statusCode: status,
+              message: exception.message,
+              path: request.url,
+              timestamp: new Date().toISOString(),
+            };
+    }
+    console.error({
+      status,
+      message: responseBody.message,
+      path: request.url,
+      method: request.method,
+      stack: exception instanceof Error ? exception.stack : null,
+    });
+    /**respuesta al cliente */
     response.status(status).json(responseBody);
   }
 }
