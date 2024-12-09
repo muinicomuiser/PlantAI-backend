@@ -50,10 +50,6 @@ export class UsuariosController {
     type: OutputUserDTO,
   })
   @ApiResponse({
-    status: 404,
-    description: 'No hay usuarios registrados',
-  })
-  @ApiResponse({
     status: 403,
     description: 'Acceso denegado',
   })
