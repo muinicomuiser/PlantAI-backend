@@ -1,7 +1,7 @@
 import {
   Injectable,
   NotFoundException,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,14 +19,34 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+  ) {}
 
+  private createTokenPayload(user: any) {
+    return {
+      username: user.username,
+      sub: user.id,
+      role: user.rol,
+    };
+  }
   async validarUsuario(
     nombreUsuario: string,
     contrasena: string,
   ): Promise<any> {
     const user = await this.usuariosService.findByUsername(nombreUsuario);
-    if (user && (await bcrypt.compare(contrasena, user.contrasena))) {
+    if (!user) {
+      return null;
+    }
+    // poder gestionar usuarios de legado con contraseñas  texto plano:
+    const isPasswordValid =
+      user.contrasena.length === 60
+        ? await bcrypt.compare(contrasena, user.contrasena)
+        : user.contrasena === contrasena;
+    if (user.contrasena.length !== 60) {
+      console.warn(
+        `usuario con ID ${user.id} no tiene cifrada su contraseña. Considerar actualuizar`,
+      );
+    }
+    if (isPasswordValid) {
       return {
         id: user.id,
         username: user.nombreUsuario,
@@ -61,12 +81,11 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
-    const payload = {
-      username: user.nombreUsuario,
-      sub: user.id,
-      role: user.rol.nombre,
-    };
-    const token = this.jwtService.sign(payload);
+    const payload = this.createTokenPayload(user);
+    const token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET || 'defaultSecretKey',
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
 
     return { access_token: token };
   }

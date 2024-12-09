@@ -8,6 +8,7 @@ import { setupSwagger } from './config/swagger/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   app.useGlobalInterceptors(new InterceptorOkLogInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -24,6 +25,8 @@ async function bootstrap() {
 
   // Configuración de puerto
   const port = app.get(ConfigService).get<number>('PORT');
+  console.log('JWT_SECRET:', configService.get<string>('JWT_SECRET')); // Esto debe imprimir tu clave secreta
+
   await app.listen(port);
 
   // Logger de inicio de la aplicación
