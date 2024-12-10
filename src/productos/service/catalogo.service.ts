@@ -10,7 +10,7 @@ export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) {}
+  ) { }
 
   /**Retorna todos los productos */
   async findAll(filtrosCatalogoDto: FiltrosCatalogoDto) {
@@ -90,7 +90,7 @@ export class CatalogoService {
       if (ordenarPor) {
         queryBuilder.orderBy(`producto.${ordenarPor}`, orden || 'ASC');
       }
-      console.log(ordenarPor, orden);
+      // console.log(ordenarPor, orden);
 
       queryBuilder.skip(offset).take(limit);
 

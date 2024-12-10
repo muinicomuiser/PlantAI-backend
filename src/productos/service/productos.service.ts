@@ -49,6 +49,9 @@ export class ProductosService {
   /**Retorna todos los productos registrados.*/
   async getAll(): Promise<GetProductoDto[]> {
     const productos = await this.productoRepository.find({
+      // where: {
+      //   idCategoria: 1  // <------- Solo traerá las plantas hasta que se trabaje con los demás tipos de productos.
+      // },
       relations: PRODUCTO_RELATIONS,
     });
     return productos.map((producto) => ProductoMapper.entityToDto(producto));

@@ -40,7 +40,7 @@ import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 @ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -55,7 +55,7 @@ export class UsuariosController {
   })
   @Get()
   @Roles('Super Admin', 'Admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
     const users = await this.usuariosService.findAll();
     return { data: users, message: 'Usuarios obtenidos exitosamente.' };

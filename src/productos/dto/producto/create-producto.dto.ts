@@ -42,6 +42,7 @@ export class CreateProductoDto {
   @ApiProperty({
     description: 'Imagen en base64',
     example: 'base64',
+    required: false
   })
   @IsOptional()
   imagen?: string;
@@ -52,7 +53,7 @@ export class CreateProductoDto {
   @Min(0)
   stock: number;
 
-  @ApiProperty({ description: 'Unidades vendidas del producto', example: 5, default: 0 })
+  @ApiProperty({ description: 'Unidades vendidas del producto', example: 5, default: 0, required: false })
   @IsNumber()
   @IsInt()
   @Min(0)
@@ -64,13 +65,14 @@ export class CreateProductoDto {
     minimum: 0,
     maximum: 5,
     example: 3,
-    default: 5
+    default: 0,
+    required: false
   })
   @IsNumber()
   @Min(0)
   @Max(5)
   @IsOptional()
-  puntuacion: number = 5;
+  puntuacion: number = 0;
 
   @ApiProperty({ description: 'Ancho del producto en cm', example: 10 })
   @IsNumber()
@@ -100,28 +102,37 @@ export class CreateProductoDto {
   @ApiProperty({
     description: 'Planta asociada al producto',
     type: CreatePlantaDto,
+    required: false
   })
   @IsOptional()
   planta?: CreatePlantaDto;
 
-  @ApiProperty({
-    description: 'Macetero asociado al producto',
-    type: CreateMaceteroDto,
-  })
+  /////
+  /**Documentación de Accesorios, Insumos y Maceteros comentada para que no se muestren 
+   * en la documentación, mientras estemos trabajando solo con plantas.*/
+  /////
+
+  // @ApiProperty({
+  //   description: 'Macetero asociado al producto',
+  //   type: CreateMaceteroDto,
+  //   required: false
+  // })
   @IsOptional()
   macetero?: CreateMaceteroDto;
 
-  @ApiProperty({
-    description: 'Accesorio asociado al producto',
-    type: CreateAccesorioDto,
-  })
+  // @ApiProperty({
+  //   description: 'Accesorio asociado al producto',
+  //   type: CreateAccesorioDto,
+  //   required: false
+  // })
   @IsOptional()
   accesorio?: CreateAccesorioDto;
 
-  @ApiProperty({
-    description: 'Insumo asociado al producto',
-    type: CreateInsumoDto,
-  })
+  // @ApiProperty({
+  //   description: 'Insumo asociado al producto',
+  //   type: CreateInsumoDto,
+  //   required: false
+  // })
   @IsOptional()
   insumo?: CreateInsumoDto;
 }
