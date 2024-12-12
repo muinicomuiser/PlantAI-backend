@@ -75,7 +75,6 @@ export class ProductosController {
     pageSize?: number,
   ): Promise<GetProductosAdminDto> {
 
-    console.log(page, pageSize)
     const paginacionDto: PaginacionDto = {
       page: page ? +page : 1,
       pageSize: pageSize ? +pageSize : 10
