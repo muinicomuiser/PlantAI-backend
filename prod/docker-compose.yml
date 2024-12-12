@@ -20,6 +20,8 @@ services:
     image: nicolasf1/cotiledonapp:1.11.3
     depends_on:
       - database-prod
+    volumes:
+      - ./imagenes:/imagenes
     environment:
       - PORT=${API_PORT}
       - AMBIENTE=${AMBIENTE}
