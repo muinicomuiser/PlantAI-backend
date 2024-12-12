@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -14,6 +15,7 @@ import { Planta } from './plantas/planta.entity';
 import { Macetero } from './maceteros/macetero.entity';
 import { Accesorio } from './accesorios/accesorio.entity';
 import { Insumo } from './insumos/insumo.entity';
+import { ImagenProducto } from './imagenes.entity';
 
 @Entity({ name: 'productos' })
 export class Producto {
@@ -35,8 +37,8 @@ export class Producto {
   @Column()
   descripcion: string;
 
-  @Column()
-  imagen: string;
+  // @Column()
+  // imagen: string;
 
   @Column()
   stock: number;
@@ -93,4 +95,8 @@ export class Producto {
   // Relacion con insumos
   @OneToOne(() => Insumo, (insumo) => insumo.producto)
   insumo: Insumo;
+
+  @OneToMany(() => ImagenProducto, (imagen: ImagenProducto) => imagen.producto)
+  @JoinColumn({ name: 'imagenes_productos', referencedColumnName: 'id' })
+  imagenes: ImagenProducto[]
 }

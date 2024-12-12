@@ -19,7 +19,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) {}
+  ) { }
 
   private createTokenPayload(user: any) {
     return {
@@ -63,7 +63,7 @@ export class AuthService {
     );
     // buscar rol en base
     const rol = await this.rolRepository.findOne({
-      where: { id: createUsuarioDto.idRol },
+      where: { id: createUsuarioDto.idRol },  // <-- Los usuarios nuevos registrados quedan siempre como Cliente
     });
     if (!rol) {
       throw new NotFoundException(

@@ -1,3 +1,4 @@
+=========================================================================================================================
 Versión 1.11.0 
 
     Cambios:
@@ -13,6 +14,7 @@ Versión 1.11.0
         ++ Agregado archivo SQL V0.0.11
 
 
+=========================================================================================================================
 Versión 1.11.1
     Cambios:
         - Producto.planta:
@@ -45,3 +47,49 @@ Versión 1.11.1
                     Si no hay stock de uno o más productos, retorna un error con un objeto { productosEnConflicto: [productosCantidad] } dentro del "response"
 
         ++ Agregado archivo SQL V0.0.12
+
+
+=========================================================================================================================
+Versión 1.11.3
+**Versión actual en AWS**
+    
+    Cambios:
+        - Catálogo:
+
+            Se agregó un query opcional para los filtros:
+                idEntorno, petFriendly, idIluminacion, idTipoRiego, idToleranciaTemperatura
+            Y orden de catálogo:
+                maxPrecio, minPrecio, ordenarPor, puntuacion
+        
+            Ahora el catálogo solo retorna productos tipo planta
+    
+        - Aut:
+
+            Se agregó la posibilidad de trabajar con JWT e integrar permisos.
+        
+        - Reviews:
+
+            Agregado servicio de reviews: POST, GET por producto y GET por usuario
+    
+        ++ Agregado archivo SQL V0.0.13 y  V0.0.14
+
+=========================================================================================================================
+Versión 1.11.4
+
+    Cambios
+        - Productos: Ahora hay imágenes múltiples
+
+            Agregado: producto.imagenes
+            Eliminado: producto.imagen
+
+            La propiedad imagenes es un array de JSONs, que contiene la ruta de cada imagen y el id del producto.
+
+            Agregado GET productos/admin, con query para obtener los productos paginados. Retorna todos los productos.
+
+            Se eliminó el endpoint PATCH productos/updateProductImage
+
+            Cambio en el DELETE removeProductImage/idProducto/indiceImagen
+                Como ahora hay varias imágenes por producto, para eliminar una imagen del arreglo hay que enviar el índice de la imagen
+                (partiendo desde índice 0)
+
+    ++ Agregado archivo SQL V0.0.15

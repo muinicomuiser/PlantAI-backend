@@ -4,6 +4,7 @@ export const PRODUCTO_RELATIONS = [
   'planta',
   'accesorio',
   'macetero',
+  'imagenes',
   'insumo',
   'planta.color',
   'planta.fotoPeriodo',
@@ -19,5 +20,5 @@ export const PRODUCTO_RELATIONS = [
   'insumo.tipoInsumo',
   'insumo.marca',
   'macetero.tipoMacetero',
-  'macetero.marca',
+  'macetero.marca'
 ];

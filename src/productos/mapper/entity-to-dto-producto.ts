@@ -12,7 +12,7 @@ export class ProductoMapper {
     productoDto.idCategoria = producto.categoria.id;
     productoDto.precio = producto.precio;
     productoDto.descripcion = producto.descripcion;
-    productoDto.imagen = producto.imagen;
+    productoDto.imagenes = producto.imagenes;
     productoDto.stock = producto.stock;
     productoDto.unidadesVendidas = producto.unidadesVendidas;
     productoDto.puntuacion = producto.puntuacion;

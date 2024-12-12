@@ -29,7 +29,7 @@ export class UsuariosService {
     private readonly medioPagoRepository: Repository<MedioPago>,
     @InjectRepository(UsuarioMedioPago)
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -134,7 +134,7 @@ export class UsuariosService {
     });
     if (pedidos.length === 0) {
       throw new NotFoundException(
-        `No se encontraron pedidos para el usuario con ID ${idUsuario}`,
+        `No se encontraron pedidos para el usuario con ID ${idUsuario}`,  // <-- Un array vacío no es un error.
       );
     }
     return pedidos.map(mapperPedido.toDto);
