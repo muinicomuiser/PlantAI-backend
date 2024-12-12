@@ -1,7 +1,18 @@
+Falta documentar los cambios hasta la V1.11.3
+
+Aut:
+    Falta agregar un usuario "admin" decente, aparte de 'bigdaddy'.
+    Agregar más datos de plantas.
+
+Usuarios:
+    Paginación de Get todos los usuarios.
+
 Productos:
     Falta:
         Agregar un get de opciones de atributos por categorías. Que devuelva toda la tabla.
         O uno que devuelva un arreglo con todas las opciones posibles y sus ids, para pintar las pantallas de gestión.
+        Paginar los get /productos para no mandar todos los productos de una.
+        Corregir id_entorno: Misxo a Mixto
 
 
 Carro:
@@ -16,4 +27,92 @@ Carro:
 
 Pedidos:
     Falta:
-        Validar el stock del carro antes de crear pedido
+        Validar el stock del carro antes de crear pedido.
+        Historia de compra.
+
+
+Necesito agregar filas a dos tablas en mi base de datos.
+La base de datos almacena productos de una tienda. Necesito agregar productos tipo planta.
+Tengo una tabla llamada productos y una tabla relacionada llamada plantas.
+
+
+Tabla productos
+
+sku: varchar(20)
+nombre: varchar(50)
+precio: int
+descripcion: varchar(2048)
+unidades_vendidas: int
+puntuacion: decimal 1 a 5
+ancho: int
+alto: int
+largo: int
+peso: int
+habilitado: 1
+
+Tabla plantas
+
+pet_friendly: tinyint
+id_tipo_riego: int 1 a 7
+id_fotoperiodo: int 1 a 3
+ciclo: tinyint 0 a 1
+id_habito_crecimiento: int 1 a 4
+id_color: int 1 a 13
+especie: varchar(50)
+id_tolerancia_temperatura: int 1 a 3
+id_tamaño: int 1 a 4
+id_entorno: int 1 a 3
+id_iluminacion: int 1 a 3
+
+referencias:
+id_tipo_riego
+        1 Riego manual
+	2 Riego goteo
+	3 Riego capilar
+	4 Riego sumersión
+	5 Autorriego
+	6 Nebulización
+	7 Automático
+id_fotoperiodo
+        1 Día corto
+        2 Día largo
+        3 Neutro
+ciclo
+        0 Anual
+        1 Perenne
+id_habito_crecimiento
+	1 Determinado arbustivo
+	2 Indeterminado arbustivo
+	3 Indeterminado postrado
+	4 Indeterminado trepador
+id_color
+        1 Verde
+        2 Rojo
+        3 Púrpura
+        4 Burdeo
+        5 Amarillo
+        6 Blanco
+        7 Naranja
+        8 Azul
+        9 Violeta
+        10 Rosa
+        11 Negro
+        12 Marrón
+        13 Variegada
+id_tolerancia_temperatura
+        1 Cálido
+        2 Templado
+        3 Frío
+id_tamaño
+        1 S
+        2 M
+        3 L
+        4 XL
+id_iluminacion
+	1 Sol Directo
+	2 Semi Sombra
+	3 Sombra
+
+¿Puedes armar dos códigos de inserción de datos con 50 filas?
+Tipo: Insert into productos (columnas) values (valores)
+Tipo: Insert into plantas (columnas) values (valores)
