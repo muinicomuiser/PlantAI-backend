@@ -197,52 +197,69 @@ export class ProductosService {
 
   /**Elimina un producto según su id */
   async deleteOne(idProducto: number): Promise<GetProductoDto> {
-    const producto = await this.productoRepository.findOne({
-      where: { id: idProducto },
-      relations: PRODUCTO_RELATIONS,
-    });
-    await this.productoRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        await transactionalEntityManager.delete(CarroProducto, {
-          idProducto: idProducto,
-        });
-        await transactionalEntityManager.delete('productos_etiquetas', {
-          id_producto: idProducto,
-        });
-        if (producto.planta) {
-          await transactionalEntityManager.delete(
-            Planta,
-            producto.planta.idProducto,
-          );
+    try {
+
+      const producto = await this.productoRepository.findOne({
+        where: { id: idProducto },
+        relations: PRODUCTO_RELATIONS,
+      });
+      await this.productoRepository.manager.transaction(
+        async (transactionalEntityManager) => {
+          await transactionalEntityManager.delete(CarroProducto, {
+            idProducto: idProducto,
+          });
+          await transactionalEntityManager.delete('productos_etiquetas', {
+            id_producto: idProducto,
+          });
+          if (producto.planta) {
+            await transactionalEntityManager.delete(
+              Planta,
+              producto.planta.idProducto,
+            );
+          }
+          if (producto.macetero) {
+            await transactionalEntityManager.delete(
+              Macetero,
+              producto.macetero.idProducto,
+            );
+          }
+          if (producto.insumo) {
+            await transactionalEntityManager.delete(
+              Insumo,
+              producto.insumo.idProducto,
+            );
+          }
+          if (producto.accesorio) {
+            await transactionalEntityManager.delete(
+              Accesorio,
+              producto.accesorio.idProducto,
+            );
+          }
+          if (producto.imagenes) {
+            if (producto.imagenes.length > 0) {
+              await transactionalEntityManager.delete(
+                ImagenProducto,
+                producto.imagenes,
+              );
+            }
+          }
+          await transactionalEntityManager.delete(Producto, idProducto);
+        },
+      );
+      if (producto.imagenes) {
+        if (producto.imagenes.length > 0) {
+          await Promise.all(producto.imagenes.map(async imagen => {
+            const rutaImage = this.reemplazarRutaEstaticoAFisico(imagen.ruta)
+            await this.imageService.deleteImage(rutaImage);
+          }))
         }
-        if (producto.macetero) {
-          await transactionalEntityManager.delete(
-            Macetero,
-            producto.macetero.idProducto,
-          );
-        }
-        if (producto.insumo) {
-          await transactionalEntityManager.delete(
-            Insumo,
-            producto.insumo.idProducto,
-          );
-        }
-        if (producto.accesorio) {
-          await transactionalEntityManager.delete(
-            Accesorio,
-            producto.accesorio.idProducto,
-          );
-        }
-        if (producto.imagenes) {
-          await transactionalEntityManager.delete(
-            ImagenProducto,
-            producto.imagenes,
-          );
-        }
-        await transactionalEntityManager.delete(Producto, idProducto);
-      },
-    );
-    return ProductoMapper.entityToDto(producto);
+      }
+      return ProductoMapper.entityToDto(producto);
+    }
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al eliminar producto')
+    }
   }
 
   /**Subir una imagen en Base64; guardar ruta en DB y SV estáticos*/
@@ -309,10 +326,7 @@ export class ProductosService {
         throw new BadRequestException('Índice inválido');
       }
       const imagenEliminada: ImagenProducto = producto.imagenes[indiceImagen]
-      const rutaImage = imagenEliminada.ruta.replace(
-        `${process.env.RUTA_ESTATICOS}`,
-        `${process.env.RUTA_FISICA}/`,
-      );
+      const rutaImage = this.reemplazarRutaEstaticoAFisico(imagenEliminada.ruta)
       await this.imageService.deleteImage(rutaImage);
       await this.imagenProductoRepository.remove(imagenEliminada)
     } catch (error) {
@@ -323,6 +337,14 @@ export class ProductosService {
       );
     }
     return true;
+  }
+
+  private reemplazarRutaEstaticoAFisico(ruta: string): string {
+    const rutaImagen = ruta.replace(
+      `${process.env.RUTA_ESTATICOS}`,
+      `${process.env.RUTA_FISICA}/`,
+    );
+    return rutaImagen
   }
 
   /**Retorna todos los productos */
