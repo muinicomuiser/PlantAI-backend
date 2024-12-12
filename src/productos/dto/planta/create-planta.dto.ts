@@ -82,8 +82,6 @@ export class CreatePlantaDto {
   idIluminacion: number;
 
   // // Relaciones
-  // @ApiProperty({ description: 'especie de la planta' })
-  // especie: string;
 
   // @ApiProperty({ description: 'Color de la planta' })
   // color: string;

@@ -1,25 +1,22 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
   ParseIntPipe,
+  Post
 } from '@nestjs/common';
-import { ReviewsService } from './reviews.service';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Review } from './entities/review.entity';
-import { OutputReviewDto } from './dto/OutputReviewDto';
 import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { OutputReviewDto } from './dto/OutputReviewDto';
+import { Review } from './entities/review.entity';
+import { ReviewsService } from './reviews.service';
 
 @ApiTags('Reviews')
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(private readonly reviewsService: ReviewsService) { }
 
   @ApiOperation({ summary: 'Crear una nueva review para un producto' })
   @ApiResponse({

@@ -11,8 +11,6 @@ Productos:
     Falta:
         Agregar un get de opciones de atributos por categorías. Que devuelva toda la tabla.
         O uno que devuelva un arreglo con todas las opciones posibles y sus ids, para pintar las pantallas de gestión.
-        Paginar los get /productos para no mandar todos los productos de una.
-        Corregir id_entorno: Misxo a Mixto
 
 
 Carro:
@@ -21,15 +19,17 @@ Carro:
 
 
     Falta:
-        Un endpoint que cierre un carro, o verificar que ese proceso se haga al crear un pedido a partir de un carro.
         Una propiedad de carro que comunique si el carro está en proceso de finalizar compra y pago. finalizando: boolean
         Reservar los productos de un carro en proceso de finalización
 
 Pedidos:
     Falta:
-        Validar el stock del carro antes de crear pedido.
-        Historia de compra.
+        Historial de compra. <-- Se pueden obtener todos los pedidos de un usuairo
 
+
+
+
+pal gpt
 
 Necesito agregar filas a dos tablas en mi base de datos.
 La base de datos almacena productos de una tienda. Necesito agregar productos tipo planta.
