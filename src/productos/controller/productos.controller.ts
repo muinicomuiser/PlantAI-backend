@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 
 import {
@@ -33,7 +34,7 @@ import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
 
   @ApiOperation({ summary: 'Retorna todos los productos registrados.' })
   @ApiResponse({
@@ -191,16 +192,17 @@ export class ProductosController {
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
     idProducto: number,
   ) {
-    return await this.productosService.updateProductImage(
-      base64Content,
-      idProducto,
-    );
+    throw new ServiceUnavailableException('Servicio en mantención')
+    // return await this.productosService.updateProductImage(
+    //   base64Content,
+    //   idProducto,
+    // );
   }
 
   @ApiOperation({ summary: 'Eliminar la imagen de un producto' })
   @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
-  @Delete('deleteProductImage/:idProducto')
+  @Delete('deleteProductImage/:idProducto/:indiceImagen')
   async deleteProductImage(
     @Param(
       'idProducto',
@@ -209,7 +211,12 @@ export class ProductosController {
       ValidarImagenProductoExistePipe,
     )
     idProducto: number,
+    @Param(
+      'indiceImagen',
+      ParseIntPipe,
+    )
+    indiceImagen: number,
   ) {
-    return await this.productosService.deleteProductImage(idProducto);
+    return await this.productosService.deleteProductImage(idProducto, indiceImagen);
   }
 }

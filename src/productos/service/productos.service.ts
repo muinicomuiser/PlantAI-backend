@@ -18,12 +18,15 @@ import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
 import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
 import { ImageService } from './imagen.service';
+import { ImagenProducto } from '../entities/imagenes.entity';
 
 @Injectable()
 export class ProductosService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
+    @InjectRepository(ImagenProducto)
+    private readonly imagenProductoRepository: Repository<ImagenProducto>,
     @InjectRepository(CarroProducto)
     private readonly carroProductoRepository: Repository<CarroProducto>,
     private readonly imageService: ImageService,
@@ -158,9 +161,10 @@ export class ProductosService {
           imagenBase64,
           nuevoProducto.id,
         );
-        nuevoProducto.imagen = rutaImagen;
+        const nuevaImagen: ImagenProducto = new ImagenProducto(nuevoProducto.id, rutaImagen)
+        nuevoProducto.imagenes.push(nuevaImagen);
       } else {
-        nuevoProducto.imagen = null;
+        nuevoProducto.imagenes = null;
       }
       return await this.getById(nuevoProducto.id);
     } catch (error) {
@@ -174,14 +178,14 @@ export class ProductosService {
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
     await this.getById(id);
-    if (updateProductoDto.imagen) {
-      const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto();
-      imagenBase64.base64Content = updateProductoDto.imagen;
-      updateProductoDto.imagen = await this.updateProductImage(
-        imagenBase64,
-        id,
-      );
-    }
+    // if (updateProductoDto.imagen) {
+    //   const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto();
+    //   imagenBase64.base64Content = updateProductoDto.imagen;
+    //   updateProductoDto.imagen = await this.updateProductImage(
+    //     imagenBase64,
+    //     id,
+    //   );
+    // }
     // const categoriaProducto: Categoria = await this.productoRepository.manager.getRepository(Categoria).findOneBy({ id: updateProductoDto.idCategoria })
     const updateProducto = await this.productoRepository.manager.transaction(
       async (transactionalEntityManager) => {
@@ -301,69 +305,71 @@ export class ProductosService {
     const rutaImagen = await this.imageService.addImage(
       base64Content.base64Content,
     );
-
-    await this.productoRepository.update(idProducto, { imagen: rutaImagen });
+    const nuevaImagen: ImagenProducto = new ImagenProducto(idProducto, rutaImagen)
+    await this.imagenProductoRepository.save(nuevaImagen)
+    // await this.productoRepository.update(idProducto, { imagenes: nuevaImagen });
 
     return rutaImagen;
   }
 
+  //********************************UPDATE*********************************** */
   /**Actualiza una imagen en Base64; guardar ruta en DB y SV estáticos*/
-  async updateProductImage(
-    base64Content: UpdateProductImageDto,
-    idProducto: number,
-  ) {
-    try {
-      const producto = await this.productoRepository.findOne({
-        where: { id: idProducto },
-        relations: PRODUCTO_RELATIONS,
-      });
+  // async updateProductImage(
+  //   base64Content: UpdateProductImageDto,
+  //   idProducto: number,
+  // ) {
+  //   try {
+  //     const producto = await this.productoRepository.findOne({
+  //       where: { id: idProducto },
+  //       relations: PRODUCTO_RELATIONS,
+  //     });
 
-      //reemplaza la ruta de la db por la ruta de la carpeta física
-      if (!producto.imagen) {
-        return this.addProductImage(base64Content, idProducto);
-      } else {
-        const rutaArchivoActual = producto.imagen.replace(
-          `${process.env.RUTA_ESTATICOS}`,
-          `${process.env.RUTA_FISICA}/`,
-        );
-        //actualiza la imagen en la carpeta física
-        const rutaImagen = await this.imageService.updateImage(
-          base64Content.base64Content,
-          rutaArchivoActual,
-        );
+  //     //reemplaza la ruta de la db por la ruta de la carpeta física
+  //     if (!producto.imagen) {
+  //       return this.addProductImage(base64Content, idProducto);
+  //     } else {
+  //       const rutaArchivoActual = producto.imagen.replace(
+  //         `${process.env.RUTA_ESTATICOS}`,
+  //         `${process.env.RUTA_FISICA}/`,
+  //       );
+  //       //actualiza la imagen en la carpeta física
+  //       const rutaImagen = await this.imageService.updateImage(
+  //         base64Content.base64Content,
+  //         rutaArchivoActual,
+  //       );
 
-        //actualiza la ruta de la imagen en la db
-        await this.productoRepository.update(idProducto, {
-          imagen: rutaImagen,
-        });
+  //       //actualiza la ruta de la imagen en la db
+  //       await this.productoRepository.update(idProducto, {
+  //         imagen: rutaImagen,
+  //       });
 
-        return rutaImagen;
-      }
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException('Error al actualizar imagen');
-    }
-  }
+  //       return rutaImagen;
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new BadRequestException('Error al actualizar imagen');
+  //   }
+  // }
 
   /**Elimina una imagen de un producto en Base64; borra la ruta de DB y el archivo de la ruta de estáticos*/
-
-  async deleteProductImage(idProducto: number) {
+  async deleteProductImage(idProducto: number, indiceImagen: number) {
     try {
       const producto = await this.productoRepository.findOne({
         where: { id: idProducto },
         relations: PRODUCTO_RELATIONS,
       });
-      if (!producto.imagen) {
-        throw new BadRequestException('El producto no tiene imagen');
+      if (producto.imagenes.length < indiceImagen || indiceImagen < 1) {
+        throw new BadRequestException('Índice inválido');
       }
-      const rutaImage = producto.imagen.replace(
+      const imagenEliminada: ImagenProducto = producto.imagenes[indiceImagen - 1]
+      const rutaImage = imagenEliminada.ruta.replace(
         `${process.env.RUTA_ESTATICOS}`,
         `${process.env.RUTA_FISICA}/`,
       );
-
+      const imagenesProducto: ImagenProducto[] = producto.imagenes.splice(indiceImagen - 1, 1)
       await this.imageService.deleteImage(rutaImage);
 
-      await this.productoRepository.update(idProducto, { imagen: null });
+      await this.productoRepository.update(idProducto, { imagenes: imagenesProducto });
     } catch (error) {
       console.error(error);
       throw new BadRequestException(

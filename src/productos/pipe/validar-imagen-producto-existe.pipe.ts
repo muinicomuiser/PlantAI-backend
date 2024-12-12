@@ -10,8 +10,8 @@ export class ValidarImagenProductoExistePipe implements PipeTransform {
     const producto: Producto = await this.productoRepository.findOneBy({
       id: value
     })
-    if (!producto.imagen) {
-      throw new NotFoundException('El producto no tiene imagen')
+    if (producto.imagenes.length == 0) {
+      throw new NotFoundException('El producto no tiene imágenes')
     }
     return value;
   }

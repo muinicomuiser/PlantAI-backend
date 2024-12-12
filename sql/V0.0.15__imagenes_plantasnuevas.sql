@@ -50,3 +50,53 @@ VALUES
 UPDATE plantas_entorno
 SET entorno = "Mixto"
 WHERE id = 3;
+
+alter table productos drop column imagen;
+
+create table imagenes_productos(
+    id_producto int,
+    ruta varchar(50) primary key,
+    foreign key (id_producto) references productos(id)
+);
+
+insert into imagenes_productos (id_producto, ruta) values 
+(1, '/estaticos/1_Cipres_1.jpg'),
+(1, '/estaticos/1_Cipres_2.jpg'),
+(1, '/estaticos/1_Cipres_3.jpg'),
+(1, '/estaticos/1_Cipres_4.jpg'),
+(2, '/estaticos/2_Espino_1.jpg'),
+(2, '/estaticos/2_Espino_2.jpg'),
+(2, '/estaticos/2_Espino_3.jpg'),
+(2, '/estaticos/2_Espino_4.jpg'),
+(3, '/estaticos/3_Grevillea_1.jpg'),
+(3, '/estaticos/3_Grevillea_2.jpg'),
+(3, '/estaticos/3_Grevillea_3.jpg'),
+(3, '/estaticos/3_Grevillea_4.jpg'),
+(4, '/estaticos/4_Juniperus_1.jpg'),
+(4, '/estaticos/4_Juniperus_2.jpg'),
+(4, '/estaticos/4_Juniperus_3.jpg'),
+(4, '/estaticos/4_Juniperus_4.jpg'),
+(5, '/estaticos/5_Agatea_1.jpg'),
+(5, '/estaticos/5_Agatea_2.jpg'),
+(5, '/estaticos/5_Agatea_3.jpg'),
+(5, '/estaticos/5_Agatea_4.jpg'),
+(6, '/estaticos/6_Dolar_1.jpg'),
+(6, '/estaticos/6_Dolar_2.jpg'),
+(6, '/estaticos/6_Dolar_3.jpg'),
+(6, '/estaticos/6_Dolar_4.jpg'),
+(7, '/estaticos/7_Pennisetum_1.jpg'),
+(7, '/estaticos/7_Pennisetum_2.jpg'),
+(7, '/estaticos/7_Pennisetum_3.jpg'),
+(7, '/estaticos/7_Pennisetum_4.jpg'),
+(8, '/estaticos/8_Sedum_1.jpg'),
+(8, '/estaticos/8_Sedum_2.jpg'),
+(8, '/estaticos/8_Sedum_3.jpg'),
+(8, '/estaticos/8_Sedum_4.jpg'),
+(9, '/estaticos/9_Buganvilla_1.jpg'),
+(9, '/estaticos/9_Buganvilla_2.jpg'),
+(9, '/estaticos/9_Buganvilla_3.jpg'),
+(9, '/estaticos/9_Buganvilla_4.jpg'),
+(10, '/estaticos/10_Jazmin_1.jpg'),
+(10, '/estaticos/10_Jazmin_2.jpg'),
+(10, '/estaticos/10_Jazmin_3.jpg'),
+(10, '/estaticos/10_Jazmin_4.jpg');

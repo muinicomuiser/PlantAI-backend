@@ -44,12 +44,12 @@ export class UpdateProductoDto {
   @IsOptional()
   descripcion?: string;
 
-  @ApiProperty({
-    description: 'Imagen en base64',
-    example: 'base64',
-  })
-  @IsOptional()
-  imagen?: string;
+  // @ApiProperty({
+  //   description: 'Imagen en base64',
+  //   example: 'base64',
+  // })
+  // @IsOptional()
+  // imagen?: string;
 
   @ApiProperty({ description: 'Cantidad disponible del producto', example: 10 })
   @IsNumber()

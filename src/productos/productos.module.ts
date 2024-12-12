@@ -25,6 +25,7 @@ import { Tamano } from './entities/plantas/tamano.entity';
 import { TipoRiego } from './entities/plantas/tipo_riego.entity';
 import { ToleranciaTemperatura } from './entities/plantas/tolerancia_temperatura.entity';
 import { ImageService } from './service/imagen.service';
+import { ImagenProducto } from './entities/imagenes.entity';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ImageService } from './service/imagen.service';
       Accesorio,
       TipoAccesorio,
       CarroProducto,
+      ImagenProducto
     ]),
   ],
   controllers: [ProductosController, CatalogoController],
