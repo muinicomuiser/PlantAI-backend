@@ -36,6 +36,7 @@ export class CatalogoService {
         .innerJoinAndSelect('producto.categoria', 'categoria')
         .leftJoinAndSelect('producto.planta', 'planta')
         .leftJoinAndSelect('planta.entorno', 'entorno')
+        .leftJoinAndSelect('producto.imagenes', 'imagenes')
         .leftJoinAndSelect('planta.iluminacion', 'iluminacion')
         .leftJoinAndSelect('planta.tipoRiego', 'tipoRiego')
         .leftJoinAndSelect(
