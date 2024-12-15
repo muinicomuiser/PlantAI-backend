@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { timestamp } from 'rxjs';
+import { QueryFailedError } from 'typeorm';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -14,18 +14,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const timestamp = new Date().toISOString();
 
-    /**configuración del estado inicial y mensaje. */
-
+    // Configuración inicial para errores genéricos
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let message = 'Ocurrió un error interno en el servidor';
     let responseBody: any = {
-      statysCode: status,
-      message: 'Ocurrió un error interno en el servidor',
+      statusCode: status,
+      message,
       path: request.url,
-      timestamp: new Date().toISOString(),
+      method: request.method,
+      timestamp,
     };
 
-    // Si es HTTPEXCEPTION se maneja al detalle:
+    // Manejo detallado de errores
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
@@ -34,23 +36,48 @@ export class HttpExceptionFilter implements ExceptionFilter {
           ? {
               ...exceptionResponse,
               path: request.url,
-              timestamp: new Date().toISOString(),
+              timestamp,
             }
           : {
               statusCode: status,
               message: exception.message,
               path: request.url,
-              timestamp: new Date().toISOString(),
+              timestamp,
             };
+    } else if (exception instanceof QueryFailedError) {
+      console.error('Error de SQL:', exception.message);
+      message = 'Error en la base de datos. Verifique los datos enviados.';
+      responseBody = {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message,
+        sqlError: exception.message,
+        query: exception['query'],
+        parameters: exception['parameters'],
+        path: request.url,
+        method: request.method,
+        timestamp,
+      };
+    } else if (exception instanceof Error) {
+      console.error('Error genérico:', exception.message);
+      responseBody = {
+        statusCode: status,
+        message: exception.message,
+        path: request.url,
+        method: request.method,
+        timestamp,
+      };
     }
+
+    // Logs detallados para todos los errores
     console.error({
-      status,
+      status: responseBody.statusCode,
       message: responseBody.message,
-      path: request.url,
-      method: request.method,
+      path: responseBody.path,
+      method: responseBody.method,
       stack: exception instanceof Error ? exception.stack : null,
     });
-    /**respuesta al cliente */
+
+    // Responder al cliente
     response.status(status).json(responseBody);
   }
 }

@@ -35,6 +35,7 @@ console.log(
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      logging: true, //depuracion
     }),
     ServeStaticModule.forRoot({
       rootPath: `${process.env.RUTA_FISICA}` || `./imagenes/productos`,

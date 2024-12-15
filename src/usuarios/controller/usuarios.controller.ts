@@ -12,6 +12,7 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -34,13 +35,15 @@ import { UsuariosService } from '../service/usuarios.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { SanitizeInputInterceptor } from 'src/commons/interceptor/Sanitize-create-usuario.interceptor';
+import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) { }
+  constructor(private readonly usuariosService: UsuariosService) {}
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -110,7 +113,7 @@ export class UsuariosController {
   // Actualizar un usuario según el id
   @ApiOperation({ summary: 'Actualiza un usuario' })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'Usuario actualizado',
     type: OutputUserDTO,
   })
@@ -118,17 +121,34 @@ export class UsuariosController {
     status: 400,
     description: 'No se ha podido actualizar el usuario',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario o rol no encontrado',
+  })
   @ApiBody({ type: UpdateUsuarioDto })
   @Put(':id')
+  @UseInterceptors(SanitizeInputInterceptor, RemoveInvisibleCharsInterceptor)
   async updateOne(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('idRol', RolExistsPipe) rol: Rol,
-    @Body() updateUsuarioDto: UpdateUsuarioDto,
-  ): Promise<OutputUserDTO> {
-    const updateData = { ...updateUsuarioDto, rol };
-    return this.usuariosService.updateOne(id, updateData);
-  }
+    @Param('id', ParseIntPipe, ValidarUsuarioExistePipe) id: number,
+    @Body(ValidarCrearUsuarioPipe) updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<{
+    status: number;
+    message: string;
+    data: OutputUserDTO;
+    timestamp: string;
+  }> {
+    const updatedUser = await this.usuariosService.updateOne(
+      id,
+      updateUsuarioDto,
+    );
 
+    return {
+      status: 200,
+      message: 'Usuario actualizado exitosamente',
+      data: updatedUser,
+      timestamp: new Date().toISOString(),
+    };
+  }
   // Eliminar un usuario según el id
   @ApiOperation({ summary: 'Elimina un usuario según su id' })
   @ApiResponse({
