@@ -43,7 +43,7 @@ import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-
 @ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -111,7 +111,7 @@ export class UsuariosController {
   }
 
   // Actualizar un usuario según el id
-  @ApiOperation({ summary: 'Actualiza un usuario' })
+  @ApiOperation({ summary: 'Actualiza un usuario según su id.' })
   @ApiResponse({
     status: 200,
     description: 'Usuario actualizado',
@@ -126,10 +126,10 @@ export class UsuariosController {
     description: 'Usuario o rol no encontrado',
   })
   @ApiBody({ type: UpdateUsuarioDto })
-  @Put(':id')
+  @Put(':idUsuario')
   @UseInterceptors(SanitizeInputInterceptor, RemoveInvisibleCharsInterceptor)
   async updateOne(
-    @Param('id', ParseIntPipe, ValidarUsuarioExistePipe) id: number,
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
     @Body(ValidarCrearUsuarioPipe) updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<{
     status: number;
@@ -138,7 +138,7 @@ export class UsuariosController {
     timestamp: string;
   }> {
     const updatedUser = await this.usuariosService.updateOne(
-      id,
+      idUsuario,
       updateUsuarioDto,
     );
 
