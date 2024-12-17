@@ -5,11 +5,21 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './commons/filter/httpexception.filter';
 import { ConfigService } from '@nestjs/config';
 import { setupSwagger } from './config/swagger/swagger.config';
+import { WinstonModule } from 'nest-winston';
+import { winstonLogger } from './config/winston/winston.config';
+import { LoggingInterceptor } from './commons/interceptor/logger.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({
+      instance: winstonLogger,
+    }),
+  });
   const configService = app.get(ConfigService);
-  app.useGlobalInterceptors(new InterceptorOkLogInterceptor());
+  app.useGlobalInterceptors(
+    new InterceptorOkLogInterceptor(),
+    new LoggingInterceptor(winstonLogger),
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

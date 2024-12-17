@@ -122,3 +122,13 @@ export class FiltrosCatalogoDto extends PaginacionDto {
   @Transform(({ value }) => ORDENCATALOGO[value])
   orden?: ORDENCATALOGO;
 }
+
+export class SearchCatalogoDto extends PaginacionDto {
+  @ApiProperty({
+    description: 'Búsqueda',
+    required: true,
+  })
+  @IsString({ message: 'El campo de búsqueda debe ser un string' })
+  @Transform(({ value }) => value.trim())
+  search: string;
+}

@@ -35,7 +35,7 @@ import { UsuariosService } from '../service/usuarios.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
-import { SanitizeInputInterceptor } from 'src/commons/interceptor/Sanitize-create-usuario.interceptor';
+import { SanitizeInputInterceptor } from 'src/commons/interceptor/sanitize-create-usuario.interceptor';
 import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
