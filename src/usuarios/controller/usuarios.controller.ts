@@ -4,15 +4,13 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Put,
   Query,
-  UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,9 +19,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
+import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
+import { SanitizeInputInterceptor } from 'src/commons/interceptor/sanitize-create-usuario.interceptor';
 import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
-import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -32,11 +32,6 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
-import { SanitizeInputInterceptor } from 'src/commons/interceptor/sanitize-create-usuario.interceptor';
-import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
@@ -107,11 +102,11 @@ export class UsuariosController {
     @Body('idRol', RolExistsPipe) rol: Rol,
     @Body(ValidarCrearUsuarioPipe) createUsuarioDTO: CreateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    return this.usuariosService.createUser(createUsuarioDTO, rol);
+    return await this.usuariosService.createUser(createUsuarioDTO, rol);
   }
 
   // Actualizar un usuario según el id
-  @ApiOperation({ summary: 'Actualiza un usuario según su id.' })
+  @ApiOperation({ summary: 'Actualiza un usuario según su id' })
   @ApiResponse({
     status: 200,
     description: 'Usuario actualizado',
@@ -131,23 +126,22 @@ export class UsuariosController {
   async updateOne(
     @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
     @Body(ValidarCrearUsuarioPipe) updateUsuarioDto: UpdateUsuarioDto,
-  ): Promise<{
-    status: number;
-    message: string;
-    data: OutputUserDTO;
-    timestamp: string;
-  }> {
+  ): Promise<OutputUserDTO> {
     const updatedUser = await this.usuariosService.updateOne(
       idUsuario,
       updateUsuarioDto,
     );
 
-    return {
-      status: 200,
-      message: 'Usuario actualizado exitosamente',
-      data: updatedUser,
-      timestamp: new Date().toISOString(),
-    };
+    return updatedUser;
+
+    /****Comentado para aplicarlo después de la entrega 11, pa no descalibrarle a Front el uso del endpoint tan encima. */
+    // const respuesta = {    
+    //   status: 200,
+    //   message: 'Usuario actualizado exitosamente',
+    //   data: updatedUser,
+    //   timestamp: new Date().toISOString(),
+    // };
+
   }
   // Eliminar un usuario según el id
   @ApiOperation({ summary: 'Elimina un usuario según su id' })
@@ -162,8 +156,8 @@ export class UsuariosController {
     status: 404,
     description: 'No existe un usuario con ese id',
   })
-  @Delete(':id')
-  async deleteOne(@Param('id') id: number): Promise<{ message: string }> {
+  @Delete(':idUsuario')
+  async deleteOne(@Param('idUsuario') id: number): Promise<{ message: string }> {
     return await this.usuariosService.deleteUser(id);
   }
   //Obtener pedidos de usuario
@@ -173,7 +167,7 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de pedidos de un usuario',
-    type: Pedido,
+    type: [GetPedidoDto],
     isArray: true,
   })
   @ApiResponse({
@@ -184,7 +178,7 @@ export class UsuariosController {
   async findPedidos(
     @Param('idUsuario', ParseIntPipe) idUsuario: number,
   ): Promise<GetPedidoDto[]> {
-    return this.usuariosService.findPedidos(idUsuario);
+    return await this.usuariosService.findPedidos(idUsuario);
   }
 
   // Modificar o agregar medio de pago
@@ -231,6 +225,6 @@ export class UsuariosController {
     @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe)
     idUsuario: number,
   ): Promise<MedioPago[]> {
-    return this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
+    return await this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
   }
 }

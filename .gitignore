@@ -59,7 +59,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # db
 prod/db
-# prod/imagenes
+prod/imagenes
 db
 /imagenes
 undefined
