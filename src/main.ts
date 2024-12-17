@@ -8,6 +8,7 @@ import { setupSwagger } from './config/swagger/swagger.config';
 import { WinstonModule } from 'nest-winston';
 import { winstonLogger } from './config/winston/winston.config';
 import { LoggingInterceptor } from './commons/interceptor/logger.interceptor';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -30,6 +31,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
+  app.use(json({ limit: '2mb' }))
 
   // Configuración de Swagger
   setupSwagger(app);
