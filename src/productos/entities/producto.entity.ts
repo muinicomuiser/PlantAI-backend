@@ -98,5 +98,5 @@ export class Producto {
 
   @OneToMany(() => ImagenProducto, (imagen: ImagenProducto) => imagen.producto)
   @JoinColumn({ name: 'imagenes_productos', referencedColumnName: 'id' })
-  imagenes: ImagenProducto[]
+  imagenes: ImagenProducto[];
 }
