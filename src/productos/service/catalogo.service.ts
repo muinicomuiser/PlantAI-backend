@@ -31,6 +31,7 @@ export class CatalogoService {
         ordenarPor,
         puntuacion,
         orden,
+        sizePlant,
       } = filtrosCatalogoDto;
       const limit = pageSize;
       const offset = (page - 1) * limit;
@@ -89,6 +90,9 @@ export class CatalogoService {
         queryBuilder.andWhere('producto.puntuacion >= :puntuacion', {
           puntuacion,
         });
+      }
+      if (sizePlant) {
+        queryBuilder.andWhere('planta.tamano = :sizePlant', { sizePlant });
       }
 
       if (ordenarPor) {
