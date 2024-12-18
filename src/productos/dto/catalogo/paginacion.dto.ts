@@ -121,6 +121,14 @@ export class FiltrosCatalogoDto extends PaginacionDto {
   @IsOptional()
   @Transform(({ value }) => ORDENCATALOGO[value])
   orden?: ORDENCATALOGO;
+
+  @ApiProperty({
+    description: 'ID tamaño de la planta',
+    required: false,
+  })
+  @IsString({ message: 'El campo tamaño debe ser un string' })
+  @IsOptional()
+  sizePlant?: string;
 }
 
 export class SearchCatalogoDto extends PaginacionDto {
