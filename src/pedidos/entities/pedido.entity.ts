@@ -78,7 +78,8 @@ export class Pedido {
   @JoinColumn({ name: 'id' })
   Pago: Pago; // Por id_pedido
 
-  @OneToMany(() => ProductoPedido, (productoPedido) => productoPedido.idPedido)
+  @OneToMany(() => ProductoPedido, (productoPedido) => productoPedido.pedido)
+  @JoinColumn({ name: 'id' })
   productosPedido: ProductoPedido[]
 
   @OneToOne(() => DireccionEnvio, (direccion) => direccion.pedido)

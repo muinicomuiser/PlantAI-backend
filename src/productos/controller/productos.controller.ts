@@ -110,7 +110,7 @@ export class ProductosController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Agrega un producto al sistema.',
+    description: 'Agrega un producto al sistema.', type: GetProductoDto,
   })
   @ApiResponse({
     status: 400,
@@ -118,7 +118,7 @@ export class ProductosController {
   })
   @ApiBody({ type: CreateProductoDto })
   @Post()
-  createProduct(
+  async createProduct(
     @Body(
       ValidarBase64Pipe,
       ValidarCategoriaProductoPipe,
@@ -126,7 +126,7 @@ export class ProductosController {
     )
     createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
-    return this.productosService.create(createProductoDto);
+    return await this.productosService.create(createProductoDto);
   }
 
   // Actualizar un producto
@@ -134,16 +134,16 @@ export class ProductosController {
   @ApiBody({ type: UpdateProductoDto })
   @ApiResponse({
     status: 200,
-    description: 'Actualiza un producto.',
+    description: 'Actualiza un producto.', type: GetProductoDto
   })
   @ApiResponse({
     status: 404,
     description: 'No se ha encontrado un producto con ese id.',
   })
-  @ApiParam({ name: 'id', type: Number })
-  @Patch(':id')
-  updateProduct(
-    @Param('id', ProductoExistentePipe) id: number,
+  @ApiParam({ name: 'idProducto', type: Number })
+  @Patch(':idProducto')
+  async updateProduct(
+    @Param('idProducto', ProductoExistentePipe) idProducto: number,
     @Body(
       ValidarBase64Pipe,
       ValidarCategoriaProductoPipe,
@@ -151,7 +151,7 @@ export class ProductosController {
     )
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
-    return this.productosService.update(id, updateProductoDto);
+    return await this.productosService.update(idProducto, updateProductoDto);
   }
 
   // Eliminar un producto
@@ -164,11 +164,11 @@ export class ProductosController {
     status: 404,
     description: 'No existe un producto con ese id',
   })
-  @Delete(':id')
-  deleteOne(
-    @Param('id', ProductoExistentePipe) id: number,
+  @Delete(':idProducto')
+  async deleteOne(
+    @Param('idProducto', ProductoExistentePipe) idProducto: number,
   ): Promise<GetProductoDto> {
-    return this.productosService.deleteOne(id);
+    return await this.productosService.deleteOne(idProducto);
   }
 
   //Subir imagen en bas64 a un producto

@@ -2,10 +2,11 @@ Falta documentar los cambios hasta la V1.11.3
 
 Aut:
     Falta agregar un usuario "admin" decente, aparte de 'bigdaddy'.
-    Agregar más datos de plantas.
+    Permitir login con nombreusuario y correo.
 
 Usuarios:
     Paginación de Get todos los usuarios.
+    Considerar por búsqueda por nombreusuario, email y rut.
 
 Productos:
     Falta:

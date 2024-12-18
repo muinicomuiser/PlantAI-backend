@@ -113,24 +113,24 @@ export class UpdateProductoDto {
   @IsOptional()
   planta?: UpdatePlantaDto;
 
-  @ApiProperty({
-    description: 'Macetero asociado al producto',
-    type: UpdateMaceteroDto,
-  })
+  // @ApiProperty({
+  //   description: 'Macetero asociado al producto',
+  //   type: UpdateMaceteroDto,
+  // })
   @IsOptional()
   macetero?: UpdateMaceteroDto;
 
-  @ApiProperty({
-    description: 'Accesorio asociado al producto',
-    type: UpdateAccesorioDto,
-  })
+  // @ApiProperty({
+  //   description: 'Accesorio asociado al producto',
+  //   type: UpdateAccesorioDto,
+  // })
   @IsOptional()
   accesorio?: UpdateAccesorioDto;
 
-  @ApiProperty({
-    description: 'Insumo asociado al producto',
-    type: UpdateInsumoDto,
-  })
+  // @ApiProperty({
+  //   description: 'Insumo asociado al producto',
+  //   type: UpdateInsumoDto,
+  // })
   @IsOptional()
   insumo?: UpdateInsumoDto;
 }

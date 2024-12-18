@@ -11,6 +11,9 @@ import { UsuarioMedioPago } from './entities/usuarios_medio_pago.entity';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
+import { Pago } from 'src/commons/entities/pagos.entity';
+import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { JwtModule } from '@nestjs/jwt';
       Pedido,
       UsuarioMedioPago,
       MedioPago,
+      CarroCompra,
+      ProductoPedido,
+      Pago
     ]),
     CarroComprasModule,
     JwtModule.register({}),
@@ -29,4 +35,4 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [UsuariosService, RolesGuard],
   exports: [UsuariosService, TypeOrmModule],
 })
-export class UsuariosModule {}
+export class UsuariosModule { }

@@ -1,12 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Review } from './entities/review.entity';
-import { Repository } from 'typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Repository } from 'typeorm';
+import { CreateReviewDto } from './dto/create-review.dto';
 import { OutputReviewDto } from './dto/OutputReviewDto';
+import { Review } from './entities/review.entity';
 import { ReviewMapper } from './mapper/reviews-mapper';
 
 @Injectable()
@@ -18,7 +17,7 @@ export class ReviewsService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
-  ) {}
+  ) { }
   async createReview(
     idUsuario: number,
     createReviewDto: CreateReviewDto,

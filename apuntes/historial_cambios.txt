@@ -93,3 +93,20 @@ Versión 1.11.4
                 (partiendo desde índice 0)
 
     ++ Agregado archivo SQL V0.0.15
+
+=========================================================================================================================
+Versión 1.11.5
+
+    Cambios
+        - Usuarios:
+            Ahora funciona el GET /usuarios/pedidos/idUsuario
+            Retorna los pedidos de un usuario, funciona como un historial de compras.
+        
+        - Catálogo:
+            Incluido el tamaño en el query
+
+            GET catalogo/search
+            Para buscar con texto por nombre
+        
+        - Pedidos:
+            Ahora al crear un pedido se aumenta la propiedad "unidadesVendidas" de los productos.

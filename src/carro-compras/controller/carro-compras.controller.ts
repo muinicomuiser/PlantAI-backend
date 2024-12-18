@@ -91,7 +91,7 @@ export class CarroComprasController {
   })
   @ApiResponse({ status: 404, description: 'No existe un usuario con el ID' })
   @Post(':idUsuario')
-  createCarro(
+  async createCarro(
     @Param(
       'idUsuario',
       ParseIntPipe,
@@ -100,7 +100,7 @@ export class CarroComprasController {
     )
     idUsuario: number,
   ) {
-    return this.carroComprasService.createCarro(idUsuario);
+    return await this.carroComprasService.createCarro(idUsuario);
   }
 
   // Eliminar carro de compras
@@ -139,7 +139,10 @@ export class CarroComprasController {
   // - Cambiar cantidad de producto de carro
   @ApiTags('Carro de compras - Cliente')
   @ApiOperation({ summary: 'Actualiza la cantidad de un producto determinado' })
-  @ApiResponse({ status: 200, description: 'Cantidad actualizada' })
+  @ApiResponse({
+    status: 200, description: 'Cantidad actualizada',
+    type: GetCarroProductoDto,
+  })
   @ApiResponse({
     status: 400,
     description: 'No ha sido actualizada la cantidad',

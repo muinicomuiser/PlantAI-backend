@@ -18,6 +18,7 @@ import { Rol } from '../entities/rol.entity';
 import { Usuario } from '../entities/usuario.entity';
 import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
 import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 
 @Injectable()
@@ -33,7 +34,7 @@ export class UsuariosService {
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -171,24 +172,32 @@ export class UsuariosService {
   }
 
   /**Retorna los pedidos asociados a un id de usuario */
-  async findPedidos(idUsuario: number): Promise<GetPedidoDto[]> {
-    const pedidos = await this.pedidosRepository.find({
-      where: { idUsuario },
-      relations: [
-        'medioPago',
-        'estadoPedido',
-        'tipoDespacho',
-        'carro',
-        'usuario',
-        'Pago',
-      ],
-    });
-    if (pedidos.length === 0) {
-      throw new NotFoundException(
-        `No se encontraron pedidos para el usuario con ID ${idUsuario}`, // <-- Un array vacío no es un error.
-      );
+  async findPedidos(idUsuario: number): Promise<GetPedidoUsuarioDto[]> {
+    try {
+      const pedidos: Pedido[] = await this.pedidosRepository.find({
+        where: { idUsuario: idUsuario },
+        relations: [
+          'medioPago',
+          'estadoPedido',
+          'tipoDespacho',
+          'carro',
+          'usuario',
+          'Pago',
+          'direccionEnvio',
+          'productosPedido'
+        ],
+      });
+      if (pedidos.length > 0) {
+        return pedidos.map(pedido => mapperPedido.toDtoUsuario(pedido));
+      }
+      else {
+        return []
+      }
     }
-    return pedidos.map(mapperPedido.toDto);
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al obtener pedidos del usuario')
+    }
   }
 
   /**Actualiza el medio de pago de un usuario según su id */

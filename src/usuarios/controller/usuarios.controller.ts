@@ -22,10 +22,11 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
 import { SanitizeInputInterceptor } from 'src/commons/interceptor/sanitize-create-usuario.interceptor';
-import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
+import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -34,7 +35,6 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
-import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
@@ -61,7 +61,6 @@ export class UsuariosController {
         },
       }
     }
-
   })
   @ApiResponse({
     status: 403,
@@ -73,7 +72,7 @@ export class UsuariosController {
   // async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
   async findAll(): Promise<GetDataDto<OutputUserDTO[]>> {
     const users = await this.usuariosService.findAll();
-    return new GetDataDto(users, 'Usuarios obtenidos exitosamente.')
+    return new GetDataDto(users, 'Usuarios obtenidos exitosamente.', users.length)
   }
 
   // Obtener un usuario según su ID
@@ -177,24 +176,37 @@ export class UsuariosController {
     return await this.usuariosService.deleteUser(idUsuario);
   }
   //Obtener pedidos de usuario
+  @ApiExtraModels(GetPedidoUsuarioDto)
   @ApiOperation({
     summary: 'Obtiene los pedidos de un usuario según ID',
   })
   @ApiResponse({
     status: 200,
-    description: 'Devuelve la lista de pedidos de un usuario',
-    type: [GetPedidoDto],
-    isArray: true,
+    description: 'Devuelve todos los usuarios',
+    // Esto es para construir el ejemplo en Swagger, porque la data es tipo genérico
+    schema: {
+      type: 'object',
+      properties: {
+        totalItems: { type: 'number' },
+        data: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(GetPedidoUsuarioDto)
+          }
+        },
+      }
+    }
   })
   @ApiResponse({
-    status: 404,
+    status: 400,
     description: 'Error al buscar los pedidos',
   })
   @Get('pedidos/:idUsuario')
   async findPedidos(
-    @Param('idUsuario', ParseIntPipe) idUsuario: number,
-  ): Promise<GetPedidoDto[]> {
-    return await this.usuariosService.findPedidos(idUsuario);
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
+  ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
+    const pedidosUsuario: GetPedidoUsuarioDto[] = await this.usuariosService.findPedidos(idUsuario);
+    return new GetDataDto(pedidosUsuario, `Pedidos del usuario con id ${idUsuario}`, pedidosUsuario.length)
   }
 
   // Modificar o agregar medio de pago
@@ -222,7 +234,7 @@ export class UsuariosController {
         `El mediio pago "${medioPago}" no está registrado`,
       );
     }
-    return this.usuariosService.updateMedioPago(idUsuario, medioPagoEntity);
+    return await this.usuariosService.updateMedioPago(idUsuario, medioPagoEntity);
   }
 
   //Obtener medios de pago de un usuario

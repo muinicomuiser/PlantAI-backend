@@ -11,6 +11,7 @@ import { mapperPedido } from '../mapper/pedido.mapper';
 import { PEDIDOS_RELATIONS } from '../shared/constants/pedidos.constants';
 import { CreateDireccionEnvioDto } from '../dto/create-direccion-envio.dto';
 import { DireccionEnvio } from '../entities/direccion-envio.entity';
+import { Producto } from 'src/productos/entities/producto.entity';
 
 @Injectable()
 export class PedidosService {
@@ -19,6 +20,8 @@ export class PedidosService {
     private pedidoRepository: Repository<Pedido>,
     @InjectRepository(ProductoPedido)
     private productoPedidoRepository: Repository<ProductoPedido>,
+    @InjectRepository(Producto)
+    private productoRepository: Repository<Producto>,
     @InjectRepository(DireccionEnvio)
     private direccionEnvioRepository: Repository<DireccionEnvio>,
     @Inject(CarroComprasService)
@@ -51,6 +54,13 @@ export class PedidosService {
         return productoPedido
       })
       const newProductosPedido = await this.productoPedidoRepository.save(productosPedido)
+      await Promise.all(
+        newProductosPedido.map(async productoPedido => {
+          const producto: Producto = await this.productoRepository.findOneBy({ id: productoPedido.idProducto })
+          producto.unidadesVendidas += productoPedido.cantidad
+          await this.productoRepository.save(producto)
+        })
+      )
       pedidoGuardado.productosPedido = newProductosPedido
       pedidoGuardado.direccionEnvio = direccionGuardada
       return mapperPedido.toDto(pedidoGuardado);
