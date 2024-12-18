@@ -7,16 +7,18 @@ import {
 } from '../dto/catalogo/paginacion.dto';
 import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
+import { GetProductoDto } from '../dto/producto/get-producto.dto';
 
 @Injectable()
 export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) {}
+  ) { }
 
   /**Retorna todos los productos */
-  async findAll(filtrosCatalogoDto: FiltrosCatalogoDto) {
+  async findAll(filtrosCatalogoDto: FiltrosCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
     try {
       const {
         page,
@@ -111,7 +113,7 @@ export class CatalogoService {
 
   // retorna producto por busqueda
 
-  async findBySearch(searchCatalogoDto: SearchCatalogoDto) {
+  async findBySearch(searchCatalogoDto: SearchCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
     try {
       const { page, pageSize, search } = searchCatalogoDto;
       const limit = pageSize;

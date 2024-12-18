@@ -109,10 +109,10 @@ export class CarroComprasController {
   @ApiResponse({ status: 200, description: 'Carro borrado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Delete(':id')
-  deleteCarro(
+  async deleteCarro(
     @Param('id', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
   ) {
-    return this.carroComprasService.deleteCarro(idCarro);
+    return await this.carroComprasService.deleteCarro(idCarro);
   }
 
   // - Agregar producto al carro

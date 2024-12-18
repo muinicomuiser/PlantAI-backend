@@ -15,9 +15,11 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExtraModels,
   ApiOperation,
   ApiResponse,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
@@ -32,6 +34,7 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
@@ -45,7 +48,20 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Devuelve todos los usuarios',
-    type: OutputUserDTO,
+    // Esto es para construir el ejemplo en Swagger, porque la data es tipo genérico
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        data: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(OutputUserDTO)
+          }
+        },
+      }
+    }
+
   })
   @ApiResponse({
     status: 403,
@@ -54,13 +70,14 @@ export class UsuariosController {
   @Get()
   @Roles('Super Admin', 'Admin')
   // @UseGuards(JwtAuthGuard, RolesGuard)
-  async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
+  // async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
+  async findAll(): Promise<GetDataDto<OutputUserDTO[]>> {
     const users = await this.usuariosService.findAll();
-    return { data: users, message: 'Usuarios obtenidos exitosamente.' };
+    return new GetDataDto(users, 'Usuarios obtenidos exitosamente.')
   }
 
   // Obtener un usuario según su ID
-  @ApiOperation({ summary: 'Obtiene un Usuario según ID' })
+  @ApiOperation({ summary: 'Obtiene un Usuario según id.' })
   @ApiResponse({
     status: 200,
     description: 'Usuario encontrado',
@@ -70,11 +87,11 @@ export class UsuariosController {
     status: 404,
     description: 'No hay un usuario con ese id',
   })
-  @Get(':id')
+  @Get(':idUsuario')
   async findById(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('idUsuario', ParseIntPipe) idUsuario: number,
   ): Promise<OutputUserDTO> {
-    return this.usuariosService.findById(id);
+    return await this.usuariosService.findById(idUsuario);
   }
 
   // Crear un usuario
@@ -132,8 +149,6 @@ export class UsuariosController {
       updateUsuarioDto,
     );
 
-    return updatedUser;
-
     /****Comentado para aplicarlo después de la entrega 11, pa no descalibrarle a Front el uso del endpoint tan encima. */
     // const respuesta = {    
     //   status: 200,
@@ -141,7 +156,8 @@ export class UsuariosController {
     //   data: updatedUser,
     //   timestamp: new Date().toISOString(),
     // };
-
+    /********** */
+    return updatedUser;
   }
   // Eliminar un usuario según el id
   @ApiOperation({ summary: 'Elimina un usuario según su id' })
@@ -157,8 +173,8 @@ export class UsuariosController {
     description: 'No existe un usuario con ese id',
   })
   @Delete(':idUsuario')
-  async deleteOne(@Param('idUsuario') id: number): Promise<{ message: string }> {
-    return await this.usuariosService.deleteUser(id);
+  async deleteOne(@Param('idUsuario') idUsuario: number): Promise<{ message: string }> {
+    return await this.usuariosService.deleteUser(idUsuario);
   }
   //Obtener pedidos de usuario
   @ApiOperation({
@@ -187,6 +203,7 @@ export class UsuariosController {
   })
   @ApiResponse({
     status: 204,
+    type: MedioPago,
     description: 'Medio de pago modificado o creado',
   })
   @ApiResponse({
@@ -213,7 +230,7 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Devuelve la lista de métodos de pago de un usuario',
-    type: MedioPago,
+    type: [MedioPago],
     isArray: true,
   })
   @ApiResponse({

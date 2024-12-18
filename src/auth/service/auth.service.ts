@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -11,6 +12,7 @@ import { Rol } from 'src/usuarios/entities/rol.entity';
 import { UsuariosService } from 'src/usuarios/service/usuarios.service';
 import { Repository } from 'typeorm';
 import { LoginDto } from '../dto/login.dto';
+import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
 
 @Injectable()
 export class AuthService {
@@ -55,23 +57,28 @@ export class AuthService {
     }
     return null;
   }
-  async register(createUsuarioDto: CreateUsuarioDto) {
-    const salt = 10;
-    createUsuarioDto.contrasena = await bcrypt.hash(
-      createUsuarioDto.contrasena,
-      salt,
-    );
-    // buscar rol en base
-    const rol = await this.rolRepository.findOne({
-      where: { id: createUsuarioDto.idRol },  // <-- Los usuarios nuevos registrados quedan siempre como Cliente
-    });
-    if (!rol) {
-      throw new NotFoundException(
-        `Rol con ID ${createUsuarioDto.idRol} no existe`,
+  async register(createUsuarioDto: CreateUsuarioDto): Promise<OutputUserDTO> {
+    try {
+      const salt = 10;
+      createUsuarioDto.contrasena = await bcrypt.hash(
+        createUsuarioDto.contrasena,
+        salt,
       );
+      // buscar rol en base
+      const rol = await this.rolRepository.findOne({
+        where: { id: createUsuarioDto.idRol },  // <-- Los usuarios nuevos registrados quedan siempre como Cliente
+      });
+      if (!rol) {
+        throw new NotFoundException(
+          `Rol con ID ${createUsuarioDto.idRol} no existe`,
+        );
+      }
+      //pasar rol al metodo de crea
+      return this.usuariosService.createUser(createUsuarioDto, rol);
     }
-    //pasar rol al metodo de crea
-    return this.usuariosService.createUser(createUsuarioDto, rol);
+    catch (error) {
+      throw new BadRequestException('Error al registrar usuario')
+    }
   }
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
