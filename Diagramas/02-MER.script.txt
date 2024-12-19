@@ -78,11 +78,11 @@ Table imagenes_productos{
 Table plantas{
   id_producto integer [primary key]
   pet_friendly boolean
+  id_color integer
   id_tipo_riego integer
   id_fotoperiodo integer
   ciclo boolean
   id_habito_crecimiento integer
-  id_color integer
   especie varchar
   id_tolerancia_temperatura integer
   id_tamaño integer
@@ -130,8 +130,8 @@ Table colores_productos{
 }
 
 Table productos_etiquetas{
-  id_producto integer [primary key]
   id_etiqueta integer [primary key]
+  id_producto integer [primary key]
 }
 
 Table etiquetas{
@@ -142,8 +142,8 @@ Table etiquetas{
 Table accesorios {
   id_producto integer [primary key]
   id_marca integer
-  id_tipo_accesorio integer
   id_color integer
+  id_tipo_accesorio integer
 }
 
 Table tipo_accesorio{
@@ -158,8 +158,8 @@ Table marca {
 
 Table insumos {
   id_producto integer [primary key]
-  id_tipo_insumo integer
   id_marca integer
+  id_tipo_insumo integer
 }
 
 Table tipo_insumos {
@@ -167,7 +167,7 @@ Table tipo_insumos {
   tipo_insumo integer
   }
 
-Table macetero {
+Table maceteros {
   id_producto integer [primary key]
   id_marca integer
   id_tipo_macetero integer
@@ -234,8 +234,8 @@ table tipo_despacho {
 }
 
 table usuarios_medios_pago {
-  id_usuario integer [primary key]
   id_medio_pago integer [primary key]
+  id_usuario integer [primary key]
   es_preferido boolean
 }
 
@@ -263,6 +263,12 @@ Ref: "productos"."id" < "imagenes_productos"."id_producto"
 
 Ref: "productos"."id" - "plantas"."id_producto"
 
+Ref: "productos"."id" - "accesorios"."id_producto"
+
+Ref: "productos"."id" - "insumos"."id_producto"
+
+Ref: "productos"."id" - "maceteros"."id_producto"
+
 Ref: "plantas_tamaño"."id" < "plantas"."id_tamaño"
 
 Ref: "plantas"."id_entorno" < "plantas_entorno"."id"
@@ -287,23 +293,15 @@ Ref: "accesorios"."id_marca" < "marca"."id"
 
 Ref: "insumos"."id_marca" < "marca"."id"
 
-Ref: "plantas"."id_producto" < "insumos"."id_producto"
-
 Ref: "insumos"."id_tipo_insumo" < "tipo_insumos"."id"
 
-Ref: "macetero"."id_marca" < "marca"."id"
+Ref: "maceteros"."id_marca" < "marca"."id"
 
-Ref: "plantas"."id_producto" < "macetero"."id_producto"
-
-Ref: "macetero"."id_tipo_macetero" < "tipo_macetero"."id"
+Ref: "maceteros"."id_tipo_macetero" < "tipo_macetero"."id"
 
 Ref: "usuarios"."id" < "pedidos"."id_usuario"
 
-
-
 Ref: "pedidos"."id" < "pagos"."id_pedido"
-
-
 
 Ref: "pagos"."id_medio_pago" < "medio_pago"."id"
 

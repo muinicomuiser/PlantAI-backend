@@ -106,6 +106,7 @@ export class FiltrosCatalogoDto extends PaginacionDto {
   @ApiProperty({
     description: 'Nombre por el cual se ordenará',
     required: false,
+    enum: ORDENARPOR
   })
   @IsString({ message: 'El campo ordenarPor debe ser un string' })
   @Transform(({ value }) => ORDENARPOR[value])
@@ -116,6 +117,7 @@ export class FiltrosCatalogoDto extends PaginacionDto {
     description:
       'Indica si se ordenará de forma ascendente o descendente con respecto al campo ordenarPor (asc o desc)',
     required: false,
+    enum: ORDENCATALOGO
   })
   @IsString({ message: 'El campo orden debe ser un string' })
   @IsOptional()
@@ -125,6 +127,7 @@ export class FiltrosCatalogoDto extends PaginacionDto {
   @ApiProperty({
     description: 'ID tamaño de la planta. 1:"S", 2:"M", 3:"L", 4:"XL"',
     required: false,
+    enum: ["1", "2", "3", "4"]
   })
   @IsString({ message: 'El campo tamaño debe ser un string' })
   @IsOptional()

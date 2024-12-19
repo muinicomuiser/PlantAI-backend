@@ -103,7 +103,7 @@ Versión 1.11.5
             Retorna los pedidos de un usuario, funciona como un historial de compras.
         
         - Catálogo:
-            Incluido el tamaño en el query
+            Incluido el idTamano en el query
 
             GET catalogo/search
             Para buscar con texto por nombre
