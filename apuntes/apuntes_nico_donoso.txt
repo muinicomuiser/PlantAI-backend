@@ -1,51 +1,119 @@
+Falta documentar los cambios hasta la V1.11.3
+
+Aut:
+    Falta agregar un usuario "admin" decente, aparte de 'bigdaddy'.
+    Permitir login con nombreusuario y correo.
+
+Usuarios:
+    Paginación de Get todos los usuarios.
+    Considerar por búsqueda por nombreusuario, email y rut.
 
 Productos:
     Falta:
         Agregar un get de opciones de atributos por categorías. Que devuelva toda la tabla.
+        O uno que devuelva un arreglo con todas las opciones posibles y sus ids, para pintar las pantallas de gestión.
 
-Correcciones:
-    A la versión 1.9.2
-        Documentar los campos requeridos y opcionales en el dto de crear usuario
-        Validar los campos requeridos y opcionales en el dto de crear usuario
 
 Carro:
     - Al buscar por id Usuario: Retorna el carro activo, donde la fecha_cierre sea null.
     - Al reemplazar un carro y enviar productos repetidos, los junta en un mismo registro.
-    - Cambio contenido en la versión 1.10.0
-        Eliminar producto de carro
-        Delete  /carro-compras/removeProducto/:id_carro
-        Ahora tendrá body tipo UpdateProductCarro. Se restará la cantidad y si la cantidad entrante coincide con la registrada, se elimina el registro.
-        Esto para permitir que los carros guardados en local puedan contener productos repetidos y que al eliminar uno no se borre el registro completo del 
-        producto en Back.
-    - Ahora los get.carro.dto mostrarán la fecha de creación y de cierre
-    
-    Estructura carro propuesta:
-        - Obtener todos los carros activos e inactivos. Filtrar por usuario
-            GET /carro-compras 'query'
 
-        - Obtener carro por id
-            GET /carro-compras/:id
-    
-        - Obtener carro por id_usuario
-            GET /carro-compras/user/:id
-    
-        - Eliminar carro por id
-            DELETE /carro-compras/:id
-    
-        - Crear carro nuevo vacío a un usuario
-            POST /carro-compras/:id_usuario
-    
-        - Llenar carro / reemplazar contenido de carro
-            PUT /replaceProductos/carro-compras/:id_carro
-    
-        - Agregar producto a carro
-            POST /carro-compras/addProducto/:id_carro
-    
-        - Actualizar cantidad de producto
-            PATCH /carro-compras/updateProducto/:id_carro
-    
-        - Eliminar producto de carro / restar cantidad de producto
-            DELETE /carro-compras/removeProducto/:id_carro
 
     Falta:
-        Un endpoint que cierre un carro, o verificar que ese proceso se haga al crear un pedido a partir de un carro.
+        Una propiedad de carro que comunique si el carro está en proceso de finalizar compra y pago. finalizando: boolean
+        Reservar los productos de un carro en proceso de finalización
+
+Pedidos:
+    Falta:
+        Historial de compra. <-- Se pueden obtener todos los pedidos de un usuairo
+
+
+
+
+pal gpt
+
+Necesito agregar filas a dos tablas en mi base de datos.
+La base de datos almacena productos de una tienda. Necesito agregar productos tipo planta.
+Tengo una tabla llamada productos y una tabla relacionada llamada plantas.
+
+
+Tabla productos
+
+sku: varchar(20)
+nombre: varchar(50)
+precio: int
+descripcion: varchar(2048)
+unidades_vendidas: int
+puntuacion: decimal 1 a 5
+ancho: int
+alto: int
+largo: int
+peso: int
+habilitado: 1
+
+Tabla plantas
+
+pet_friendly: tinyint
+id_tipo_riego: int 1 a 7
+id_fotoperiodo: int 1 a 3
+ciclo: tinyint 0 a 1
+id_habito_crecimiento: int 1 a 4
+id_color: int 1 a 13
+especie: varchar(50)
+id_tolerancia_temperatura: int 1 a 3
+id_tamaño: int 1 a 4
+id_entorno: int 1 a 3
+id_iluminacion: int 1 a 3
+
+referencias:
+id_tipo_riego
+        1 Riego manual
+	2 Riego goteo
+	3 Riego capilar
+	4 Riego sumersión
+	5 Autorriego
+	6 Nebulización
+	7 Automático
+id_fotoperiodo
+        1 Día corto
+        2 Día largo
+        3 Neutro
+ciclo
+        0 Anual
+        1 Perenne
+id_habito_crecimiento
+	1 Determinado arbustivo
+	2 Indeterminado arbustivo
+	3 Indeterminado postrado
+	4 Indeterminado trepador
+id_color
+        1 Verde
+        2 Rojo
+        3 Púrpura
+        4 Burdeo
+        5 Amarillo
+        6 Blanco
+        7 Naranja
+        8 Azul
+        9 Violeta
+        10 Rosa
+        11 Negro
+        12 Marrón
+        13 Variegada
+id_tolerancia_temperatura
+        1 Cálido
+        2 Templado
+        3 Frío
+id_tamaño
+        1 S
+        2 M
+        3 L
+        4 XL
+id_iluminacion
+	1 Sol Directo
+	2 Semi Sombra
+	3 Sombra
+
+¿Puedes armar dos códigos de inserción de datos con 50 filas?
+Tipo: Insert into productos (columnas) values (valores)
+Tipo: Insert into plantas (columnas) values (valores)

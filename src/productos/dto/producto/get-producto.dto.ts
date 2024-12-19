@@ -7,11 +7,12 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { GetCategoriaDto } from '../categoria/get-categoria.dto';
-import { GetPlantaDto } from '../planta/get-planta.dto';
-import { GetMaceteroDto } from '../macetero/get-macetero.dto';
 import { GetAccesorioDto } from '../accesorio/get-accesorio.dto';
+import { GetCategoriaDto } from '../categoria/get-categoria.dto';
 import { GetInsumoDto } from '../insumo/get-insumo.dto';
+import { GetMaceteroDto } from '../macetero/get-macetero.dto';
+import { GetPlantaDto } from '../planta/get-planta.dto';
+import { GetImagenDto } from '../imagen/get-imagen.dto';
 
 export class GetProductoDto {
   @ApiProperty({ example: 1, description: 'Identificador único del producto' })
@@ -48,16 +49,16 @@ export class GetProductoDto {
   @IsString()
   descripcion: string;
 
-  @ApiProperty({
-    example: 'macetero.jpg',
-    description: 'URL de la imagen del producto',
-  })
-  @IsString()
-  imagen: string;
+  // @ApiProperty({
+  //   example: 'macetero.jpg',
+  //   description: 'URL de la imagen del producto',
+  // })
+  // @IsString()
+  // imagen: string;
 
   @ApiProperty({ example: 50, description: 'Cantidad disponible del producto' })
   @IsInt()
-  cantidad: number;
+  stock: number;
 
   @ApiProperty({
     example: 20,
@@ -120,6 +121,11 @@ export class GetProductoDto {
   habilitado: boolean;
 
   @ApiProperty({
+    type: [GetImagenDto],
+  })
+  imagenes: GetImagenDto[]
+
+  @ApiProperty({
     type: GetPlantaDto,
     description: 'Información de la planta asociada al producto',
     required: false,
@@ -150,4 +156,5 @@ export class GetProductoDto {
   })
   @IsOptional()
   insumo?: GetInsumoDto;
+
 }

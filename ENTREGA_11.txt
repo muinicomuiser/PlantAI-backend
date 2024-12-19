@@ -1,6 +1,7 @@
 - Historias de usuario priorizadas:
 
     Historia de Usuario 1: Registro de Usuarios
+        Controlador: auth
         Prioridad: Baja
 
     Historia de Usuario 2: Autenticación y Gestión de Sesiones
@@ -20,20 +21,32 @@
 
     Historia de Usuario 7: Búsqueda de Productos
         Prioridad: Alta
-        Controlador: productos
+        Controlador: catalogo
 
     Historia de Usuario 8: Filtros Avanzados
+        Controlador: catalogo
+
+
         Lista de filtros:
-            Por rango de precio
-            Por puntuación
-            Por más vendidos
-            Recomendados al usuario (según su id)
-            Por nombre
-            Por especie
-            Por fotoperiodo
-            Por tipo de riego
-            Por pet friendly
-            Por color
+        
+            Orden:
+            Más vendidos / Destacados (por defecto)
+            Mejor valorados
+            Precio menor a mayor
+            Precio mayor a menor
+            
+            Básicos:
+            Rango de precio
+            Tamaño
+
+            Avanzados:
+            Ciclo
+            Iluminación
+            Floral
+            Tolerancia Temperatura
+            Tipo riego
+            Pet Friendly
+
 
     Historia de Usuario 9: Añadir Productos al Carrito de Compras
         Prioridad: Alta
@@ -42,18 +55,21 @@
     Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos
         Prioridad: Alta
         Controlador: pedidos
+
+    Historia de Usuario 11: Integración de Sistemas de Pago
+        Controlador: pedidos
+
     
     Historia de Usuario 12: Visualización del catálogo
         Prioridad: Alta
         Controlador: catalogo
 
+    Historia de Usuario 13: Visualización del Detalle del Producto de Catálogo
+        Controlador: catalogo
+
+    Historia de Usuario 14: Implementación AI
 
     Módulo Equipo
         Controlador: equipo
 
 -----------------------------------------------------------------------------------------
-
-Entrega 9
-
-A considerar:
-    Prefijos de dto: get-create-update

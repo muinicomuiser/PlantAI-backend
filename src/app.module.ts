@@ -11,7 +11,9 @@ import { GlobalMiddleware } from './commons/middleware/global.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+
 import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 console.log(
   `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
@@ -35,6 +37,7 @@ console.log(
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      logging: true, //depuracion
     }),
     ServeStaticModule.forRoot({
       rootPath: `${process.env.RUTA_FISICA}` || `./imagenes/productos`,
@@ -47,6 +50,7 @@ console.log(
     EquipoModule,
     AuthModule,
     IaconsultasModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

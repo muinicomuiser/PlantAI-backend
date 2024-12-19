@@ -9,13 +9,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Categoria } from '../entities/categoria.entity';
 import { Repository } from 'typeorm';
 import { ColorProducto } from 'src/commons/entities/color.entity';
-import { Especie } from '../entities/plantas/especie.entity';
 import { Fotoperiodo } from '../entities/plantas/fotoperiodo.entity';
 import { HabitoCrecimiento } from '../entities/plantas/habito_crecimiento.entity';
 import { TipoRiego } from '../entities/plantas/tipo_riego.entity';
 import { Marca } from 'src/commons/entities/marca.entity';
 import { TipoMacetero } from '../entities/maceteros/tipo_macetero.entity';
 import { TipoInsumo } from '../entities/insumos/tipo_insumo.entity';
+import { ToleranciaTemperatura } from '../entities/plantas/tolerancia_temperatura.entity';
+import { Entorno } from '../entities/plantas/entorno.entity';
+import { Tamano } from '../entities/plantas/tamano.entity';
+import { Iluminacion } from '../entities/plantas/iluminacion.entity';
 
 /**Valida que los id de cada campo existan en sus rspectivas tablas. */
 @Injectable()
@@ -25,21 +28,27 @@ export class ValidarPropiedadesProductoPipe implements PipeTransform {
     private readonly categoriaRepository: Repository<Categoria>,
     @InjectRepository(ColorProducto)
     private readonly colorProductoRepository: Repository<ColorProducto>,
-    @InjectRepository(Especie)
-    private readonly especieRepository: Repository<Especie>,
     @InjectRepository(Fotoperiodo)
     private readonly fotoperiodoRepository: Repository<Fotoperiodo>,
     @InjectRepository(HabitoCrecimiento)
     private readonly habitoCrecimientoRepository: Repository<HabitoCrecimiento>,
     @InjectRepository(TipoRiego)
     private readonly tipoRiegoRepository: Repository<TipoRiego>,
+    @InjectRepository(Entorno)
+    private readonly entornoRepository: Repository<Entorno>,
+    @InjectRepository(ToleranciaTemperatura)
+    private readonly toleranciaTemperaturaRepository: Repository<ToleranciaTemperatura>,
+    @InjectRepository(Tamano)
+    private readonly tamanoRepository: Repository<Tamano>,
+    @InjectRepository(Iluminacion)
+    private readonly iluminacionRepository: Repository<Iluminacion>,
     @InjectRepository(Marca)
     private readonly marcaRepository: Repository<Marca>,
     @InjectRepository(TipoMacetero)
     private readonly tipoMaceteroRepository: Repository<TipoMacetero>,
     @InjectRepository(TipoInsumo)
     private readonly tipoInsumoRepository: Repository<TipoInsumo>,
-  ) {}
+  ) { }
   async transform(value: any, metadata: ArgumentMetadata) {
     const updateDto: UpdateProductoDto = value as UpdateProductoDto;
     if (updateDto.idCategoria) {
@@ -61,14 +70,7 @@ export class ValidarPropiedadesProductoPipe implements PipeTransform {
           throw new BadRequestException('La id de color no es válida');
         }
       }
-      if (updateDto.planta.idEspecie) {
-        const existe: boolean = await this.especieRepository.existsBy({
-          id: updateDto.planta.idEspecie,
-        });
-        if (!existe) {
-          throw new BadRequestException('La id de especie no es válida');
-        }
-      }
+
       if (updateDto.planta.idFotoperiodo) {
         const existe: boolean = await this.fotoperiodoRepository.existsBy({
           id: updateDto.planta.idFotoperiodo,
@@ -93,6 +95,38 @@ export class ValidarPropiedadesProductoPipe implements PipeTransform {
         });
         if (!existe) {
           throw new BadRequestException('La id de tipo riego no es válida');
+        }
+      }
+      if (updateDto.planta.idEntorno) {
+        const existe: boolean = await this.entornoRepository.existsBy({
+          id: updateDto.planta.idEntorno,
+        });
+        if (!existe) {
+          throw new BadRequestException('La id de entorno no es válida');
+        }
+      }
+      if (updateDto.planta.idIluminacion) {
+        const existe: boolean = await this.iluminacionRepository.existsBy({
+          id: updateDto.planta.idIluminacion,
+        });
+        if (!existe) {
+          throw new BadRequestException('La id de iluminación no es válida');
+        }
+      }
+      if (updateDto.planta.idTamano) {
+        const existe: boolean = await this.tamanoRepository.existsBy({
+          id: updateDto.planta.idTamano,
+        });
+        if (!existe) {
+          throw new BadRequestException('La id de tamaño no es válida');
+        }
+      }
+      if (updateDto.planta.idToleranciaTemperatura) {
+        const existe: boolean = await this.toleranciaTemperaturaRepository.existsBy({
+          id: updateDto.planta.idToleranciaTemperatura,
+        });
+        if (!existe) {
+          throw new BadRequestException('La id de tolerancia temperatura no es válida');
         }
       }
     }

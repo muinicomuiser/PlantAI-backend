@@ -20,12 +20,13 @@ import { ValidarCarroActivoPipe } from '../pipe/validar-carro-activo-existente.p
 import { ValidarCarroExistePipe } from '../pipe/validar-carro-existe.pipe';
 import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 import { CarroComprasService } from '../service/carro-compras.service';
+import { NoStockProductosCarroDto } from '../dto/no-stock-carro-productos.dto';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 // @ApiTags('Carro de compras')
 @Controller('carro-compras')
 export class CarroComprasController {
-  constructor(private readonly carroComprasService: CarroComprasService) {}
+  constructor(private readonly carroComprasService: CarroComprasService) { }
 
   // Obtener carro de compras por id
   @ApiTags('Carro de compras - Admin')
@@ -90,7 +91,7 @@ export class CarroComprasController {
   })
   @ApiResponse({ status: 404, description: 'No existe un usuario con el ID' })
   @Post(':idUsuario')
-  createCarro(
+  async createCarro(
     @Param(
       'idUsuario',
       ParseIntPipe,
@@ -99,7 +100,7 @@ export class CarroComprasController {
     )
     idUsuario: number,
   ) {
-    return this.carroComprasService.createCarro(idUsuario);
+    return await this.carroComprasService.createCarro(idUsuario);
   }
 
   // Eliminar carro de compras
@@ -108,10 +109,10 @@ export class CarroComprasController {
   @ApiResponse({ status: 200, description: 'Carro borrado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
   @Delete(':id')
-  deleteCarro(
+  async deleteCarro(
     @Param('id', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
   ) {
-    return this.carroComprasService.deleteCarro(idCarro);
+    return await this.carroComprasService.deleteCarro(idCarro);
   }
 
   // - Agregar producto al carro
@@ -138,7 +139,10 @@ export class CarroComprasController {
   // - Cambiar cantidad de producto de carro
   @ApiTags('Carro de compras - Cliente')
   @ApiOperation({ summary: 'Actualiza la cantidad de un producto determinado' })
-  @ApiResponse({ status: 200, description: 'Cantidad actualizada' })
+  @ApiResponse({
+    status: 200, description: 'Cantidad actualizada',
+    type: GetCarroProductoDto,
+  })
   @ApiResponse({
     status: 400,
     description: 'No ha sido actualizada la cantidad',
@@ -210,5 +214,15 @@ export class CarroComprasController {
         updateCarroDto,
       );
     return carroProductosDto;
+  }
+
+  @ApiTags('Carro de compras - Cliente')
+  @ApiOperation({ summary: 'Valida el stock del contenido de un carro. Si hay conflicto, devuelve el máximo por producto en conflicto, si no, actualiza el carro. FINALIZAR COMPRA.' })
+  @ApiResponse({ status: 201, description: 'Stock suficiente y contenido del carro de compras actualizado.', type: [GetCarroProductoDto] })
+  @ApiResponse({ status: 400, description: 'Stock insuficiente de uno o más productos.', type: NoStockProductosCarroDto })
+  @ApiBody({ type: UpdateContenidoCarroDto })
+  @Post('/validateProductosCarro/:idCarro')
+  async validateProductosCarro(@Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number, @Body(ProductoExistentePipe) contenidoCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
+    return await this.carroComprasService.validateProductosCarro(idCarro, contenidoCarroDto)
   }
 }

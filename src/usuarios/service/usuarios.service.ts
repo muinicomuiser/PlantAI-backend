@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,7 +17,9 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { Rol } from '../entities/rol.entity';
 import { Usuario } from '../entities/usuario.entity';
 import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
-import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
+import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
+//import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 
 @Injectable()
 export class UsuariosService {
@@ -28,6 +32,8 @@ export class UsuariosService {
     private readonly medioPagoRepository: Repository<MedioPago>,
     @InjectRepository(UsuarioMedioPago)
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
+    @InjectRepository(Rol)
+    private readonly rolRepository: Repository<Rol>,
   ) { }
 
   /**Retorna todos los usuarios */
@@ -35,6 +41,11 @@ export class UsuariosService {
     const usuarios = await this.usuariosRepository.find({
       relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
     });
+    if (!usuarios.length) {
+      throw new NotFoundException(
+        'No se encntraron usaurios en la base de datos',
+      );
+    }
     return usuarios.map(toOutputUserDTO);
   }
 
@@ -66,23 +77,70 @@ export class UsuariosService {
   /**Actualiza un usuario según su id */
   async updateOne(
     id: number,
-    UpdateUsuarioDto: UpdateUsuarioDto,
+    updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<OutputUserDTO> {
-    const usuario = await this.usuariosRepository.findOne({
-      where: { id },
-      relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
-    });
-    //validacion de id
-    if (!usuario) {
-      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    try {
+      const usuario = await this.usuariosRepository.findOne({
+        where: { id },
+        relations: ['rol'],
+      });
+
+      if (!usuario) {
+        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      }
+
+      if (updateUsuarioDto.idRol) {
+        const rol = await this.rolRepository.findOne({
+          where: { id: updateUsuarioDto.idRol },
+        });
+
+        if (!rol) {
+          throw new NotFoundException(
+            `Rol con ID ${updateUsuarioDto.idRol} no encontrado`,
+          );
+        }
+
+        usuario.rol = rol;
+      }
+
+      const updatedData = { ...updateUsuarioDto, rol: usuario.rol };
+
+      const usuarioActualizado = await this.usuariosRepository.preload({
+        id,
+        ...updatedData,
+      });
+
+      if (!usuarioActualizado) {
+        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      }
+
+      console.log('Datos antes de guardar:', usuarioActualizado);
+
+      const usuarioGuardado =
+        await this.usuariosRepository.save(usuarioActualizado);
+
+      return toOutputUserDTO(usuarioGuardado);
+    } catch (error) {
+      console.error(
+        'Error en servicio de actualización de usuarios:',
+        error.message,
+      );
+
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new BadRequestException(
+          'Solicitud duplicada detectada. La data ingresada entra en conflicto con nuestros registros actuales.',
+        );
+      }
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Un error inesperado ocurrió actualizando usuarios',
+      );
     }
-    //actualiza el usuario:
-    this.usuariosRepository.merge(usuario, UpdateUsuarioDto);
-    const usuarioActualizado = await this.usuariosRepository.save(usuario);
-
-    return toOutputUserDTO(usuarioActualizado);
   }
-
   /**Elimina un usuario según su id */
   async deleteUser(id: number): Promise<{ message: string }> {
     //verificar id
@@ -114,24 +172,32 @@ export class UsuariosService {
   }
 
   /**Retorna los pedidos asociados a un id de usuario */
-  async findPedidos(idUsuario: number): Promise<GetPedidoDto[]> {
-    const pedidos = await this.pedidosRepository.find({
-      where: { idUsuario },
-      relations: [
-        'medioPago',
-        'estadoPedido',
-        'tipoDespacho',
-        'carro',
-        'usuario',
-        'Pago',
-      ],
-    });
-    if (pedidos.length === 0) {
-      throw new NotFoundException(
-        `No se encontraron pedidos para el usuario con ID ${idUsuario}`,
-      );
+  async findPedidos(idUsuario: number): Promise<GetPedidoUsuarioDto[]> {
+    try {
+      const pedidos: Pedido[] = await this.pedidosRepository.find({
+        where: { idUsuario: idUsuario },
+        relations: [
+          'medioPago',
+          'estadoPedido',
+          'tipoDespacho',
+          'carro',
+          'usuario',
+          'Pago',
+          'direccionEnvio',
+          'productosPedido'
+        ],
+      });
+      if (pedidos.length > 0) {
+        return pedidos.map(pedido => mapperPedido.toDtoUsuario(pedido));
+      }
+      else {
+        return []
+      }
     }
-    return pedidos.map(mapperPedido.toDto);
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al obtener pedidos del usuario')
+    }
   }
 
   /**Actualiza el medio de pago de un usuario según su id */
