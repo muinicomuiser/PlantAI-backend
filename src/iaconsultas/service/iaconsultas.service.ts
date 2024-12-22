@@ -18,6 +18,8 @@ import { ConsultaBase64Dto } from '../dto/consulta-base64.dto';
 import { FiltrosCatalogoIa } from '../dto/filtros.dto';
 
 
+// Hay que revisar. Sería más sensato responder con una lista de filtros en vez de un catálogo, para permitir paginar sin perder la consulta.
+/**Funciona con Generative Language API de Google Cloud*/
 @Injectable()
 export class IaconsultasService {
     private genAI: GoogleGenerativeAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -32,7 +34,6 @@ export class IaconsultasService {
         iluminacion: [],
         tamano: []
     };
-    private listaAtributos: string[] = []
     constructor(
         @InjectRepository(Fotoperiodo) private readonly fotoperiodoRepository: Repository<Fotoperiodo>,
         @InjectRepository(TipoRiego) private readonly tipoRiegoRepository: Repository<TipoRiego>,
@@ -46,27 +47,31 @@ export class IaconsultasService {
         this.model = this.genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     }
 
-    async getRespuestaImagenBinario(file: Express.Multer.File) {
-        if (this.categorias.length < 1) {
-            await this.cargarAtributos()
-            this.categorias.push('PetFriendly', 'Estacional', 'Perenne')
-            console.log(this.categorias)
+    async getRespuestaImagenBinario(file: Express.Multer.File, paginacion: PaginacionDto, consulta: string) {
+        try {
+            if (this.atributos.entorno.length < 1) {
+                await this.cargarAtributos()
+            }
+            const prompt: string = this.promptImagen(this.categorias, this.atributos, consulta);
+            const imagePart = this.fileToGenerativePart(
+                file,
+                "image/jpeg",
+            );
+            if (process.env.API_KEY) {
+                const respuestaJson = await this.obtenerRespuesta(prompt, imagePart);
+                const filtros: FiltrosCatalogoIa = this.getFiltros(respuestaJson['atributos'], respuestaJson['otros'])
+                const productos: Producto[] = await this.getProductosConsulta(filtros, paginacion)
+                return { message: respuestaJson['explicacion'], totalItems: productos.length, data: ProductoMapper.entitiesToDtos(productos) };
+            }
+            else {
+                const productos: Producto[] = await this.getProductosConsulta(new FiltrosCatalogoIa(), paginacion)
+                return { message: 'Respuesta de prueba', totalItems: productos.length, data: ProductoMapper.entitiesToDtos(productos) };
+            }
         }
-        const prompt: string = this.promptImagen(this.categorias, this.atributos);
-        const imagePart = this.fileToGenerativePart(
-            file,
-            "image/jpeg",
-        );
-        const result = await this.model.generateContent([prompt, imagePart]);
-        const responseText: string = result.response.text()
-        const respuestaStringJson: string = this.extraerTextoTipoJson(responseText)
-        const respuestaJson = JSON.parse(respuestaStringJson);
-        // respuestaJson.consulta = consultaDto.consulta
-        return respuestaJson;
+        catch (error) {
+            throw new BadRequestException('Error en la consulta')
+        }
     }
-
-
-
 
     /**Recibe una imagen en base64 y/o un texto, envía una consulta a la API de Gemini, filtra productos de acuerdo a la respuesta y retorna los productos. */
     async getRespuestaImagenBase64(consultaDto: ConsultaBase64Dto, paginacion: PaginacionDto): Promise<GetDataDto<GetProductoDto[]>> {
@@ -74,21 +79,28 @@ export class IaconsultasService {
             if (this.atributos.entorno.length < 1) {
                 await this.cargarAtributos()
             }
-            const prompt = this.promptImagen(this.categorias, this.atributos);
+            const prompt: string = this.promptImagen(this.categorias, this.atributos, consultaDto.consulta);
             const imagePart = this.base64fileToGenerativePart(
                 consultaDto.base64.contenido,
                 "image/jpeg",
             );
-            const respuestaJson = await this.obtenerRespuesta(prompt, imagePart);
-            const filtros: FiltrosCatalogoIa = this.getFiltros(respuestaJson['atributos'], respuestaJson['otros'])
-            const productos: Producto[] = await this.getProductosConsulta(filtros, paginacion)
-            return { message: respuestaJson['explicacion'], totalItems: productos.length, data: ProductoMapper.entitiesToDtos(productos) };
+            if (process.env.API_KEY) {
+                const respuestaJson = await this.obtenerRespuesta(prompt, imagePart);
+                const filtros: FiltrosCatalogoIa = this.getFiltros(respuestaJson['atributos'], respuestaJson['otros'])
+                const productos: Producto[] = await this.getProductosConsulta(filtros, paginacion)
+                return { message: respuestaJson['explicacion'], totalItems: productos.length, data: ProductoMapper.entitiesToDtos(productos) };
+            }
+            else {
+                const productos: Producto[] = await this.getProductosConsulta(new FiltrosCatalogoIa(), paginacion)
+                return { message: 'Respuesta de prueba', totalItems: productos.length, data: ProductoMapper.entitiesToDtos(productos) };
+            }
         }
         catch (error) {
             throw new BadRequestException('Error en la consulta')
         }
     }
 
+    /**Inicia una consulta con el prompt y la imagen */
     private async obtenerRespuesta(prompt: string, imagePart: { inlineData: { data: string; mimeType: string; } }) {
         try {
             const result = await this.model.generateContent([prompt, imagePart]);
@@ -100,6 +112,7 @@ export class IaconsultasService {
         }
     };
 
+    //**Extrae los atributos seleccionados de la respuesta y encapsula las ids en arrays por cada atributo. */
     private getFiltros(atributos: Atributos, otros: string[]): FiltrosCatalogoIa {
         const filtros: FiltrosCatalogoIa = new FiltrosCatalogoIa();
         if (atributos.entorno) {
@@ -130,7 +143,6 @@ export class IaconsultasService {
     }
 
     private async getProductosConsulta(filtros: FiltrosCatalogoIa, paginacion: PaginacionDto) {
-        console.log(filtros)
         const queryBuilder = this.productoRepository
             .createQueryBuilder('producto')
             .innerJoinAndSelect('producto.categoria', 'categoria')
@@ -149,48 +161,53 @@ export class IaconsultasService {
             .leftJoinAndSelect('planta.tamano', 'tamano')
             .where('producto.habilitado = :habilitado', { habilitado: true })
             .andWhere('producto.idCategoria = :idCategoria', { idCategoria: 1 });
-
-        if (filtros.idEntorno.length) {
-            queryBuilder.andWhere('planta.idEntorno IN (:...idEntorno)').setParameter('idEntorno', filtros.idEntorno);
-        }
-        if (filtros.idFotoperiodo.length) {
-            queryBuilder.andWhere('planta.idFotoperiodo IN (:...idFotoperiodo)').setParameter('idFotoperiodo', filtros.idFotoperiodo);
-        }
-        if (filtros.idHabitoCrecimiento.length) {
-            queryBuilder.andWhere('planta.idHabitoCrecimiento IN (:...idHabitoCrecimiento)').setParameter('idHabitoCrecimiento', filtros.idHabitoCrecimiento);
-        }
-        if (filtros.idIluminacion.length) {
-            queryBuilder.andWhere('planta.idIluminacion IN (:...idIluminacion)').setParameter('idIluminacion', filtros.idIluminacion);
-        }
-        if (filtros.idTamano.length) {
-            queryBuilder.andWhere('planta.idTamano IN (:...idTamano)').setParameter('idTamano', filtros.idTamano);
-        }
-        if (filtros.idTipoRiego.length) {
-            queryBuilder.andWhere('planta.idTipoRiego IN (:...idTipoRiego)').setParameter('idTipoRiego', filtros.idTipoRiego);
-        }
-        if (filtros.idToleranciaTemperatura.length) {
-            queryBuilder.andWhere('planta.idToleranciaTemperatura IN (:...idToleranciaTemperatura)').setParameter('idToleranciaTemperatura', filtros.idToleranciaTemperatura);
-        }
-        if (filtros.otros.find(categoria => categoria == 'PetFriendly')) {
-            queryBuilder.andWhere('planta.petFriendly = :petFriendly', { petFriendly: true });
+        if (process.env.API_KEY) {
+            if (filtros.idEntorno.length) {
+                queryBuilder.andWhere('planta.idEntorno IN (:...idEntorno)').setParameter('idEntorno', filtros.idEntorno);
+            }
+            if (filtros.idFotoperiodo.length) {
+                queryBuilder.andWhere('planta.idFotoperiodo IN (:...idFotoperiodo)').setParameter('idFotoperiodo', filtros.idFotoperiodo);
+            }
+            if (filtros.idHabitoCrecimiento.length) {
+                queryBuilder.andWhere('planta.idHabitoCrecimiento IN (:...idHabitoCrecimiento)').setParameter('idHabitoCrecimiento', filtros.idHabitoCrecimiento);
+            }
+            if (filtros.idIluminacion.length) {
+                queryBuilder.andWhere('planta.idIluminacion IN (:...idIluminacion)').setParameter('idIluminacion', filtros.idIluminacion);
+            }
+            if (filtros.idTamano.length) {
+                queryBuilder.andWhere('planta.idTamano IN (:...idTamano)').setParameter('idTamano', filtros.idTamano);
+            }
+            if (filtros.idTipoRiego.length) {
+                queryBuilder.andWhere('planta.idTipoRiego IN (:...idTipoRiego)').setParameter('idTipoRiego', filtros.idTipoRiego);
+            }
+            if (filtros.idToleranciaTemperatura.length) {
+                queryBuilder.andWhere('planta.idToleranciaTemperatura IN (:...idToleranciaTemperatura)').setParameter('idToleranciaTemperatura', filtros.idToleranciaTemperatura);
+            }
+            if (filtros.otros.find(categoria => categoria == 'PetFriendly')) {
+                queryBuilder.andWhere('planta.petFriendly = :petFriendly', { petFriendly: true });
+            }
+            //Falta Ciclo
+            //O ajustar a los filtros de catálogo
         }
         queryBuilder.skip((paginacion.page - 1) * paginacion.pageSize).take(paginacion.pageSize);
         return await queryBuilder.getMany()
     }
 
-    private promptImagen(categorias: string[], atributos: Atributos): string {
+    /**Crea un prompt con los atributos disponibles para hacer filtros. */
+    private promptImagen(categorias: string[], atributos: Atributos, consulta: string): string {
         let categoriasString = '';
         categorias.forEach(categoria => categoriasString += categoria)
-        // return `Select categories, as much as you can, from the list to put a plant in the place of the image: ${categoriasString}. Explain the choices. Response with a json containing a property called "categorias" and another called "explicacion", with the explanation of the choices in spanish with 200 words or less.`
-        return `This object: ${JSON.stringify(atributos)}, represents a list of attributes for plants in a store. This array: ${this.categorias} contains other categories. Select few attributes from the object and categories from the array, to choose a plant for the place of the image: ${categoriasString}. Can select more than one for each attribute. Explain the choices. Response with a json containing a property called "atributos" (following the original form of the object, with the attribute name(for example: fotoPeriodo: [{id, selectedAttribute}])), another called "otros", whit the selected categories,  and another called "explicacion", with the explanation of the choices in spanish with 200 words or less.`
+        return `This object: ${JSON.stringify(atributos)}, represents a list of attributes for plants in a store. This array: ${this.categorias} contains other categories. And consider this consideration: ${consulta} Select few attributes from the object and categories from the array, to choose a plant for the place of the image: ${categoriasString}. Can select more than one for each attribute. Explain the choices. Response with a json containing a property called "atributos" (following the original form of the object, with the attribute name(for example: fotoPeriodo: [{id, selectedAttribute}])), another called "otros", whit the selected categories,  and another called "explicacion", with the explanation of the choices in spanish with 200 words or less.`
     }
 
+    /**Extrae el JSON de la respuesta */
     private extraerTextoTipoJson(texto: string): string {
         const indicePrimeraLlave: number = texto.indexOf('{');
         const indiceUltimaLlave: number = texto.lastIndexOf('}');
         const textoTipoJson: string = texto.substring(indicePrimeraLlave, indiceUltimaLlave + 1);
         return textoTipoJson;
     }
+
     private fileToGenerativePart(imageFile: Express.Multer.File, mimeType: string) {
         return {
             inlineData: {
@@ -199,6 +216,8 @@ export class IaconsultasService {
             },
         };
     }
+
+
     private base64fileToGenerativePart(imageBase64: string, mimeType: string) {
         if (imageBase64.includes(',')) {
             imageBase64 = imageBase64.split(',')[1]
@@ -213,13 +232,18 @@ export class IaconsultasService {
 
     /**Obtiene la lista de atributos asociados al producto planta registrados en la base de datos.  */
     private async cargarAtributos() {
-        this.atributos.fotoPeriodo = (await this.fotoperiodoRepository.find())
-        this.atributos.tipoRiego = (await this.tipoRiegoRepository.find())
-        this.atributos.habitoCrecimiento = (await this.habitoCrecimientoRepository.find())
-        this.atributos.toleranciaTemperatura = (await this.toleranciaTemperaturaRepository.find())
-        this.atributos.iluminacion = (await this.iluminacionRepository.find())
-        this.atributos.tamano = (await this.tamanoRepository.find())
-        this.atributos.entorno = (await this.entornoRepository.find())
+        try {
+            this.atributos.fotoPeriodo = (await this.fotoperiodoRepository.find())
+            this.atributos.tipoRiego = (await this.tipoRiegoRepository.find())
+            this.atributos.habitoCrecimiento = (await this.habitoCrecimientoRepository.find())
+            this.atributos.toleranciaTemperatura = (await this.toleranciaTemperaturaRepository.find())
+            this.atributos.iluminacion = (await this.iluminacionRepository.find())
+            this.atributos.tamano = (await this.tamanoRepository.find())
+            this.atributos.entorno = (await this.entornoRepository.find())
+        }
+        catch (error) {
+            throw new BadRequestException('Error al obtener información de los filtroas')
+        }
     }
 }
 

@@ -58,11 +58,11 @@ yarn install
 1. Completar el archivo .env en la raíz del proyecto,
    configurando las siguientes variables de entorno (tomar el archivo .env.example como referencia):
 ```
+AMBIENTE=dev
 VERSION_NODE="Versión Node"
 VERSION_MYSQL="Versión MYSQL"
 VERSION_FLYWAY="Versión Flyway"
 API_PORT=3000
-AMBIENTE=dev
 DB_HOST="host_db"
 DB_PORT=3306
 DB_USERNAME="usuario_dev"
@@ -70,14 +70,17 @@ DB_PASSWORD="contraseña"
 DB_DATABASE="nombre_db"
 RUTA_ESTATICOS=/ruta/estaticos
 RUTA_FISICA=./ruta/archivos
+API_KEY="CLAVE_SECRETA_API_GENERATIVA"
+JWT_EXPIRES_IN=3600s
+JWT_SECRET="secreto"
 ```
 
 2. En caso que se ejecute en ambiente productivo:
 ```
+AMBIENTE=production
 VERSION_MYSQL="Versión MYSQL"
 VERSION_FLYWAY="Versión Flyway"
 API_PORT=8080
-AMBIENTE=production
 DB_HOST="host_db"
 DB_PORT=3306
 DB_USERNAME="usuario_prod"
@@ -85,6 +88,9 @@ DB_PASSWORD="contraseña"
 DB_DATABASE="nombre_db"
 RUTA_ESTATICOS=/ruta/estaticos
 RUTA_FISICA=./ruta/archivos
+API_KEY="CLAVE_SECRETA_API_GENERATIVA"
+JWT_EXPIRES_IN=3600s
+JWT_SECRET="secreto"
 ```
 
 <a name="ejecucion-desarrollo"></a>
