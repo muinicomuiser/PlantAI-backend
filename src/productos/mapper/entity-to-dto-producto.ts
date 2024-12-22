@@ -89,6 +89,10 @@ export class ProductoMapper {
     return productoDto;
   }
 
+  static entitiesToDtos(productos: Producto[]): GetProductoDto[] {
+    return productos.map(producto => ProductoMapper.entityToDto(producto))
+  }
+
   static DtoToProducto(
     productoDto: CreateProductoDto | UpdateProductoDto,
   ): Producto {

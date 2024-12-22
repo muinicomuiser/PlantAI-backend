@@ -27,7 +27,10 @@ Pedidos:
     Falta:
         Historial de compra. <-- Se pueden obtener todos los pedidos de un usuairo
 
-
+IA:
+    Falta:
+        Resolver el tema de la paginación. ¿Cómo se va a conservar la query si su construcción es dinámica?
+        Quizás en vez de retornar productos, debería retornar un query.
 
 
 pal gpt
