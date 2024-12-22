@@ -12,6 +12,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
+import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
+import { ReviewsModule } from './reviews/reviews.module';
+
 console.log(
   `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
 ); //agrego interfaz para ver que archivo carga
@@ -21,9 +24,9 @@ console.log(
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath:
-        process.env.AMBIENTE != undefined
+        [process.env.AMBIENTE != undefined
           ? `.env.${process.env.AMBIENTE}`
-          : `.env.dev`,
+          : `.env.dev`, `.env.ia`],
     }),
 
     TypeOrmModule.forRoot({
@@ -34,6 +37,7 @@ console.log(
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      logging: false, //depuracion
     }),
     ServeStaticModule.forRoot({
       rootPath: `${process.env.RUTA_FISICA}` || `./imagenes/productos`,
@@ -45,6 +49,8 @@ console.log(
     UsuariosModule,
     EquipoModule,
     AuthModule,
+    IaconsultasModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

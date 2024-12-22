@@ -13,30 +13,12 @@ export class GetPlantaDto {
   @IsBoolean()
   petFriendly: boolean;
 
-  @ApiProperty({ example: 20, description: 'Tolerancia de temperatura' })
-  @IsInt()
-  toleranciaTemperatura: number;
-
   @ApiProperty({
     example: true,
     description: 'Indica si la planta es de ciclo',
   })
   @IsBoolean()
   ciclo: boolean;
-
-  @ApiProperty({
-    example: '1.5m',
-    description: 'Altura de la planta',
-  })
-  @IsString()
-  altura: string;
-
-  @ApiProperty({
-    example: 1,
-    description: 'Identificador de la especie de la planta',
-  })
-  @IsInt()
-  idEspecie: number;
 
   @ApiProperty({
     example: 1,
@@ -66,6 +48,34 @@ export class GetPlantaDto {
   @IsInt()
   idHabitoCrecimiento: number;
 
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador del tamaño de la planta',
+  })
+  @IsInt()
+  idTamano: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador de la tolerancia a la temperatura de la planta',
+  })
+  @IsInt()
+  idToleranciaTemperatura: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador del entorno de la planta',
+  })
+  @IsInt()
+  idEntorno: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Identificador de la iluminación de la planta',
+  })
+  @IsInt()
+  idIluminacion: number;
+
   // Relaciónes
   @ApiProperty({ description: 'especie de la planta' })
   especie: string;
@@ -87,4 +97,16 @@ export class GetPlantaDto {
     description: 'Hábito de crecimiento de la planta',
   })
   habitoCrecimiento: string;
+
+  @ApiProperty()
+  iluminacion: string;
+
+  @ApiProperty()
+  tamano: string;
+
+  @ApiProperty()
+  toleranciaTemperatura: string;
+
+  @ApiProperty()
+  entorno: string;
 }

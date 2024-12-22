@@ -1,10 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Pago } from 'src/commons/entities/pagos.entity';
 import { EstadoPedido } from '../entities/estado_pedido.entity';
 import { TipoDespacho } from '../entities/tipo_despacho.entity';
-import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
-import { Pago } from 'src/commons/entities/pagos.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { GetProductoPedidoDto } from './get-producto-pedido.dto';
+import { GetDireccionEnvioDto } from './get-direccion-envio.dto';
 
 export class GetPedidoDto {
   @ApiProperty({ example: 1, description: 'Identificador del pedido' })
@@ -36,17 +36,25 @@ export class GetPedidoDto {
   })
   fechaEntrega: Date;
 
+  @ApiProperty({ type: [GetProductoPedidoDto] })
+  productosPedido: GetProductoPedidoDto[]
+
+  @ApiProperty({ type: GetDireccionEnvioDto })
+  direccionEnvio: GetDireccionEnvioDto;
+
   // pedientes de desarrollo cuando se creen los DTOs
   @ApiProperty()
-  usuario?: Usuario; // Por id_usuario
-  @ApiProperty()
   medioPago?: MedioPago; // Por id_medio_pago
+  @ApiProperty()
+  Pago?: Pago; // Por id_pedido
   @ApiProperty()
   estadoPedido?: EstadoPedido; // Por id_estado
   @ApiProperty()
   tipoDespacho?: TipoDespacho; // Por id_tipo_despacho
-  @ApiProperty()
-  carro?: CarroCompra; // Por id_carro
-  @ApiProperty()
-  Pago?: Pago; // Por id_pedido
+
+  // @ApiProperty()
+  // usuario?: Usuario; // Por id_usuario
+  // @ApiProperty()
+  // carro?: CarroCompra; // Por id_carro
+
 }

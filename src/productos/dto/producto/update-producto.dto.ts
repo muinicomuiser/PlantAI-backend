@@ -1,20 +1,18 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProductoDto } from './create-producto.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsString,
+  IsBoolean,
   IsInt,
   IsNumber,
-  IsPositive,
   IsOptional,
-  Min,
+  IsPositive,
+  IsString,
   Max,
-  IsBoolean,
+  Min,
 } from 'class-validator';
-import { UpdatePlantaDto } from '../planta/update-planta.dto';
-import { UpdateMaceteroDto } from '../macetero/update-macetero.dto';
-import { UpdateInsumoDto } from '../insumo/update-insumo.dto';
 import { UpdateAccesorioDto } from '../accesorio/update-accesorio.dto';
+import { UpdateInsumoDto } from '../insumo/update-insumo.dto';
+import { UpdateMaceteroDto } from '../macetero/update-macetero.dto';
+import { UpdatePlantaDto } from '../planta/update-planta.dto';
 // export class UpdateProductoDto extends PartialType(CreateProductoDto) {}
 export class UpdateProductoDto {
   @ApiProperty({ description: 'SKU del producto', example: 'AGT-001' })
@@ -46,19 +44,19 @@ export class UpdateProductoDto {
   @IsOptional()
   descripcion?: string;
 
-  @ApiProperty({
-    description: 'Imagen en base64',
-    example: 'base64',
-  })
-  @IsOptional()
-  imagen?: string;
+  // @ApiProperty({
+  //   description: 'Imagen en base64',
+  //   example: 'base64',
+  // })
+  // @IsOptional()
+  // imagen?: string;
 
   @ApiProperty({ description: 'Cantidad disponible del producto', example: 10 })
   @IsNumber()
   @IsInt()
   @Min(0)
   @IsOptional()
-  cantidad?: number;
+  stock?: number;
 
   @ApiProperty({ description: 'Unidades vendidas del producto', example: 5 })
   @IsNumber()
@@ -115,24 +113,24 @@ export class UpdateProductoDto {
   @IsOptional()
   planta?: UpdatePlantaDto;
 
-  @ApiProperty({
-    description: 'Macetero asociado al producto',
-    type: UpdateMaceteroDto,
-  })
+  // @ApiProperty({
+  //   description: 'Macetero asociado al producto',
+  //   type: UpdateMaceteroDto,
+  // })
   @IsOptional()
   macetero?: UpdateMaceteroDto;
 
-  @ApiProperty({
-    description: 'Accesorio asociado al producto',
-    type: UpdateAccesorioDto,
-  })
+  // @ApiProperty({
+  //   description: 'Accesorio asociado al producto',
+  //   type: UpdateAccesorioDto,
+  // })
   @IsOptional()
   accesorio?: UpdateAccesorioDto;
 
-  @ApiProperty({
-    description: 'Insumo asociado al producto',
-    type: UpdateInsumoDto,
-  })
+  // @ApiProperty({
+  //   description: 'Insumo asociado al producto',
+  //   type: UpdateInsumoDto,
+  // })
   @IsOptional()
   insumo?: UpdateInsumoDto;
 }

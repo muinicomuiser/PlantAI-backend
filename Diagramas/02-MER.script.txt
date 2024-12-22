@@ -1,22 +1,26 @@
 Table usuarios{
   id integer [primary key]
-  contrasena varchar
-  id_rol integer
-  nombre varchar
-  apellido varchar
-  nombre_usuario varchar
+  rut varchar
+  contraseña varchar
+  idRol integer
+  user_name varchar
+  name varchar
+  surname varchar
   email varchar
   telefono varchar
   genero varchar
-  rut varchar
-  fecha_nacimiento date
-  fecha_eliminacion date
+  fecha_nacimiento varchar
+  fecha_eliminacion varchar
 }
 
+Table roles{
+  id integer [primary key]
+  nombre varchar
+}
 
 Table direcciones{
   id integer [primary key]
-  id_usuario integer
+  id_usuario integer [primary key]
   comuna varchar
   calle varchar
   numero varchar
@@ -24,17 +28,28 @@ Table direcciones{
   referencia varchar
 }
 
-
-Table roles{
+Table reviews{
   id integer [primary key]
-  nombre varchar
+  id_usuario integer [primary key]
+  id_producto integer [primary key]
+  puntuacion integer
+  comentario varchar
+  fecha_creacion varchar
 }
 
-
-Table usuarios_medios_pagos{
+Table carros{
+  id integer [primary key]
   id_usuario integer [primary key]
-  id_medio_pago integer [primary key]
-  es_preferido bool
+  fecha_creacion varchar
+  fecha_cierre varchar
+  fecha_eliminacion varchar
+
+}
+
+Table carros_productos{
+  id_carro integer [primary key]
+  id_producto integer [primary key]
+  cantidad_producto integer
 }
 
 
@@ -45,8 +60,7 @@ Table productos{
   id_categoria integer
   precio integer
   descripcion varchar
-  imagen varchar
-  cantidad integer
+  stock integer
   unidades_vendidas integer
   puntuacion float
   ancho integer
@@ -55,119 +69,105 @@ Table productos{
   peso integer
 }
 
-
-Table etiquetas{
-  id integer [primary key]
-  etiqueta varchar
-}
-
-
-Table productos_etiquetas{
+Table imagenes_productos{
+  ruta varchar [primary key]
   id_producto integer [primary key]
-  id_etiqueta integer [primary key]
 }
 
 
-Table pedidos{
-  id integer [primary key]
-  id_usuario integer
-  fecha_creacion date
-  id_medio_pago integer
-  id_estado integer
-  id_tipo_despacho integer
-  id_carro integer
-  fecha_entrega date
-}
-
-
-Table carros{
-  id_usuario integer
-  id integer [primary key]
-  fecha_creacion date
-  fecha_cierre date  
-  fecha_eliminacion date
-}
-
-
-Table pagos{
-  id integer [primary key]
-  id_medio_pago integer
-  id_pedido integer
-  fecha datetime
-  monto integer
-}
-
-
-Table medio_pago{
-  id integer [primary key]
-  nombre varchar
-  habilitado bool
-}
-
-Table tipo_despacho{
-  id integer [primary key]
-  tipo varchar
-}
-
-
-Table estados_pedido{
-  id integer [primary key]
-  estado varchar
-}
-
-
-Table categorias{
-  id integer [primary key]
-  categoria varchar
-}
-
-
-Table carros_productos{
-  id_carro integer [primary key]
-  id_producto integer [primary key]
-  cantidad_producto integer
-}
-
-Table marcas{
-  id integer [primary key]
-  nombre varchar
-}
-//Atributos de categorias
 Table plantas{
-  id_producto integer [primary key]  
-  id_especie integer
-  pet_friendly bool
+  id_producto integer [primary key]
+  pet_friendly boolean
+  id_color integer
   id_tipo_riego integer
   id_fotoperiodo integer
-  tolerancia_temperatura integer
-  ciclo bool
-  altura varchar
+  ciclo boolean
   id_habito_crecimiento integer
-  id_color integer
-}
-Table plantas_especies{
-  id integer [primary key]
   especie varchar
+  id_tolerancia_temperatura integer
+  id_tamaño integer
+  id_entorno integer
+  id_iluminacion integer
 }
-Table plantas_fotoperiodo{
+
+table plantas_entorno{
   id integer [primary key]
-  tipo_fotoperiodo varchar
+  entrono varchar
 }
-Table plantas_tipo_riego{
+
+table plantas_fotoperiodo{
   id integer [primary key]
-  tipo_riego varchar
+  tipo_fotoperiodoo varchar
 }
-Table colores_productos{
-  id integer [primary key]
-  color varchar
-}
-Table plantas_habito_crecimiento{
+
+table plantas_habito_crecimiento{
   id integer [primary key]
   crecimiento varchar
 }
 
+table plantas_iluminacion{
+  id integer [primary key]
+  iluminacion varchar
+}
 
-Table maceteros{
+table plantas_tamaño{
+  id integer [primary key]
+  tamaño varchar
+}
+
+table plantas_tipo_riego{
+  id integer [primary key]
+  tipo_riego varchar
+}
+
+table plantas_tolerancia_tempreratura{
+  id integer [primary key]
+  tolerancia_temperatura varchar
+}
+Table colores_productos{
+  id_color varchar [primary key]
+  color varchar [primary key]
+}
+
+Table productos_etiquetas{
+  id_etiqueta integer [primary key]
+  id_producto integer [primary key]
+}
+
+Table etiquetas{
+  id_etiqueta integer [primary key]
+  etiqueta varchar
+}
+
+Table accesorios {
+  id_producto integer [primary key]
+  id_marca integer
+  id_color integer
+  id_tipo_accesorio integer
+}
+
+Table tipo_accesorio{
+  id_tipo integer [primary key]
+  tipo varchar
+}
+
+Table marca {
+  id integer [primary key]
+  nombre varchar
+}
+
+Table insumos {
+  id_producto integer [primary key]
+  id_marca integer
+  id_tipo_insumo integer
+}
+
+Table tipo_insumos {
+  id integer [primary key]
+  tipo_insumo integer
+  }
+
+Table maceteros {
   id_producto integer [primary key]
   id_marca integer
   id_tipo_macetero integer
@@ -176,78 +176,152 @@ Table maceteros{
   diametro integer
   litros integer
 }
-Table tipo_maceteros{
+
+table tipo_macetero {
   id integer [primary key]
   tipo varchar
 }
 
-Table insumos{
-  id_producto integer [primary key]
-  id_tipo_insumo integer
-  id_marca integer
-}
-Table tipo_insumos{
+table pedidos {
   id integer [primary key]
-  tipo_insumo varchar
+  id_usuario integer
+  fecha_creacion varchar
+  id_estado integer
+  id_tipo_despacho integer
+  id_carro integer
+  fecha_entrega varchar
+  receptor varchar
 }
 
-Table accesorios{
-  id_producto integer [primary key]
-  id_marca integer
-  id_tipo_accesorio integer
-  id_color integer
-}
-Table tipo_accesorios{
+table pagos {
   id integer [primary key]
-  tipo varchar
+  id_medio_pago integer
+  id_pedido integer
+  fecha varchar
+  monto integer 
 }
 
+table medio_pago{
+  id integer [primary key]
+  nombre varchar
+  habilitado integer
+}
 
-//Usuarios
-Ref: usuarios.id_rol > roles.id
-Ref: usuarios.id < carros.id_usuario
-Ref: usuarios.id < direcciones.id_usuario
-Ref: usuarios.id < pedidos.id_usuario
-Ref: usuarios.id < usuarios_medios_pagos.id_usuario
-//Pedidos
-Ref: pedidos.id_estado > estados_pedido.id
-Ref: pedidos.id_tipo_despacho > tipo_despacho.id
-Ref: pedidos.id_medio_pago > medio_pago.id
-Ref: pedidos.id_carro - carros.id
+table direcciones_envio {
+  id_pedido integer
+  comuna varchar
+  calle varchar
+  numero varchar
+  departamento varchar
+  referencia varchar
+}
 
-Ref: carros.id < carros_productos.id_carro
-Ref: productos.id < carros_productos.id_producto
-Ref: productos.id_categoria > categorias.id
+table productos_pedido {
+  id_pedido integer [primary key]
+  id_producto integer [primary key]
+  cantidad integer
+  precio_compra integer
+}
 
-Ref: pagos.id_pedido - pedidos.id
-Ref: pagos.id_medio_pago > medio_pago.id
-Ref: medio_pago.id < usuarios_medios_pagos.id_medio_pago
-//Etiquetas
-Ref: productos.id < productos_etiquetas.id_producto
-Ref: etiquetas.id < productos_etiquetas.id_etiqueta
+table estados_pedido{
+  id integer [primary key]
+  estado varchar
+  }
 
-//Categorías
-Ref: accesorios.id_producto - productos.id
-Ref: maceteros.id_producto - productos.id
-Ref: plantas.id_producto - productos.id
-Ref: insumos.id_producto - productos.id
+table tipo_despacho {
+  id integer [primary key]
+  tipo varchar 
+}
 
-//Atributos Plantas
-Ref: plantas.id_color > colores_productos.id
-Ref: plantas.id_especie > plantas_especies.id 
-Ref: plantas.id_fotoperiodo > plantas_fotoperiodo.id
-Ref: plantas.id_tipo_riego > plantas_tipo_riego.id
-Ref: plantas.id_habito_crecimiento > plantas_habito_crecimiento.id
+table usuarios_medios_pago {
+  id_medio_pago integer [primary key]
+  id_usuario integer [primary key]
+  es_preferido boolean
+}
 
-//Atributos Accesorios
-Ref: marcas.id < accesorios.id_marca
-Ref: tipo_accesorios.id < accesorios.id_tipo_accesorio
-Ref: colores_productos.id < accesorios.id_color
+table categorias {
+  id integer [primary key]
+  categoria varchar
+}
+Ref: "roles"."id" < "usuarios"."idRol"
 
-//Atributos Insumos
-Ref: tipo_insumos.id < insumos.id_tipo_insumo
-Ref: marcas.id < insumos.id_marca
+Ref: "usuarios"."id" < "direcciones"."id_usuario"
 
-//Atributos Maceteros
-Ref: marcas.id < maceteros.id_marca
-Ref: tipo_maceteros.id < maceteros.id_tipo_macetero
+Ref: "usuarios"."idRol" < "reviews"."id_usuario"
+
+Ref: "usuarios"."rut" < "carros"."id_usuario"
+
+Ref: "carros"."id" < "carros_productos"."id_carro"
+
+Ref: "productos"."id" < "carros_productos"."id_producto"
+
+Ref: "productos"."id" < "productos_etiquetas"."id_producto"
+
+Ref: "etiquetas"."etiqueta" < "productos_etiquetas"."id_etiqueta"
+
+Ref: "productos"."id" < "imagenes_productos"."id_producto"
+
+Ref: "productos"."id" - "plantas"."id_producto"
+
+Ref: "productos"."id" - "accesorios"."id_producto"
+
+Ref: "productos"."id" - "insumos"."id_producto"
+
+Ref: "productos"."id" - "maceteros"."id_producto"
+
+Ref: "plantas_tamaño"."id" < "plantas"."id_tamaño"
+
+Ref: "plantas"."id_entorno" < "plantas_entorno"."id"
+
+Ref: "plantas"."id_tipo_riego" < "plantas_tipo_riego"."id"
+
+Ref: "plantas"."id_color" < "colores_productos"."id_color"
+
+Ref: "plantas"."id_tolerancia_temperatura" < "plantas_tolerancia_tempreratura"."id"
+
+Ref: "plantas"."id_habito_crecimiento" < "plantas_habito_crecimiento"."id"
+
+Ref: "plantas"."id_fotoperiodo" < "plantas_fotoperiodo"."id"
+
+Ref: "plantas"."id_iluminacion" < "plantas_iluminacion"."id"
+
+Ref: "accesorios"."id_color" < "colores_productos"."id_color"
+
+Ref: "accesorios"."id_tipo_accesorio" < "tipo_accesorio"."id_tipo"
+
+Ref: "accesorios"."id_marca" < "marca"."id"
+
+Ref: "insumos"."id_marca" < "marca"."id"
+
+Ref: "insumos"."id_tipo_insumo" < "tipo_insumos"."id"
+
+Ref: "maceteros"."id_marca" < "marca"."id"
+
+Ref: "maceteros"."id_tipo_macetero" < "tipo_macetero"."id"
+
+Ref: "usuarios"."id" < "pedidos"."id_usuario"
+
+Ref: "pedidos"."id" < "pagos"."id_pedido"
+
+Ref: "pagos"."id_medio_pago" < "medio_pago"."id"
+
+Ref: "pedidos"."id" < "direcciones_envio"."id_pedido"
+
+Ref: "productos"."id" < "productos_pedido"."id_producto"
+
+Ref: "pedidos"."id" < "productos_pedido"."id_pedido"
+
+Ref: "pedidos"."id_estado" < "estados_pedido"."id"
+
+Ref: "pedidos"."id_carro" < "carros"."id"
+
+Ref: "pedidos"."id_tipo_despacho" < "tipo_despacho"."id"
+
+Ref: "usuarios"."id" < "usuarios_medios_pago"."id_usuario"
+
+Ref: "medio_pago"."id" < "usuarios_medios_pago"."id_medio_pago"
+
+
+
+
+Ref: "productos"."id_categoria" < "categorias"."id"

@@ -1,9 +1,4 @@
 import { ColorProducto } from 'src/commons/entities/color.entity';
-import { Producto } from '../producto.entity';
-import { Especie } from './especie.entity';
-import { TipoRiego } from './tipo_riego.entity';
-import { Fotoperiodo } from './fotoperiodo.entity';
-import { HabitoCrecimiento } from './habito_crecimiento.entity';
 import {
   Column,
   Entity,
@@ -12,6 +7,14 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { Producto } from '../producto.entity';
+import { Entorno } from './entorno.entity';
+import { Fotoperiodo } from './fotoperiodo.entity';
+import { HabitoCrecimiento } from './habito_crecimiento.entity';
+import { Iluminacion } from './iluminacion.entity';
+import { Tamano } from './tamano.entity';
+import { TipoRiego } from './tipo_riego.entity';
+import { ToleranciaTemperatura } from './tolerancia_temperatura.entity';
 
 @Entity({ name: 'plantas' })
 export class Planta {
@@ -21,23 +24,23 @@ export class Planta {
   @Column({ name: 'pet_friendly' })
   petFriendly: boolean;
 
-  @Column({ name: 'tolerancia_temperatura' })
-  toleranciaTemperatura: number;
-
   @Column()
   ciclo: boolean;
 
+  @Column({ name: 'id_tamaño' })
+  idTamano: number;
+
+  @Column({ name: 'id_entorno' })
+  idEntorno: number;
+
+  @Column({ name: 'id_iluminacion' })
+  idIluminacion: number;
+
+  @Column({ name: 'id_tolerancia_temperatura' })
+  idToleranciaTemperatura: number;
+
   @Column()
-  altura: string;
-
-  // Clave foránea para Especie
-  @Column({ name: 'id_especie' })
-  idEspecie: number;
-
-  // Relación con la entidad Especie
-  @ManyToOne(() => Especie)
-  @JoinColumn({ name: 'id_especie' })
-  especie: Especie;
+  especie: string;
 
   // Clave foránea para Color
   @Column({ name: 'id_color' })
@@ -79,4 +82,20 @@ export class Planta {
   @OneToOne(() => Producto, (producto) => producto.planta)
   @JoinColumn({ name: 'id_producto' })
   producto: Producto;
+
+  @ManyToOne(() => Entorno)
+  @JoinColumn({ name: 'id_entorno' })
+  entorno: Entorno;
+
+  @ManyToOne(() => Tamano)
+  @JoinColumn({ name: 'id_tamaño' })
+  tamano: Tamano;
+
+  @ManyToOne(() => ToleranciaTemperatura)
+  @JoinColumn({ name: 'id_tolerancia_temperatura' })
+  toleranciaTemperatura: ToleranciaTemperatura;
+
+  @ManyToOne(() => Iluminacion)
+  @JoinColumn({ name: 'id_iluminacion' })
+  iluminacion: Iluminacion;
 }

@@ -7,12 +7,17 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
+  ServiceUnavailableException,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -27,6 +32,11 @@ import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
 import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
 import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
 import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
+import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
+import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
+import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -35,12 +45,52 @@ import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) { }
 
-
-  @ApiOperation({ summary: 'Retorna todos los productos registrados.' })
-  @ApiResponse({ status: 200, description: 'Retorna todos los productos', type: [GetProductoDto] })
+  @ApiOperation({
+    summary: 'Retorna todos los productos registrados. PREFERIR GET productos/admin para paginación.',
+    description:
+      'Ahora está habilitado el GET productos/admin, que retorna todos los productos y permite paginar.'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna todos los productos',
+    type: [GetProductoDto],
+  })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Get()
   async findAll(): Promise<GetProductoDto[]> {
-    return this.productosService.getAll()
+    return this.productosService.getAll();
+  }
+
+  @ApiOperation({ summary: 'Retorna todos los productos registrados paginados.' })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'Cantidad de elementos por página',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retorna todos los productos',
+    type: GetProductosAdminDto,
+  })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
+  @Get('admin')
+  async findAllPaginated(
+    @Query('page')
+    page?: number,
+    @Query('pageSize')
+    pageSize?: number,
+  ): Promise<GetProductosAdminDto> {
+
+    const paginacionDto: PaginacionDto = {
+      page: page ? +page : 1,
+      pageSize: pageSize ? +pageSize : 10
+    };
+    return await this.productosService.findAllPaginated(paginacionDto);
   }
 
   // Obtener producto por id
@@ -62,50 +112,35 @@ export class ProductosController {
     return await this.productosService.getById(+id);
   }
 
-  // Obtener todos los productos
-  // Filtrar por (nombre, familia, fotoperiodo, tipoRiego, petFriendly, color)
-  // @ApiOperation({ summary: 'Busca productos por filtros.' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description:
-  //     'Devuelve todos los productos que coincidan con los parámetros. Si no hay parámetros, los devuelve todos.',
-  //   type: GetProductoDto,
-  // })
-  // @ApiQuery({ name: 'nombre', required: false })
-  // @ApiQuery({ name: 'familia', required: false })
-  // @ApiQuery({ name: 'fotoperiodo', required: false })
-  // @ApiQuery({ name: 'tiporiego', required: false })
-  // @ApiQuery({ name: 'petfriendly', enum: ['true', 'false'], required: false })
-  // @ApiQuery({ name: 'color', required: false })
-  // @Get()
-  // getByFilters(
-  //   @Query('nombre') nombre: string,
-  //   @Query('familia') familia: string,
-  //   @Query('fotoperiodo') fotoperiodo: string,
-  //   @Query('tiporiego') tipoRiego: string,
-  //   @Query('petfriendly') petFriendly: string,
-  //   @Query('color') color: string,
-  // ) {
-  //   return this.productosService.getByFilters();
-  // }
-
   // Crear un producto
-  @ApiOperation({ summary: 'Crea un producto.' })
+  @ApiOperation({
+    summary:
+      'Crea un producto.',
+    description:
+      'Crea un producto nuevo. Permite agregar una imagen nueva.'
+  })
   @ApiResponse({
     status: 200,
-    description: 'Agrega un producto al sistema.',
+    description: 'Agrega un producto al sistema.', type: GetProductoDto,
   })
   @ApiResponse({
     status: 400,
     description: 'No ha sido posible crear el producto',
   })
   @ApiBody({ type: CreateProductoDto })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Post()
-  createProduct(
-    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
+  async createProduct(
+    @Body(
+      ValidarBase64Pipe,
+      ValidarCategoriaProductoPipe,
+      ValidarPropiedadesProductoPipe,
+    )
     createProductoDto: CreateProductoDto,
   ): Promise<GetProductoDto> {
-    return this.productosService.create(createProductoDto);
+    return await this.productosService.create(createProductoDto);
   }
 
   // Actualizar un producto
@@ -113,20 +148,27 @@ export class ProductosController {
   @ApiBody({ type: UpdateProductoDto })
   @ApiResponse({
     status: 200,
-    description: 'Actualiza un producto.',
+    description: 'Actualiza un producto.', type: GetProductoDto
   })
   @ApiResponse({
     status: 404,
     description: 'No se ha encontrado un producto con ese id.',
   })
-  @ApiParam({ name: 'id', type: Number })
-  @Patch(':id')
-  updateProduct(
-    @Param('id', ProductoExistentePipe) id: number,
-    @Body(ValidarBase64Pipe, ValidarCategoriaProductoPipe, ValidarPropiedadesProductoPipe)
+  @ApiParam({ name: 'idProducto', type: Number })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
+  @Patch(':idProducto')
+  async updateProduct(
+    @Param('idProducto', ProductoExistentePipe) idProducto: number,
+    @Body(
+      ValidarBase64Pipe,
+      ValidarCategoriaProductoPipe,
+      ValidarPropiedadesProductoPipe,
+    )
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
-    return this.productosService.update(id, updateProductoDto);
+    return await this.productosService.update(idProducto, updateProductoDto);
   }
 
   // Eliminar un producto
@@ -139,11 +181,14 @@ export class ProductosController {
     status: 404,
     description: 'No existe un producto con ese id',
   })
-  @Delete(':id')
-  deleteOne(
-    @Param('id', ProductoExistentePipe) id: number,
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
+  @Delete(':idProducto')
+  async deleteOne(
+    @Param('idProducto', ProductoExistentePipe) idProducto: number,
   ): Promise<GetProductoDto> {
-    return this.productosService.deleteOne(id);
+    return await this.productosService.deleteOne(idProducto);
   }
 
   //Subir imagen en bas64 a un producto
@@ -154,6 +199,9 @@ export class ProductosController {
   @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
   @ApiResponse({ status: 400, description: 'Error al subir imagen' })
   @ApiBody({ type: Object })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Post('addProductImage/:idProducto')
   @ApiBody({ type: UpdateProductImageDto })
   async addProductImage(
@@ -167,30 +215,50 @@ export class ProductosController {
     );
   }
 
-  @ApiOperation({ summary: 'Actualizar la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta' })
-  @ApiResponse({ status: 200, description: 'Imagen actualizada con éxito' })
-  @ApiResponse({ status: 400, description: 'Error al actualizar imagen' })
-  @ApiBody({ type: UpdateProductImageDto })
-  @Patch('updateProductImage/:idProducto')
-  async updateProductImage(
-    @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
-    idProducto: number,
-  ) {
-    return await this.productosService.updateProductImage(
-      base64Content,
-      idProducto,
-    );
-  }
+  // @ApiOperation({
+  //   summary:
+  //     'INHABILITADO. Actualizar la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta',
+  // })
+  // @ApiResponse({ status: 200, description: 'Imagen actualizada con éxito' })
+  // @ApiResponse({ status: 400, description: 'Error al actualizar imagen' })
+  // @ApiBody({ type: UpdateProductImageDto })
+  // @ApiBearerAuth()
+  // @Roles('Super Admin', 'Admin')
+  // @UseGuards(RolesGuard)
+  // @Patch('updateProductImage/:idProducto')
+  // async updateProductImage(
+  //   @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
+  //   @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
+  //   idProducto: number,
+  // ) {
+  //   throw new ServiceUnavailableException('Servicio en mantención')
+  //   // return await this.productosService.updateProductImage(
+  //   //   base64Content,
+  //   //   idProducto,
+  //   // );
+  // }
 
-  @ApiOperation({ summary: 'Eliminar la imagen de un producto' })
+  @ApiOperation({ summary: 'Eliminar la imagen de un producto según el índice de la imagen en el arreglo.' })
   @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
-  @Delete('deleteProductImage/:idProducto')
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
+  @Delete('deleteProductImage/:idProducto/:indiceImagen')
   async deleteProductImage(
-    @Param('idProducto', ParseIntPipe, ProductoExistentePipe, ValidarImagenProductoExistePipe)
+    @Param(
+      'idProducto',
+      ParseIntPipe,
+      ProductoExistentePipe,
+      ValidarImagenProductoExistePipe,
+    )
     idProducto: number,
+    @Param(
+      'indiceImagen',
+      ParseIntPipe,
+    )
+    indiceImagen: number,
   ) {
-    return await this.productosService.deleteProductImage(idProducto);
+    return await this.productosService.deleteProductImage(idProducto, indiceImagen);
   }
 }

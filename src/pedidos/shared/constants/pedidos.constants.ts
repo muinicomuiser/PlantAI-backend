@@ -5,4 +5,5 @@ export const PEDIDOS_RELATIONS = [
   'tipoDespacho',
   'carro',
   'Pago',
+  'productosPedido'
 ];

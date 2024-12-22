@@ -1,33 +1,38 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Get, Query } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
 import { CatalogoService } from '../service/catalogo.service';
-import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
+import {
+  FiltrosCatalogoDto,
+  SearchCatalogoDto,
+} from '../dto/catalogo/paginacion.dto';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 
 /**Historia de Usuario 12: Visualización del catálogo*/
 @ApiTags('Catálogo')
 @Controller('catalogo')
 export class CatalogoController {
-  constructor(private readonly catalogoService: CatalogoService) {}
+  constructor(private readonly catalogoService: CatalogoService) { }
 
   // Obtener todos los productos
-  @ApiOperation({ summary: 'Obtener todos los productos del catálogo' })
+  @ApiOperation({ summary: 'Obtener todos los productos del catálogo, permite usar filtros' })
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos del catálogo',
-    type: GetProductoDto,
-    isArray: true,
+    schema: {
+      type: 'object',
+      properties: {
+        totalItems: { type: 'number' },
+        data: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(GetProductoDto)
+          }
+        },
+      }
+    },
   })
-  @ApiResponse({
-    status: 404,
-    description: 'No se encontraron los productos',
-  })
+
   @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'pageSize',
@@ -35,92 +40,30 @@ export class CatalogoController {
     description: 'Cantidad de elementos por página',
   })
   @Get()
-  findAll(
-    @Query('page', new ParseIntPipe({ errorHttpStatusCode: 400 }))
-    page: number = 1,
-    @Query('pageSize', new ParseIntPipe({ errorHttpStatusCode: 400 }))
-    pageSize: number = 10,
-  ): Promise<{ data: GetProductoDto[]; totalItems: number }> {
-    const paginacionDto: PaginacionDto = { page, pageSize };
-    return this.catalogoService.findAll(paginacionDto);
+  async findAll(@Query() filtrosCatalogoDto: FiltrosCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
+    return await this.catalogoService.findAll(filtrosCatalogoDto);
   }
 
-  // Obtener productos mas vendidos
-  @ApiOperation({ summary: 'Obtener los productos más vendidos' })
+  // obtener catalogo por search
+  @ApiOperation({ summary: 'Obtener productos del catálogo según búsqueda por texto' })
   @ApiResponse({
     status: 200,
-    description: 'Retorna los productos más vendidos',
-    type: GetProductoDto,
+    description: 'Retorna los productos del catálogo por búsqueda',
+    schema: {
+      type: 'object',
+      properties: {
+        totalItems: { type: 'number' },
+        data: {
+          type: 'array',
+          items: {
+            $ref: getSchemaPath(GetProductoDto)
+          }
+        },
+      }
+    },
   })
-  @ApiResponse({
-    status: 404,
-    description: 'Productos más vendidos no encontrados',
-  })
-  @Get('mas-vendidos')
-  findBestSellers() {
-    return this.catalogoService.findBestSellers();
-  }
-
-  // Obtener productos por puntuacion
-  @ApiOperation({ summary: 'Obtener productos por puntuación' })
-  @ApiResponse({
-    status: 200,
-    description: 'Retorna los productos con la puntuación especificada',
-    type: GetProductoDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Productos con la puntuación especificada no encontrados',
-  })
-  @ApiParam({
-    name: 'puntuacion',
-    description: 'Puntuación del producto en una escala del 1 al 10',
-    example: 5,
-  })
-  @Get('puntuacion/:puntuacion')
-  findByRating(@Param('puntuacion') puntuacion: number) {
-    return this.catalogoService.findByRating(puntuacion);
-  }
-
-  // Obtener recomendados por historial
-  @ApiOperation({ summary: 'Obtener productos recomendados por id usuario' })
-  @ApiResponse({
-    status: 200,
-    description: 'Retorna los productos recomendados para el id entregado',
-    type: GetProductoDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Productos recomendados no encontrados',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Identificador del usuario',
-    example: 1,
-  })
-  @Get('recomendados/:id')
-  findRecommended(@Param('id') id: number) {
-    return this.catalogoService.findRecommended(id);
-  }
-
-  //Filtrar productos por cota de precios
-  @ApiOperation({ summary: 'Obtener productos por rango de precios' })
-  @ApiResponse({
-    status: 200,
-    description: 'Retorna los productos dentro del rango de precios',
-    type: GetProductoDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Rangos de precios no válidos',
-  })
-  @Get('filtro-precio')
-  filterbyPrice(
-    @Query('minPrice') minPrice: number,
-    @Query('maxPrice') maxPrice: number,
-  ) {
-    const min = +minPrice;
-    const max = +maxPrice;
-    return this.catalogoService.filterByPrice(min, max);
+  @Get('search')
+  async findBySearch(@Query() searchCatalogoDto: SearchCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
+    return await this.catalogoService.findBySearch(searchCatalogoDto);
   }
 }

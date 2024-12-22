@@ -7,6 +7,8 @@ import { ProductosModule } from 'src/productos/productos.module';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
 import { EquipoModule } from 'src/commons/modelse3/equipo/equipo.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { IaconsultasModule } from 'src/iaconsultas/iaconsultas.module';
+import { ReviewsModule } from 'src/reviews/reviews.module';
 
 export function setupSwagger(app: INestApplication) {
   const configService: ConfigService = app.get(ConfigService);
@@ -20,30 +22,39 @@ export function setupSwagger(app: INestApplication) {
   const license = configService.get('npm_package_license');
   const ambiente = configService.get('AMBIENTE');
 
-  const config = new DocumentBuilder()
+  //configuracion global de swagger
+  const globalConfig = new DocumentBuilder()
     .setTitle(`${name} - ${ambiente}`)
     .setDescription(
       description +
+
         '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
         '\n Módulo Pedidos: api/pedidos\n' +
         '\n Módulo Productos: api/productos\n' +
         '\n Módulo Usuarios: api/usuarios\n' +
         '\n Módulo Equipo: api/equipo\n' +
-        '\n Módulo Autenticación: api/aut',
+        '\n Módulo Autenticación: api/aut\n' +
+        '\n Módulo Reviews: api/reviews',
     )
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
     .setLicense(license, '')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'access-token',
+    )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config, {
-    include: [null],
-  });
-
-  SwaggerModule.setup('api', app, document, {
+  const golbalDocument = SwaggerModule.createDocument(app, globalConfig);
+  SwaggerModule.setup('api', app, golbalDocument, {
     yamlDocumentUrl: 'swagger/yaml',
   });
 
+  // Configuraciones de modulos
   const configs = [
     { module: CarroComprasModule, path: 'api/carro' },
     { module: PedidosModule, path: 'api/pedidos' },
@@ -51,6 +62,8 @@ export function setupSwagger(app: INestApplication) {
     { module: UsuariosModule, path: 'api/usuarios' },
     { module: EquipoModule, path: 'api/equipo' },
     { module: AuthModule, path: 'api/aut' },
+    { module: IaconsultasModule, path: 'api/consultas-ia' },
+    { module: ReviewsModule, path: 'api/reviews' },
   ];
 
   configs.forEach(({ module, path }) => {
@@ -60,6 +73,10 @@ export function setupSwagger(app: INestApplication) {
       .setVersion(version)
       .setContact(authorName, authorUrl, authorEmail)
       .setLicense(license, '')
+      .addBearerAuth(
+        { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        'access-token',
+      )
       .build();
 
     const modDocument = SwaggerModule.createDocument(app, modConfig, {

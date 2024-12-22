@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Convertir y Comprimir Imagen a Base64</title>
+  </head>
+  <body>
+    <h1>Convertir y Comprimir Imagen a Base64</h1>
+    <input type="file" id="imageInput" accept="image/*" />
+    <p id="result"></p>
+    <img id="compressedImage" alt="Imagen comprimida" />
+
+    <script>
+      function convertAndCompressImage(file, targetWidth, targetHeight) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            // Crear un canvas para redimensionar la imagen
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Configurar el tamaño del canvas
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            // Dibujar la imagen redimensionada en el canvas
+            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+            // Obtener el Base64 de la imagen comprimida
+            const base64 = canvas.toDataURL('image/jpeg', 0.8); // 0.8 es la calidad
+            const result = document.getElementById('result');
+            result.textContent = base64; // Mostrar el Base64 en la página
+
+            // Mostrar la imagen comprimida en pantalla
+            const compressedImage = document.getElementById('compressedImage');
+            compressedImage.src = base64;
+
+            console.log(base64); // También lo muestra en la consola
+          };
+          img.src = event.target.result; // Cargar la imagen
+        };
+        reader.readAsDataURL(file); // Leer el archivo
+      }
+
+      document
+        .querySelector('input[type="file"]')
+        .addEventListener('change', (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            convertAndCompressImage(file, 300, 300); // Redimensionar a 300x300
+          }
+        });
+    </script>
+  </body>
+</html>
