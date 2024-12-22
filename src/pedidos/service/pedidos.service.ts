@@ -58,6 +58,7 @@ export class PedidosService {
         newProductosPedido.map(async productoPedido => {
           const producto: Producto = await this.productoRepository.findOneBy({ id: productoPedido.idProducto })
           producto.unidadesVendidas += productoPedido.cantidad
+          producto.stock -= productoPedido.cantidad
           await this.productoRepository.save(producto)
         })
       )
