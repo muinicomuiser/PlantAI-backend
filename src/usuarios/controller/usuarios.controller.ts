@@ -10,6 +10,8 @@ import {
   Post,
   Put,
   Query,
+  Request,
+  UseGuards,
   UseInterceptors
 } from '@nestjs/common';
 import {
@@ -17,6 +19,7 @@ import {
   ApiBody,
   ApiExtraModels,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
   getSchemaPath,
@@ -35,6 +38,8 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
@@ -67,8 +72,9 @@ export class UsuariosController {
     description: 'Acceso denegado',
   })
   @Get()
+  //@UseGuards(RolesGuard)
   @Roles('Super Admin', 'Admin')
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   // async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
   async findAll(): Promise<GetDataDto<OutputUserDTO[]>> {
     const users = await this.usuariosService.findAll();
@@ -86,8 +92,11 @@ export class UsuariosController {
     status: 404,
     description: 'No hay un usuario con ese id',
   })
+  @Roles('Super Admin', 'Admin', 'Cliente')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':idUsuario')
   async findById(
+    //validar que el cliente sólo puede ver si información
     @Param('idUsuario', ParseIntPipe) idUsuario: number,
   ): Promise<OutputUserDTO> {
     return await this.usuariosService.findById(idUsuario);
@@ -113,6 +122,7 @@ export class UsuariosController {
     description: 'El nombre de usuario ya está registrado',
   })
   @ApiBody({ type: CreateUsuarioDto })
+  @Roles('Super Admin', 'Admin')
   @Post()
   async create(
     @Body('idRol', RolExistsPipe) rol: Rol,
@@ -139,6 +149,8 @@ export class UsuariosController {
   @ApiBody({ type: UpdateUsuarioDto })
   @Put(':idUsuario')
   @UseInterceptors(SanitizeInputInterceptor, RemoveInvisibleCharsInterceptor)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Super Admin', 'Admin')
   async updateOne(
     @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
     @Body(ValidarCrearUsuarioPipe) updateUsuarioDto: UpdateUsuarioDto,
@@ -171,7 +183,9 @@ export class UsuariosController {
     status: 404,
     description: 'No existe un usuario con ese id',
   })
+  @Roles('Super Admin', 'Admin', 'Cliente')
   @Delete(':idUsuario')
+  //en el caso del cliente autoeliminarse. No eliminar otros 
   async deleteOne(@Param('idUsuario') idUsuario: number): Promise<{ message: string }> {
     return await this.usuariosService.deleteUser(idUsuario);
   }
@@ -201,11 +215,20 @@ export class UsuariosController {
     status: 400,
     description: 'Error al buscar los pedidos',
   })
+  @Roles('Super Admin', 'Admin', 'Cliente')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiParam({ name: 'idUsuario', required: false })
   @Get('pedidos/:idUsuario')
   async findPedidos(
-    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
+    //en caso de cliente sólo buscar pedidos de sí mismo
+    @Request() req,
+    @Param('idUsuario', /* ParseIntPipe, */ ValidarUsuarioExistePipe) idUsuario?: number
+
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
-    const pedidosUsuario: GetPedidoUsuarioDto[] = await this.usuariosService.findPedidos(idUsuario);
+    const user = req.user;
+    console.log(user)
+    const pedidosUsuario: GetPedidoUsuarioDto[] = await this.usuariosService.findPedidos(user, idUsuario);
+    console.log(pedidosUsuario)
     return new GetDataDto(pedidosUsuario, `Pedidos del usuario con id ${idUsuario}`, pedidosUsuario.length)
   }
 

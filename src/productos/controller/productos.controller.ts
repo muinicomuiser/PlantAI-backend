@@ -9,9 +9,11 @@ import {
   Post,
   Query,
   ServiceUnavailableException,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -32,6 +34,9 @@ import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto
 import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
 import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
+import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -50,6 +55,9 @@ export class ProductosController {
     description: 'Retorna todos los productos',
     type: [GetProductoDto],
   })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Get()
   async findAll(): Promise<GetProductoDto[]> {
     return this.productosService.getAll();
@@ -67,6 +75,9 @@ export class ProductosController {
     description: 'Retorna todos los productos',
     type: GetProductosAdminDto,
   })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Get('admin')
   async findAllPaginated(
     @Query('page')
@@ -117,6 +128,9 @@ export class ProductosController {
     description: 'No ha sido posible crear el producto',
   })
   @ApiBody({ type: CreateProductoDto })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Post()
   async createProduct(
     @Body(
@@ -141,6 +155,9 @@ export class ProductosController {
     description: 'No se ha encontrado un producto con ese id.',
   })
   @ApiParam({ name: 'idProducto', type: Number })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Patch(':idProducto')
   async updateProduct(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
@@ -164,6 +181,9 @@ export class ProductosController {
     status: 404,
     description: 'No existe un producto con ese id',
   })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Delete(':idProducto')
   async deleteOne(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
@@ -179,6 +199,9 @@ export class ProductosController {
   @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
   @ApiResponse({ status: 400, description: 'Error al subir imagen' })
   @ApiBody({ type: Object })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Post('addProductImage/:idProducto')
   @ApiBody({ type: UpdateProductImageDto })
   async addProductImage(
@@ -199,6 +222,9 @@ export class ProductosController {
   // @ApiResponse({ status: 200, description: 'Imagen actualizada con éxito' })
   // @ApiResponse({ status: 400, description: 'Error al actualizar imagen' })
   // @ApiBody({ type: UpdateProductImageDto })
+  // @ApiBearerAuth()
+  // @Roles('Super Admin', 'Admin')
+  // @UseGuards(RolesGuard)
   // @Patch('updateProductImage/:idProducto')
   // async updateProductImage(
   //   @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
@@ -215,6 +241,9 @@ export class ProductosController {
   @ApiOperation({ summary: 'Eliminar la imagen de un producto según el índice de la imagen en el arreglo.' })
   @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Delete('deleteProductImage/:idProducto/:indiceImagen')
   async deleteProductImage(
     @Param(

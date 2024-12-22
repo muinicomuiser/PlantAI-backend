@@ -8,15 +8,18 @@ import {
   Query,
   Delete,
   ServiceUnavailableException,
+  UseGuards,
 } from '@nestjs/common';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePedidoDto } from '../dto/update-pedido.dto';
 import { GetPedidoDto } from '../dto/get-pedido.dto';
 import { PedidosService } from '../service/pedidos.service';
 import { DeletePedidoResponseDto } from '../dto/delete-pedido.dto';
 import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 import { ValidarCarroLlenoPipe } from '../pipe/validar-carro-lleno.pipe';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 
 /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
 @ApiTags('Pedidos')
@@ -32,6 +35,9 @@ export class PedidosController {
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 400, description: 'Problemas para crear el pedido' })
+  @ApiBearerAuth()
+  @Roles('Visitante', 'Cliente')
+  @UseGuards(RolesGuard)
   @Post(':idUsuario')
   async create(@Param('idUsuario', ValidarUsuarioExistePipe, ValidarCarroLlenoPipe) idUsuario: number, @Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
     return await this.pedidosService.create(+idUsuario, createPedidoDTO);
@@ -48,6 +54,9 @@ export class PedidosController {
     description: 'Pedidos filtrados por estado o todos los pedidos',
     type: [GetPedidoDto],
   })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Get()
   async findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
     throw new ServiceUnavailableException('Servicio en mantención')
@@ -62,6 +71,9 @@ export class PedidosController {
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<GetPedidoDto> {
     throw new ServiceUnavailableException('Servicio en mantención')
@@ -77,6 +89,9 @@ export class PedidosController {
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Patch(':id')
   update(
     @Param('id') id: number,
@@ -94,6 +109,9 @@ export class PedidosController {
     type: DeletePedidoResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
+  @ApiBearerAuth()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: number): Promise<DeletePedidoResponseDto> {
     throw new ServiceUnavailableException('Servicio en mantención')

@@ -6,6 +6,7 @@ import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
+import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
 
 /**Historia de Usuario 2: Autenticación y Gestión de Sesiones */
 @ApiTags('Autenticación')
