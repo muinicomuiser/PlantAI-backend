@@ -11,7 +11,11 @@ import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(@Inject('winston') private readonly logger: Logger) {}
+  private readonly isDevelopment: boolean;
+
+  constructor(@Inject('winston') private readonly logger: Logger) {
+    this.isDevelopment = process.env.AMBIENTE === 'dev';
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
@@ -20,12 +24,19 @@ export class LoggingInterceptor implements NestInterceptor {
     const startTime = Date.now();
 
     // Log de la solicitud entrante
-    this.logger.info(`Incoming Request: ${method} ${url}`, {
-      method,
-      url,
-      body,
-      headers,
-    });
+    if (this.isDevelopment) {
+      this.logger.verbose(`Incoming Request: ${method} ${url}`, {
+        method,
+        url,
+        headers,
+      });
+    } else {
+      this.logger.info(`Incoming Request: ${method} ${url}`, {
+        method,
+        url,
+        headers,
+      });
+    }
 
     return next.handle().pipe(
       tap((responseData) => {
@@ -34,13 +45,21 @@ export class LoggingInterceptor implements NestInterceptor {
         const duration = Date.now() - startTime;
 
         // Log de la respuesta
-        this.logger.info(`Response: ${method} ${url}`, {
-          method,
-          url,
-          statusCode,
-          duration: `${duration}ms`,
-          response: responseData,
-        });
+        if (this.isDevelopment) {
+          this.logger.verbose(`Response: ${method} ${url}`, {
+            method,
+            url,
+            statusCode,
+            duration: `${duration}ms`,
+          });
+        } else {
+          this.logger.info(`Response: ${method} ${url}`, {
+            method,
+            url,
+            statusCode,
+            duration: `${duration}ms`,
+          });
+        }
       }),
     );
   }

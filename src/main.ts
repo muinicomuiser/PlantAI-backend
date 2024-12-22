@@ -18,7 +18,7 @@ async function bootstrap() {
   });
   const configService = app.get(ConfigService);
   app.useGlobalInterceptors(
-    new InterceptorOkLogInterceptor(),
+    // new InterceptorOkLogInterceptor(),
     new LoggingInterceptor(winstonLogger),
   );
   app.useGlobalPipes(
@@ -31,7 +31,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors();
-  app.use(json({ limit: '2mb' }))
+  app.use(json({ limit: '2mb' }));
 
   // Configuración de Swagger
   setupSwagger(app);

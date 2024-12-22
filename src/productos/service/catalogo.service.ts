@@ -15,10 +15,12 @@ export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) { }
+  ) {}
 
   /**Retorna todos los productos */
-  async findAll(filtrosCatalogoDto: FiltrosCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
+  async findAll(
+    filtrosCatalogoDto: FiltrosCatalogoDto,
+  ): Promise<GetDataDto<GetProductoDto[]>> {
     try {
       const {
         page,
@@ -100,7 +102,6 @@ export class CatalogoService {
       if (ordenarPor) {
         queryBuilder.orderBy(`producto.${ordenarPor}`, orden || 'ASC');
       }
-      // console.log(ordenarPor, orden);
 
       queryBuilder.skip(offset).take(limit);
 
@@ -117,7 +118,9 @@ export class CatalogoService {
 
   // retorna producto por busqueda
 
-  async findBySearch(searchCatalogoDto: SearchCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
+  async findBySearch(
+    searchCatalogoDto: SearchCatalogoDto,
+  ): Promise<GetDataDto<GetProductoDto[]>> {
     try {
       const { page, pageSize, search } = searchCatalogoDto;
       const limit = pageSize;
