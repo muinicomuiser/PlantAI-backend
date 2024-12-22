@@ -26,6 +26,7 @@ import { TipoRiego } from './entities/plantas/tipo_riego.entity';
 import { ToleranciaTemperatura } from './entities/plantas/tolerancia_temperatura.entity';
 import { ImageService } from './service/imagen.service';
 import { ImagenProducto } from './entities/imagenes.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -53,7 +54,7 @@ import { ImagenProducto } from './entities/imagenes.entity';
     ]),
   ],
   controllers: [ProductosController, CatalogoController],
-  providers: [ProductosService, CatalogoService, ImageService],
+  providers: [ProductosService, CatalogoService, ImageService, JwtService],
   exports: [ProductosService],
 })
 export class ProductosModule { }

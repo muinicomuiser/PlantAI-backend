@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
@@ -172,26 +173,46 @@ export class UsuariosService {
   }
 
   /**Retorna los pedidos asociados a un id de usuario */
-  async findPedidos(idUsuario: number): Promise<GetPedidoUsuarioDto[]> {
+  async findPedidos(user: any, idUsuario?: number): Promise<GetPedidoUsuarioDto[]> {
     try {
-      const pedidos: Pedido[] = await this.pedidosRepository.find({
-        where: { idUsuario: idUsuario },
-        relations: [
-          'medioPago',
-          'estadoPedido',
-          'tipoDespacho',
-          'carro',
-          'usuario',
-          'Pago',
-          'direccionEnvio',
-          'productosPedido'
-        ],
-      });
-      if (pedidos.length > 0) {
-        return pedidos.map(pedido => mapperPedido.toDtoUsuario(pedido));
+      if (user.role === 'Admin' || user.role === 'Super Admin') {
+        const pedidos: Pedido[] = await this.pedidosRepository.find({
+          where: { idUsuario: idUsuario },
+          relations: [
+            'medioPago',
+            'estadoPedido',
+            'tipoDespacho',
+            'carro',
+            'usuario',
+            'Pago',
+            'direccionEnvio',
+            'productosPedido'
+          ],
+        });
+        console.log('pedidos', pedidos)
+        if (pedidos.length > 0) {
+          return pedidos.map(pedido => mapperPedido.toDtoUsuario(pedido));
+        }
+        else {
+          return []
+        }
+
       }
-      else {
-        return []
+      if (user.role == 'Cliente') {
+        if (user.id !== idUsuario) {
+          throw new UnauthorizedException('error')
+        }
+        const pedidosCliente = await this.pedidosRepository.find({
+          where: {
+            idUsuario: user.id
+          }
+        })
+        if (pedidosCliente.length > 0) {
+          return pedidosCliente.map(pedido => mapperPedido.toDtoUsuario(pedido));
+        }
+        else {
+          return []
+        }
       }
     }
     catch (error) {
