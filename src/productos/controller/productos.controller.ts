@@ -37,6 +37,7 @@ import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtStrategy } from 'src/auth/strategies/jwt.strategy/jwt.strategy';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -55,10 +56,10 @@ export class ProductosController {
     description: 'Retorna todos los productos',
     type: [GetProductoDto],
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Get()
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Get()
   async findAll(): Promise<GetProductoDto[]> {
     return this.productosService.getAll();
   }
@@ -75,10 +76,10 @@ export class ProductosController {
     description: 'Retorna todos los productos',
     type: GetProductosAdminDto,
   })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Get('admin')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findAllPaginated(
     @Query('page')
     page?: number,
@@ -128,10 +129,10 @@ export class ProductosController {
     description: 'No ha sido posible crear el producto',
   })
   @ApiBody({ type: CreateProductoDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Post()
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Post()
   async createProduct(
     @Body(
       ValidarBase64Pipe,
@@ -155,10 +156,10 @@ export class ProductosController {
     description: 'No se ha encontrado un producto con ese id.',
   })
   @ApiParam({ name: 'idProducto', type: Number })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Patch(':idProducto')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Patch(':idProducto')
   async updateProduct(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
     @Body(
@@ -181,10 +182,10 @@ export class ProductosController {
     status: 404,
     description: 'No existe un producto con ese id',
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Delete(':idProducto')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Delete(':idProducto')
   async deleteOne(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
   ): Promise<GetProductoDto> {
@@ -199,11 +200,11 @@ export class ProductosController {
   @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
   @ApiResponse({ status: 400, description: 'Error al subir imagen' })
   @ApiBody({ type: Object })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @ApiBody({ type: UpdateProductImageDto })
+  @Post('addProductImage/:idProducto')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Post('addProductImage/:idProducto')
-  @ApiBody({ type: UpdateProductImageDto })
   async addProductImage(
     @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
@@ -241,10 +242,10 @@ export class ProductosController {
   @ApiOperation({ summary: 'Eliminar la imagen de un producto según el índice de la imagen en el arreglo.' })
   @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Delete('deleteProductImage/:idProducto/:indiceImagen')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Delete('deleteProductImage/:idProducto/:indiceImagen')
   async deleteProductImage(
     @Param(
       'idProducto',
