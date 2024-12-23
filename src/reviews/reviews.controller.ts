@@ -27,7 +27,7 @@ export class ReviewsController {
     description: 'Review creada con éxito',
     type: Review,
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Roles('Cliente')
   @UseGuards(RolesGuard)
   @Post(':idUsuario')

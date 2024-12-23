@@ -40,10 +40,10 @@ export class CarroComprasController {
     type: GetCarroComprasDto,
   })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Get(':id')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Get(':id')
   async findByCarroId(
     @Param('id', ParseIntPipe, ValidarCarroExistePipe) id: number,
   ): Promise<GetCarroComprasDto> {
@@ -58,10 +58,10 @@ export class CarroComprasController {
     description: 'Retorna todos los carros',
     type: [GetCarroComprasDto],
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Get()
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Get()
   async obtenerTodos(): Promise<GetCarroComprasDto[]> {
     return await this.carroComprasService.findAll();
   }
@@ -78,8 +78,10 @@ export class CarroComprasController {
     type: GetCarroComprasDto,
   })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
-  @Roles('Super Admin', 'Admin')
+  @ApiBearerAuth('access-token')
   @Get('user/:id')
+  @Roles('Super Admin', 'Admin', 'Cliente', 'Visitante')
+  @UseGuards(RolesGuard)
   async findByUserId(
     @Param('id', ParseIntPipe, ValidarUsuarioExistePipe) id: number,
   ): Promise<GetCarroComprasDto> {
@@ -100,10 +102,10 @@ export class CarroComprasController {
       'Error al crear carro. El usuario no puede tener más de un carro activo.',
   })
   @ApiResponse({ status: 404, description: 'No existe un usuario con el ID' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Post(':idUsuario')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Post(':idUsuario')
   async createCarro(
     @Param(
       'idUsuario',
@@ -121,10 +123,10 @@ export class CarroComprasController {
   @ApiOperation({ summary: 'Elimina un carro de compras' })
   @ApiResponse({ status: 200, description: 'Carro borrado' })
   @ApiResponse({ status: 404, description: 'Carro no encontrado' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Delete(':id')
   @Roles('Super Admin', 'Admin')
   @UseGuards(RolesGuard)
-  @Delete(':id')
   async deleteCarro(
     @Param('id', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
   ) {
@@ -237,10 +239,10 @@ export class CarroComprasController {
   @ApiResponse({ status: 201, description: 'Stock suficiente y contenido del carro de compras actualizado.', type: [GetCarroProductoDto] })
   @ApiResponse({ status: 400, description: 'Stock insuficiente de uno o más productos.', type: NoStockProductosCarroDto })
   @ApiBody({ type: UpdateContenidoCarroDto })
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
+  @Post('/validateProductosCarro/:idCarro')
   @Roles('Visitante', 'Cliente')
   @UseGuards(RolesGuard)
-  @Post('/validateProductosCarro/:idCarro')
   async validateProductosCarro(@Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number, @Body(ProductoExistentePipe) contenidoCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
     return await this.carroComprasService.validateProductosCarro(idCarro, contenidoCarroDto)
   }
