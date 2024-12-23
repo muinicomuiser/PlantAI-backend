@@ -24,6 +24,7 @@ import { CarroComprasService } from '../service/carro-compras.service';
 import { NoStockProductosCarroDto } from '../dto/no-stock-carro-productos.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
 // @ApiTags('Carro de compras')
@@ -43,7 +44,7 @@ export class CarroComprasController {
   @ApiBearerAuth('access-token')
   @Get(':id')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findByCarroId(
     @Param('id', ParseIntPipe, ValidarCarroExistePipe) id: number,
   ): Promise<GetCarroComprasDto> {
@@ -61,7 +62,7 @@ export class CarroComprasController {
   @ApiBearerAuth('access-token')
   @Get()
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async obtenerTodos(): Promise<GetCarroComprasDto[]> {
     return await this.carroComprasService.findAll();
   }
@@ -81,7 +82,7 @@ export class CarroComprasController {
   @ApiBearerAuth('access-token')
   @Get('user/:id')
   @Roles('Super Admin', 'Admin', 'Cliente', 'Visitante')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findByUserId(
     @Param('id', ParseIntPipe, ValidarUsuarioExistePipe) id: number,
   ): Promise<GetCarroComprasDto> {
@@ -105,7 +106,7 @@ export class CarroComprasController {
   @ApiBearerAuth('access-token')
   @Post(':idUsuario')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async createCarro(
     @Param(
       'idUsuario',
@@ -126,7 +127,7 @@ export class CarroComprasController {
   @ApiBearerAuth('access-token')
   @Delete(':id')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteCarro(
     @Param('id', ParseIntPipe, ValidarCarroExistePipe) idCarro: number,
   ) {
@@ -242,7 +243,7 @@ export class CarroComprasController {
   @ApiBearerAuth('access-token')
   @Post('/validateProductosCarro/:idCarro')
   @Roles('Visitante', 'Cliente')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async validateProductosCarro(@Param('idCarro', ParseIntPipe, ValidarCarroExistePipe) idCarro: number, @Body(ProductoExistentePipe) contenidoCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
     return await this.carroComprasService.validateProductosCarro(idCarro, contenidoCarroDto)
   }

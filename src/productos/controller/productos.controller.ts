@@ -59,7 +59,7 @@ export class ProductosController {
   @ApiBearerAuth('access-token')
   @Get()
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(): Promise<GetProductoDto[]> {
     return this.productosService.getAll();
   }
@@ -132,7 +132,7 @@ export class ProductosController {
   @ApiBearerAuth('access-token')
   @Post()
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async createProduct(
     @Body(
       ValidarBase64Pipe,
@@ -159,7 +159,7 @@ export class ProductosController {
   @ApiBearerAuth('access-token')
   @Patch(':idProducto')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateProduct(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
     @Body(
@@ -185,7 +185,7 @@ export class ProductosController {
   @ApiBearerAuth('access-token')
   @Delete(':idProducto')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteOne(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
   ): Promise<GetProductoDto> {
@@ -204,7 +204,7 @@ export class ProductosController {
   @ApiBody({ type: UpdateProductImageDto })
   @Post('addProductImage/:idProducto')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async addProductImage(
     @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
@@ -225,7 +225,7 @@ export class ProductosController {
   // @ApiBody({ type: UpdateProductImageDto })
   // @ApiBearerAuth()
   // @Roles('Super Admin', 'Admin')
-  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   // @Patch('updateProductImage/:idProducto')
   // async updateProductImage(
   //   @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
@@ -245,7 +245,7 @@ export class ProductosController {
   @ApiBearerAuth('access-token')
   @Delete('deleteProductImage/:idProducto/:indiceImagen')
   @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteProductImage(
     @Param(
       'idProducto',
