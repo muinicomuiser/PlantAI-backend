@@ -8,8 +8,7 @@ import {
   Patch,
   Post,
   Query,
-  ServiceUnavailableException,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 
 import {
@@ -21,23 +20,22 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
+import { ProductosService } from '../service/productos.service';
 
-import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
-import { CreateProductoDto } from '../dto/producto/create-producto.dto';
-import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
-import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
-import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
-import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
-import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
-import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
-import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
-import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
-import { JwtStrategy } from 'src/auth/strategies/jwt.strategy/jwt.strategy';
+import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
+import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
+import { CreateProductoDto } from '../dto/producto/create-producto.dto';
+import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
+import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
+import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
+import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
+import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
+import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */

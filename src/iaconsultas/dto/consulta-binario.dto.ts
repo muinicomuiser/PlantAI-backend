@@ -8,9 +8,10 @@ export class ConsultaBinario {
             type: 'string',
             format: 'binary',
         },
+        required: false
     })
-    archivo: Express.Multer.File;
-    @ApiProperty({ example: 'Tengo mascotas y quiero plantas aromáticas.' })
+    archivo?: Express.Multer.File;
+    @ApiProperty({ example: 'Tengo mascotas y quiero plantas aromáticas.', required: false })
     @IsString()
-    consulta: string = 'Consulta sin texto.';
+    consulta?: string = 'Consulta sin texto.';
 }

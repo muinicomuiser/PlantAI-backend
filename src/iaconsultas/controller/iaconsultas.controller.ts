@@ -1,11 +1,15 @@
-import { Body, Controller, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, Query, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiExtraModels, ApiOperation, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { PaginacionDto } from 'src/productos/dto/catalogo/paginacion.dto';
 import { ConsultaBase64Dto } from '../dto/consulta-base64.dto';
 import { ConsultaBinario } from '../dto/consulta-binario.dto';
-import { ValidarContenidoConsultaPipe } from '../pipe/validar-contenido-consulta.pipe';
+import { ValidarConsultaBinarioPipe } from '../pipe/validar-consulta-binario.pipe';
+import { BodyBinario } from '../routehandler/routehandler-body-binario';
 import { IaconsultasService } from '../service/iaconsultas.service';
+import { ValidarConsultaBase64Pipe } from '../pipe/validar-consulta-base64.pipe';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
+import { GetFiltrosIaDto } from '../dto/get-filtros-ia.dto';
 
 /**Conversar con front y mobile sobre el tipo de respuesta */ // <---------------------
 @ApiTags('IAConsultas')
@@ -14,7 +18,7 @@ export class IaconsultasController {
 
     constructor(private readonly iaconsultasService: IaconsultasService) { }
 
-    @ApiOperation({ summary: "Obtener catálogo productos en base a consulta con imagen en binario y texto" })
+    @ApiOperation({ summary: "Obtener filtros para catálogo en base a consulta con imagen en binario y texto" })
     @ApiConsumes('multipart/form-data')
     @ApiExtraModels(
         ConsultaBinario,
@@ -23,23 +27,47 @@ export class IaconsultasController {
         schema: {
             $ref: getSchemaPath(ConsultaBinario),
         },
+        required: false
     })
-    @ApiResponse({ status: 200, description: 'Retorna un catálogo con los productos que coincidan con la consulta' })
+    @ApiResponse({
+        status: 200, description: 'Retorna filtros para catálogo que coincidan con la consulta', schema: {
+            type: 'object',
+            properties: {
+                message: { type: 'string', example: 'Razones que da la IA para elegir los filtros' },
+                data: {
+                    $ref: getSchemaPath(GetFiltrosIaDto)
+                },
+            }
+        },
+    })
     @ApiResponse({ status: 400, description: 'Error en la consulta' })
     @Post('binario')
     @UseInterceptors(FileInterceptor('archivo'))
-    async consultaBinario(@UploadedFile() file: Express.Multer.File, @Query() paginacion: PaginacionDto, @Body() { consulta }) {
-        return await this.iaconsultasService.getRespuestaImagenBinario(file, paginacion, consulta)
+    async consultaBinario(@BodyBinario(ValidarConsultaBinarioPipe) consulta: ConsultaBinario): Promise<GetDataDto<GetFiltrosIaDto>> {
+        return await this.iaconsultasService.getRespuestaBinario(consulta)
     }
 
 
-    @ApiOperation({ summary: "Obtener catálogo productos en base a consulta con imagen en base64 y texto" })
-    @ApiResponse({ status: 200, description: 'Retorna un catálogo con los productos que coincidan con la consulta' })
+    @ApiOperation({ summary: "Obtener filtros para catálogo en base a consulta con imagen en base64 y texto" })
+    @ApiExtraModels(
+        GetFiltrosIaDto,
+    )
+    @ApiResponse({
+        status: 200, description: 'Retorna filtros para catálogo que coincidan con la consulta', schema: {
+            type: 'object',
+            properties: {
+                message: { type: 'string', example: 'Razones que da la IA para elegir los filtros' },
+                data: {
+                    $ref: getSchemaPath(GetFiltrosIaDto)
+                },
+            }
+        },
+    })
     @ApiResponse({ status: 400, description: 'Error en la consulta' })
     @ApiBody({ type: ConsultaBase64Dto })
     @Post('base')
-    async consultaBase64(@Body(ValidarContenidoConsultaPipe) consultaDto: ConsultaBase64Dto, @Query() paginacion: PaginacionDto) {
-        return await this.iaconsultasService.getRespuestaImagenBase64(consultaDto, paginacion)
+    async consultaBase64(@Body(ValidarConsultaBase64Pipe) consultaDto: ConsultaBase64Dto): Promise<GetDataDto<GetFiltrosIaDto>> {
+        return await this.iaconsultasService.getRespuestaBase64(consultaDto)
     }
 
 }
