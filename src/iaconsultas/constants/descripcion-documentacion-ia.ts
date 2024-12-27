@@ -1,0 +1,3 @@
+export const DescripcionDocumentacionIA: string = "Entrada: Ambas propiedades (contenido de imagen y texto de consulta) son opcionales, pero hay que enviar siempre al menos una.\n"
+    + "\n Salida: Retorna un conjunto de filtros para ser usados en consultas al endpoint de catálogo y un mensaje con la explicación que da la IA para la selección de filtros.\n"
+    + "\n Funcionamiento por defecto: Si no hay una clave para conectarse a una API de IA, retorna un conjunto de filtros y un mensaje por defecto, para ser usados en pruebas del endpoint."

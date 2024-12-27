@@ -28,13 +28,14 @@ export function setupSwagger(app: INestApplication) {
     .setDescription(
       description +
 
-        '\n \nLas documentaciones de cada módulo están disponibles en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
-        '\n Módulo Pedidos: api/pedidos\n' +
-        '\n Módulo Productos: api/productos\n' +
-        '\n Módulo Usuarios: api/usuarios\n' +
-        '\n Módulo Equipo: api/equipo\n' +
-        '\n Módulo Autenticación: api/aut\n' +
-        '\n Módulo Reviews: api/reviews',
+      '\n \nLa documentación de cada módulo está disponible en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
+      '\n Módulo Pedidos: api/pedidos\n' +
+      '\n Módulo Productos: api/productos\n' +
+      '\n Módulo Usuarios: api/usuarios\n' +
+      '\n Módulo Equipo: api/equipo\n' +
+      '\n Módulo Autenticación: api/aut\n' +
+      '\n Módulo Consultas IA: api/iaconsultas\n' +
+      '\n Módulo Reviews: api/reviews',
     )
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
@@ -62,7 +63,7 @@ export function setupSwagger(app: INestApplication) {
     { module: UsuariosModule, path: 'api/usuarios' },
     { module: EquipoModule, path: 'api/equipo' },
     { module: AuthModule, path: 'api/aut' },
-    { module: IaconsultasModule, path: 'api/consultas-ia' },
+    { module: IaconsultasModule, path: 'api/iaconsultas' },
     { module: ReviewsModule, path: 'api/reviews' },
   ];
 

@@ -8,6 +8,9 @@ export class ValidarConsultaBinarioPipe implements PipeTransform {
     if (!consulta.archivo && !consulta.consulta) {
       throw new BadRequestException('No se puede enviar una consulta vacía.')
     }
-    return value;
+    if (consulta.archivo && !consulta.consulta) {
+      consulta.consulta = 'Consulta sin texto'
+    }
+    return consulta;
   }
 }

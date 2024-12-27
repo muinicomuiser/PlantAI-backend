@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class ConsultaBinario {
     @ApiProperty({
@@ -10,8 +10,9 @@ export class ConsultaBinario {
         },
         required: false
     })
+    @IsOptional()
     archivo?: Express.Multer.File;
     @ApiProperty({ example: 'Tengo mascotas y quiero plantas aromáticas.', required: false })
     @IsString()
-    consulta?: string = 'Consulta sin texto.';
+    consulta?: string;
 }

@@ -7,8 +7,8 @@ export const BodyBinario = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     const value = {
       archivo: request['file'] ? request['file'] : undefined,
-      consulta: request.body['consulta'],
+      consulta: request.body['consulta'] ? request.body['consulta'] : undefined,
     };
-    return value as ConsultaBinario;
+    return value;
   },
 );

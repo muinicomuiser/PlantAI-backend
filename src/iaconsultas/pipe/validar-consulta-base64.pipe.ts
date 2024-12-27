@@ -12,7 +12,10 @@ export class ValidarConsultaBase64Pipe implements PipeTransform {
       if (!consulta.base64.includes(',')) {
         throw new BadRequestException('El formato de imagen no es válido.');
       }
+      if (!consulta.consulta) {
+        consulta.consulta = 'Consulta sin texto'
+      }
     }
-    return value;
+    return consulta;
   }
 }
