@@ -10,18 +10,23 @@ import {
 
 @Entity({ name: 'reviews' })
 export class Review {
+
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ name: 'id_usuario' })
   idUsuario: number;
+
   @Column({ name: 'id_producto' })
   idProducto: number;
+
   @Column({ type: 'int', default: 5, comment: 'evaluación entre 1 y 5' })
   puntuacion: number;
+
   @Column({ type: 'text', nullable: true, comment: 'comentario del usuario' })
   comentario: string;
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+
+  @Column({ name: "fecha_creacion", type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   fechaCreacion: Date;
 
   /**relación con Usuario */

@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { ROLES_KEY } from 'src/auth/decorators/roles.decorator';
 
 interface JwtPayload {
@@ -14,13 +13,17 @@ interface JwtPayload {
   username: string;
   sub: number;
 }
+export interface JwtUser {
+  role: string;
+  username: string;
+  id: number;
+}
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private jwtService: JwtService,
-  ) {}
+  ) { }
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
@@ -32,7 +35,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user; // Obtenido desde JwtStrategy.
+    const user: JwtUser = request.user; // Obtenido desde JwtStrategy.
 
     if (!user) {
       throw new UnauthorizedException('Usuario no autenticado');
@@ -43,7 +46,6 @@ export class RolesGuard implements CanActivate {
         'No tienes permiso para realizar esta acción',
       );
     }
-
     return true;
   }
 }
