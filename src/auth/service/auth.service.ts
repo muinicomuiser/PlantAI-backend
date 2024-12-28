@@ -21,7 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+  ) {}
 
   private createTokenPayload(user: any) {
     return {
@@ -66,7 +66,7 @@ export class AuthService {
       );
       // buscar rol en base
       const rol = await this.rolRepository.findOne({
-        where: { id: createUsuarioDto.idRol },  // <-- Los usuarios nuevos registrados quedan siempre como Cliente
+        where: { id: createUsuarioDto.idRol }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente
       });
       if (!rol) {
         throw new NotFoundException(
@@ -75,9 +75,8 @@ export class AuthService {
       }
       //pasar rol al metodo de crea
       return this.usuariosService.createUser(createUsuarioDto, rol);
-    }
-    catch (error) {
-      throw new BadRequestException('Error al registrar usuario')
+    } catch (error) {
+      throw new BadRequestException('Error al registrar usuario');
     }
   }
 

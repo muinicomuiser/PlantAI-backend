@@ -20,6 +20,7 @@ import { Usuario } from '../entities/usuario.entity';
 import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
 import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
 import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
+import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 
 @Injectable()
@@ -35,7 +36,7 @@ export class UsuariosService {
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+  ) {}
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -173,7 +174,10 @@ export class UsuariosService {
   }
 
   /**Retorna los pedidos asociados a un id de usuario */
-  async findPedidos(user: any, idUsuario?: number): Promise<GetPedidoUsuarioDto[]> {
+  async findPedidos(
+    user: any,
+    idUsuario?: number,
+  ): Promise<GetPedidoUsuarioDto[]> {
     try {
       if (user.role === 'Admin' || user.role === 'Super Admin') {
         const pedidos: Pedido[] = await this.pedidosRepository.find({
@@ -186,38 +190,36 @@ export class UsuariosService {
             'usuario',
             'Pago',
             'direccionEnvio',
-            'productosPedido'
+            'productosPedido',
           ],
         });
-        console.log('pedidos', pedidos)
+        console.log('pedidos', pedidos);
         if (pedidos.length > 0) {
-          return pedidos.map(pedido => mapperPedido.toDtoUsuario(pedido));
+          return pedidos.map((pedido) => mapperPedido.toDtoUsuario(pedido));
+        } else {
+          return [];
         }
-        else {
-          return []
-        }
-
       }
       if (user.role == 'Cliente') {
         if (user.id !== idUsuario) {
-          throw new UnauthorizedException('error')
+          throw new UnauthorizedException('error');
         }
         const pedidosCliente = await this.pedidosRepository.find({
           where: {
-            idUsuario: user.id
-          }
-        })
+            idUsuario: user.id,
+          },
+        });
         if (pedidosCliente.length > 0) {
-          return pedidosCliente.map(pedido => mapperPedido.toDtoUsuario(pedido));
-        }
-        else {
-          return []
+          return pedidosCliente.map((pedido) =>
+            mapperPedido.toDtoUsuario(pedido),
+          );
+        } else {
+          return [];
         }
       }
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException('Error al obtener pedidos del usuario')
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('Error al obtener pedidos del usuario');
     }
   }
 
@@ -262,5 +264,21 @@ export class UsuariosService {
       relations: ['medioPago'],
     });
     return usuarioMediosPago.map((relacion) => relacion.medioPago);
+  }
+
+  // crear usuario invitado para el carro
+  async createGuestUser(
+    createGuestUsuarioDto: CreateGuestUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    const rol = await this.rolRepository.findOne({
+      where: { id: 4 },
+    });
+    const usuario = this.usuariosRepository.create({
+      ...createGuestUsuarioDto,
+      contrasena: null,
+      rol,
+    });
+    const usuarioCreado = await this.usuariosRepository.save(usuario);
+    return toOutputUserDTO(usuarioCreado);
   }
 }

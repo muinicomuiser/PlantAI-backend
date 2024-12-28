@@ -6,6 +6,7 @@ import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
+import { ValidarCrearUsuarioPipe } from 'src/usuarios/pipe/validar-crear-usuario.pipe';
 
 /**Historia de Usuario 2: Autenticación y Gestión de Sesiones */
 @ApiTags('Autenticación')
@@ -22,7 +23,9 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Error al registrar el usuario' })
   @Post('registro')
-  async register(@Body() createUser: CreateUsuarioDto): Promise<OutputUserDTO> {
+  async register(
+    @Body(ValidarCrearUsuarioPipe) createUser: CreateUsuarioDto,
+  ): Promise<OutputUserDTO> {
     return await this.authService.register(createUser);
   }
 
