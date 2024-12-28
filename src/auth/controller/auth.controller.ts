@@ -6,17 +6,20 @@ import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { LoginDto } from '../dto/login.dto';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
-import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
 
 /**Historia de Usuario 2: Autenticación y Gestión de Sesiones */
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   // Registrar un usuario
   @ApiOperation({ summary: 'Registro de usuario' })
-  @ApiResponse({ status: 201, description: 'Usuario registrado exitosamente', type: OutputUserDTO })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario registrado exitosamente',
+    type: OutputUserDTO,
+  })
   @ApiResponse({ status: 400, description: 'Error al registrar el usuario' })
   @Post('registro')
   async register(@Body() createUser: CreateUsuarioDto): Promise<OutputUserDTO> {
@@ -26,11 +29,13 @@ export class AuthController {
   // Loguear un usuario
   @ApiOperation({ summary: 'Login de usuario' })
   @ApiResponse({
-    status: 201, description: 'Usuario logueado exitosamente', schema: {
+    status: 201,
+    description: 'Usuario logueado exitosamente',
+    schema: {
       type: 'object',
       properties: {
         access_token: { type: 'string' },
-      }
+      },
     },
   })
   @ApiResponse({ status: 401, description: 'Error al loguear el usuario' })

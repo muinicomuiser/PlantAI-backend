@@ -8,7 +8,7 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -22,8 +22,6 @@ import {
 } from '@nestjs/swagger';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { ProductosService } from '../service/productos.service';
-
-import { Roles } from 'prod/dist/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
@@ -36,18 +34,20 @@ import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
 import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
 import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
 import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) { }
+  constructor(private readonly productosService: ProductosService) {}
 
   @ApiOperation({
-    summary: 'Retorna todos los productos registrados. PREFERIR GET productos/admin para paginación.',
+    summary:
+      'Retorna todos los productos registrados. PREFERIR GET productos/admin para paginación.',
     description:
-      'Ahora está habilitado el GET productos/admin, que retorna todos los productos y permite paginar.'
+      'Ahora está habilitado el GET productos/admin, que retorna todos los productos y permite paginar.',
   })
   @ApiResponse({
     status: 200,
@@ -62,7 +62,9 @@ export class ProductosController {
     return this.productosService.getAll();
   }
 
-  @ApiOperation({ summary: 'Retorna todos los productos registrados paginados.' })
+  @ApiOperation({
+    summary: 'Retorna todos los productos registrados paginados.',
+  })
   @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'pageSize',
@@ -84,10 +86,9 @@ export class ProductosController {
     @Query('pageSize')
     pageSize?: number,
   ): Promise<GetProductosAdminDto> {
-
     const paginacionDto: PaginacionDto = {
       page: page ? +page : 1,
-      pageSize: pageSize ? +pageSize : 10
+      pageSize: pageSize ? +pageSize : 10,
     };
     return await this.productosService.findAllPaginated(paginacionDto);
   }
@@ -113,14 +114,13 @@ export class ProductosController {
 
   // Crear un producto
   @ApiOperation({
-    summary:
-      'Crea un producto.',
-    description:
-      'Crea un producto nuevo. Permite agregar una imagen nueva.'
+    summary: 'Crea un producto.',
+    description: 'Crea un producto nuevo. Permite agregar una imagen nueva.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Agrega un producto al sistema.', type: GetProductoDto,
+    description: 'Agrega un producto al sistema.',
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 400,
@@ -147,7 +147,8 @@ export class ProductosController {
   @ApiBody({ type: UpdateProductoDto })
   @ApiResponse({
     status: 200,
-    description: 'Actualiza un producto.', type: GetProductoDto
+    description: 'Actualiza un producto.',
+    type: GetProductoDto,
   })
   @ApiResponse({
     status: 404,
@@ -237,7 +238,10 @@ export class ProductosController {
   //   // );
   // }
 
-  @ApiOperation({ summary: 'Eliminar la imagen de un producto según el índice de la imagen en el arreglo.' })
+  @ApiOperation({
+    summary:
+      'Eliminar la imagen de un producto según el índice de la imagen en el arreglo.',
+  })
   @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
   @ApiBearerAuth('access-token')
@@ -252,12 +256,12 @@ export class ProductosController {
       ValidarImagenProductoExistePipe,
     )
     idProducto: number,
-    @Param(
-      'indiceImagen',
-      ParseIntPipe,
-    )
+    @Param('indiceImagen', ParseIntPipe)
     indiceImagen: number,
   ) {
-    return await this.productosService.deleteProductImage(idProducto, indiceImagen);
+    return await this.productosService.deleteProductImage(
+      idProducto,
+      indiceImagen,
+    );
   }
 }
