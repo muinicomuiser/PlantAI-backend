@@ -73,6 +73,13 @@ export class AuthService {
           `Rol con ID ${createUsuarioDto.idRol} no existe`,
         );
       }
+      // editar usuario si es visitante
+      const user = await this.usuariosService.findUserByEmailAddress(
+        createUsuarioDto.email,
+      );
+      if (user && user.rol.id === 4) {
+        return this.usuariosService.updateGuestUser(user.id, createUsuarioDto);
+      }
       //pasar rol al metodo de crea
       return this.usuariosService.createUser(createUsuarioDto, rol);
     } catch (error) {

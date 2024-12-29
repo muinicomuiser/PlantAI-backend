@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
-import { GetPedidoDto } from 'src/pedidos/dto/get-pedido.dto';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { mapperPedido } from 'src/pedidos/mapper/pedido.mapper';
 import { Repository } from 'typeorm';
@@ -280,5 +279,32 @@ export class UsuariosService {
     });
     const usuarioCreado = await this.usuariosRepository.save(usuario);
     return toOutputUserDTO(usuarioCreado);
+  }
+
+  async findUserByEmailAddress(email: string): Promise<Usuario> {
+    const user = await this.usuariosRepository.findOne({
+      where: { email },
+      relations: ['rol'],
+    });
+    console.log('user', user);
+    if (!user) {
+      throw new NotFoundException(`Usuario con email ${email} no encontrado`);
+    }
+    return user;
+  }
+
+  async updateGuestUser(
+    id: number,
+    createUsuarioDto: CreateUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    const rol = await this.rolRepository.findOne({
+      where: { id: createUsuarioDto.idRol },
+    });
+    const usuario = this.usuariosRepository.create({
+      ...createUsuarioDto,
+      rol,
+    });
+    await this.usuariosRepository.update(id, usuario);
+    return toOutputUserDTO(usuario);
   }
 }

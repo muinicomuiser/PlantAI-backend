@@ -55,7 +55,7 @@ export class UpdateUsuarioDto {
   @ApiPropertyOptional({ example: '1999-12-12' })
   @IsISO8601()
   @IsOptional()
-  fechaNacimiento?: Date;
+  fechaNacimiento?: string;
 
   @ApiPropertyOptional({ example: 3 })
   @IsNumber()
