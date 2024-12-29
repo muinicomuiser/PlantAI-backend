@@ -12,7 +12,7 @@ import {
   Query,
   Request,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -40,13 +40,14 @@ import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
 @ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) { }
+  constructor(private readonly usuariosService: UsuariosService) {}
 
   // Obtener todos los usuarios
   @ApiOperation({ summary: 'Obtiene los Usuarios' })
@@ -61,11 +62,11 @@ export class UsuariosController {
         data: {
           type: 'array',
           items: {
-            $ref: getSchemaPath(OutputUserDTO)
-          }
+            $ref: getSchemaPath(OutputUserDTO),
+          },
         },
-      }
-    }
+      },
+    },
   })
   @ApiResponse({
     status: 403,
@@ -78,7 +79,11 @@ export class UsuariosController {
   // async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
   async findAll(): Promise<GetDataDto<OutputUserDTO[]>> {
     const users = await this.usuariosService.findAll();
-    return new GetDataDto(users, 'Usuarios obtenidos exitosamente.', users.length)
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
   }
 
   // Obtener un usuario según su ID
@@ -152,7 +157,8 @@ export class UsuariosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Super Admin', 'Admin')
   async updateOne(
-    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe)
+    idUsuario: number,
     @Body(ValidarCrearUsuarioPipe) updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<OutputUserDTO> {
     const updatedUser = await this.usuariosService.updateOne(
@@ -161,7 +167,7 @@ export class UsuariosController {
     );
 
     /****Comentado para aplicarlo después de la entrega 11, pa no descalibrarle a Front el uso del endpoint tan encima. */
-    // const respuesta = {    
+    // const respuesta = {
     //   status: 200,
     //   message: 'Usuario actualizado exitosamente',
     //   data: updatedUser,
@@ -185,8 +191,10 @@ export class UsuariosController {
   })
   @Roles('Super Admin', 'Admin', 'Cliente')
   @Delete(':idUsuario')
-  //en el caso del cliente autoeliminarse. No eliminar otros 
-  async deleteOne(@Param('idUsuario') idUsuario: number): Promise<{ message: string }> {
+  //en el caso del cliente autoeliminarse. No eliminar otros
+  async deleteOne(
+    @Param('idUsuario') idUsuario: number,
+  ): Promise<{ message: string }> {
     return await this.usuariosService.deleteUser(idUsuario);
   }
   //Obtener pedidos de usuario
@@ -205,11 +213,11 @@ export class UsuariosController {
         data: {
           type: 'array',
           items: {
-            $ref: getSchemaPath(GetPedidoUsuarioDto)
-          }
+            $ref: getSchemaPath(GetPedidoUsuarioDto),
+          },
         },
-      }
-    }
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -222,14 +230,19 @@ export class UsuariosController {
   async findPedidos(
     //en caso de cliente sólo buscar pedidos de sí mismo
     @Request() req,
-    @Param('idUsuario', /* ParseIntPipe, */ ValidarUsuarioExistePipe) idUsuario?: number
-
+    @Param('idUsuario', /* ParseIntPipe, */ ValidarUsuarioExistePipe)
+    idUsuario?: number,
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
     const user = req.user;
-    console.log(user)
-    const pedidosUsuario: GetPedidoUsuarioDto[] = await this.usuariosService.findPedidos(user, idUsuario);
-    console.log(pedidosUsuario)
-    return new GetDataDto(pedidosUsuario, `Pedidos del usuario con id ${idUsuario}`, pedidosUsuario.length)
+    console.log(user);
+    const pedidosUsuario: GetPedidoUsuarioDto[] =
+      await this.usuariosService.findPedidos(user, idUsuario);
+    console.log(pedidosUsuario);
+    return new GetDataDto(
+      pedidosUsuario,
+      `Pedidos del usuario con id ${idUsuario}`,
+      pedidosUsuario.length,
+    );
   }
 
   // Modificar o agregar medio de pago
@@ -257,7 +270,10 @@ export class UsuariosController {
         `El mediio pago "${medioPago}" no está registrado`,
       );
     }
-    return await this.usuariosService.updateMedioPago(idUsuario, medioPagoEntity);
+    return await this.usuariosService.updateMedioPago(
+      idUsuario,
+      medioPagoEntity,
+    );
   }
 
   //Obtener medios de pago de un usuario
@@ -278,5 +294,32 @@ export class UsuariosController {
     idUsuario: number,
   ): Promise<MedioPago[]> {
     return await this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
+  }
+
+  // Crear un usuario
+  @ApiOperation({ summary: 'Crea un usuario' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario creado',
+    type: OutputUserDTO,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al crear usuario',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El email ya está registrado',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El nombre de usuario ya está registrado',
+  })
+  @ApiBody({ type: CreateGuestUsuarioDto })
+  @Post('invitado')
+  async createGuest(
+    @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
   }
 }

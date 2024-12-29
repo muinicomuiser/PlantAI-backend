@@ -21,7 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+  ) {}
 
   private createTokenPayload(user: any) {
     return {
@@ -66,18 +66,24 @@ export class AuthService {
       );
       // buscar rol en base
       const rol = await this.rolRepository.findOne({
-        where: { id: createUsuarioDto.idRol },  // <-- Los usuarios nuevos registrados quedan siempre como Cliente
+        where: { id: createUsuarioDto.idRol }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente
       });
       if (!rol) {
         throw new NotFoundException(
           `Rol con ID ${createUsuarioDto.idRol} no existe`,
         );
       }
+      // editar usuario si es visitante
+      const user = await this.usuariosService.findUserByEmailAddress(
+        createUsuarioDto.email,
+      );
+      if (user && user.rol.id === 4) {
+        return this.usuariosService.updateGuestUser(user.id, createUsuarioDto);
+      }
       //pasar rol al metodo de crea
       return this.usuariosService.createUser(createUsuarioDto, rol);
-    }
-    catch (error) {
-      throw new BadRequestException('Error al registrar usuario')
+    } catch (error) {
+      throw new BadRequestException('Error al registrar usuario');
     }
   }
 
