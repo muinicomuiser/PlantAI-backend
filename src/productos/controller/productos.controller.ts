@@ -21,7 +21,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
-import { ProductosService } from '../service/productos.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
@@ -42,7 +41,7 @@ import { ProductosService } from '../service/productos.service';
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
 
   @ApiOperation({
     summary:
