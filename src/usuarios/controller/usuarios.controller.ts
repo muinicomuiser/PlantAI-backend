@@ -236,17 +236,10 @@ export class UsuariosController {
     idUsuario?: number,
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
     const user = req.user;
-<<<<<<< HEAD
     // console.log(user);
     const pedidosUsuario: GetPedidoUsuarioDto[] =
       await this.usuariosService.findPedidos(user, idUsuario);
     // console.log(pedidosUsuario);
-=======
-    console.log(user);
-    const pedidosUsuario: GetPedidoUsuarioDto[] =
-      await this.usuariosService.findPedidos(user, idUsuario);
-    console.log(pedidosUsuario);
->>>>>>> 5d037afef55af5de9f687414e41c97036d8c3cca
     return new GetDataDto(
       pedidosUsuario,
       `Pedidos del usuario con id ${idUsuario}`,
