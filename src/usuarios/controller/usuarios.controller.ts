@@ -271,13 +271,11 @@ export class UsuariosController {
     @Param('idUsuario', ParseIntPipe) idUsuario: number,
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
     const currentUser = req.user;
-
     // Llama al servicio para obtener los pedidos según la lógica de roles
     const pedidosUsuario = await this.usuariosService.findPedidos(
       currentUser,
       idUsuario,
     );
-
     return new GetDataDto(
       pedidosUsuario,
       `Pedidos del usuario con id ${idUsuario}`,

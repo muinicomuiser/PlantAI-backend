@@ -35,6 +35,7 @@ import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto
 import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
 import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ProductosService } from '../service/productos.service';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */

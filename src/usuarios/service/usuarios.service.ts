@@ -23,6 +23,7 @@ import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import * as bcrypt from 'bcryptjs';
 
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
+import { v4 as UUIDv4 } from 'uuid';
 
 @Injectable()
 export class UsuariosService {
@@ -371,8 +372,11 @@ export class UsuariosService {
     const rol = await this.rolRepository.findOne({
       where: { id: 4 },
     });
+    const nombreUsuario =
+      createGuestUsuarioDto.nombre + '-' + UUIDv4().split('-')[1];
     const usuario = this.usuariosRepository.create({
       ...createGuestUsuarioDto,
+      nombreUsuario,
       contrasena: null,
       rol,
     });
@@ -385,10 +389,6 @@ export class UsuariosService {
       where: { email },
       relations: ['rol'],
     });
-    console.log('user', user);
-    if (!user) {
-      throw new NotFoundException(`Usuario con email ${email} no encontrado`);
-    }
     return user;
   }
 
