@@ -40,6 +40,7 @@ import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 
 /**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
 @ApiTags('Usuarios')
@@ -235,10 +236,17 @@ export class UsuariosController {
     idUsuario?: number,
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
     const user = req.user;
+<<<<<<< HEAD
     // console.log(user);
     const pedidosUsuario: GetPedidoUsuarioDto[] =
       await this.usuariosService.findPedidos(user, idUsuario);
     // console.log(pedidosUsuario);
+=======
+    console.log(user);
+    const pedidosUsuario: GetPedidoUsuarioDto[] =
+      await this.usuariosService.findPedidos(user, idUsuario);
+    console.log(pedidosUsuario);
+>>>>>>> 5d037afef55af5de9f687414e41c97036d8c3cca
     return new GetDataDto(
       pedidosUsuario,
       `Pedidos del usuario con id ${idUsuario}`,
@@ -295,5 +303,32 @@ export class UsuariosController {
     idUsuario: number,
   ): Promise<MedioPago[]> {
     return await this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
+  }
+
+  // Crear un usuario
+  @ApiOperation({ summary: 'Crea un usuario' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario creado',
+    type: OutputUserDTO,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al crear usuario',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El email ya está registrado',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'El nombre de usuario ya está registrado',
+  })
+  @ApiBody({ type: CreateGuestUsuarioDto })
+  @Post('invitado')
+  async createGuest(
+    @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
   }
 }

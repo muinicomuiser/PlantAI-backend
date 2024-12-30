@@ -5,7 +5,7 @@ import {
   PipeTransform,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Usuario } from '../entities/usuario.entity';
 
 @Injectable()
@@ -21,7 +21,12 @@ export class ValidarCrearUsuarioPipe implements PipeTransform {
     // Validar email
     if (email) {
       const emailEnUso = await this.usuarioRepository.findOne({
-        where: { email },
+        where: {
+          email,
+          rol: {
+            id: Not(4),
+          },
+        },
         select: ['id'],
       });
 
@@ -33,7 +38,12 @@ export class ValidarCrearUsuarioPipe implements PipeTransform {
     // Validar nombre de usuario
     if (nombreUsuario) {
       const nombreUsuarioEnUso = await this.usuarioRepository.findOne({
-        where: { nombreUsuario },
+        where: {
+          nombreUsuario,
+          rol: {
+            id: Not(4),
+          },
+        },
         select: ['id'],
       });
 

@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  ServiceUnavailableException,
   UseGuards,
 } from '@nestjs/common';
 
@@ -21,8 +20,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ProductosService } from '../service/productos.service';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
+<<<<<<< HEAD
 
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
@@ -35,8 +34,22 @@ import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto
 import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+=======
+import { ProductosService } from '../service/productos.service';
+>>>>>>> 5d037afef55af5de9f687414e41c97036d8c3cca
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
+import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
+import { CreateProductoDto } from '../dto/producto/create-producto.dto';
+import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
+import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
+import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
+import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
+import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
+import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
+import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
@@ -56,10 +69,10 @@ export class ProductosController {
     description: 'Retorna todos los productos',
     type: [GetProductoDto],
   })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Get()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(): Promise<GetProductoDto[]> {
     return this.productosService.getAll();
   }
@@ -78,10 +91,10 @@ export class ProductosController {
     description: 'Retorna todos los productos',
     type: GetProductosAdminDto,
   })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Get('admin')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findAllPaginated(
     @Query('page')
     page?: number,
@@ -129,10 +142,10 @@ export class ProductosController {
     description: 'No ha sido posible crear el producto',
   })
   @ApiBody({ type: CreateProductoDto })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Post()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async createProduct(
     @Body(
       ValidarBase64Pipe,
@@ -157,10 +170,10 @@ export class ProductosController {
     description: 'No se ha encontrado un producto con ese id.',
   })
   @ApiParam({ name: 'idProducto', type: Number })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Patch(':idProducto')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateProduct(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
     @Body(
@@ -183,10 +196,10 @@ export class ProductosController {
     status: 404,
     description: 'No existe un producto con ese id',
   })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Delete(':idProducto')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteOne(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
   ): Promise<GetProductoDto> {
@@ -201,11 +214,11 @@ export class ProductosController {
   @ApiResponse({ status: 201, description: 'Imagen subida con éxito' })
   @ApiResponse({ status: 400, description: 'Error al subir imagen' })
   @ApiBody({ type: Object })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
-  @Post('addProductImage/:idProducto')
+  @ApiBearerAuth('access-token')
   @ApiBody({ type: UpdateProductImageDto })
+  @Post('addProductImage/:idProducto')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async addProductImage(
     @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
     @Param('idProducto', ParseIntPipe, ProductoExistentePipe)
@@ -226,7 +239,7 @@ export class ProductosController {
   // @ApiBody({ type: UpdateProductImageDto })
   // @ApiBearerAuth()
   // @Roles('Super Admin', 'Admin')
-  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   // @Patch('updateProductImage/:idProducto')
   // async updateProductImage(
   //   @Body(ValidarBase64Pipe) base64Content: UpdateProductImageDto,
@@ -246,10 +259,10 @@ export class ProductosController {
   })
   @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Delete('deleteProductImage/:idProducto/:indiceImagen')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteProductImage(
     @Param(
       'idProducto',

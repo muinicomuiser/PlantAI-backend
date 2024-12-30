@@ -20,6 +20,7 @@ import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-exis
 import { ValidarCarroLlenoPipe } from '../pipe/validar-carro-lleno.pipe';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 
 /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
 @ApiTags('Pedidos')
@@ -35,10 +36,10 @@ export class PedidosController {
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 400, description: 'Problemas para crear el pedido' })
-  @ApiBearerAuth()
-  @Roles('Visitante', 'Cliente')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Post(':idUsuario')
+  @Roles('Visitante', 'Cliente')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Param('idUsuario', ValidarUsuarioExistePipe, ValidarCarroLlenoPipe) idUsuario: number, @Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
     return await this.pedidosService.create(+idUsuario, createPedidoDTO);
   }
@@ -54,10 +55,10 @@ export class PedidosController {
     description: 'Pedidos filtrados por estado o todos los pedidos',
     type: [GetPedidoDto],
   })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Get()
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(@Query('Estado') estado: string): Promise<GetPedidoDto[]> {
     throw new ServiceUnavailableException('Servicio en mantención')
     // return await this.pedidosService.findAll();
@@ -71,10 +72,10 @@ export class PedidosController {
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Get(':id')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async findOne(@Param('id') id: number): Promise<GetPedidoDto> {
     throw new ServiceUnavailableException('Servicio en mantención')
     // return this.pedidosService.findOne(+id);
@@ -89,10 +90,10 @@ export class PedidosController {
     type: GetPedidoDto,
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Patch(':id')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   update(
     @Param('id') id: number,
     @Body() updatePedidoDto: UpdatePedidoDto,
@@ -109,10 +110,10 @@ export class PedidosController {
     type: DeletePedidoResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Pedido no encontrado' })
-  @ApiBearerAuth()
-  @Roles('Super Admin', 'Admin')
-  @UseGuards(RolesGuard)
+  @ApiBearerAuth('access-token')
   @Delete(':id')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: number): Promise<DeletePedidoResponseDto> {
     throw new ServiceUnavailableException('Servicio en mantención')
     // return this.pedidosService.remove(+id);
