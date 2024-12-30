@@ -21,22 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
-<<<<<<< HEAD
-
-import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
-import { CreateProductoDto } from '../dto/producto/create-producto.dto';
-import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
-import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
-import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
-import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
-import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
-import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
-import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
-import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-=======
 import { ProductosService } from '../service/productos.service';
->>>>>>> 5d037afef55af5de9f687414e41c97036d8c3cca
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';

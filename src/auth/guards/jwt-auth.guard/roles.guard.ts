@@ -21,9 +21,7 @@ export interface JwtUser {
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-  ) { }
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
@@ -35,7 +33,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user: JwtUser = request.user; // Obtenido desde JwtStrategy.
+    const user: JwtUser = request.user; // Obtenido desde JwtStrategy.}
 
     if (!user) {
       throw new UnauthorizedException('Usuario no autenticado');

@@ -31,6 +31,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: [{ nombreUsuario: usernameOrEmail }, { email: usernameOrEmail }],
+      relations: ['rol'],
     });
 
     if (!user) {
@@ -74,7 +75,11 @@ export class AuthService {
   }
 
   private createTokenPayload(user: Usuario): any {
-    return { sub: user.id, username: user.nombreUsuario, role: user.rol };
+    return {
+      sub: user.id,
+      username: user.nombreUsuario,
+      role: user.rol?.nombre, // Asegúrate de enviar solo el nombre del rol
+    };
   }
 
   async register(createUsuarioDto: CreateUsuarioDto): Promise<OutputUserDTO> {

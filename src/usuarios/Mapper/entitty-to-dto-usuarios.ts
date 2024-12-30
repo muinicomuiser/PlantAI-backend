@@ -13,11 +13,14 @@ export function toOutputUserDTO(usuario: Usuario): OutputUserDTO {
     rut: usuario.rut,
     fechaNacimiento: usuario?.fechaNacimiento,
     rol: usuario.rol.nombre,
-    direcciones: usuario.direccion?.map((dir) => {
-      const direccionCompleta = `${dir.calle}, ${dir.numero}, ${dir.comuna}`;
-      return dir.departamento
-        ? `${direccionCompleta}, Depto ${dir.departamento}`
-        : direccionCompleta;
-    }),
+    direcciones: usuario.direccion
+      ? usuario.direccion.map((dir) => {
+          const direccionCompleta = `${dir.calle} ${dir.numero}, ${dir.comuna}`;
+          if (dir.departamento) {
+            return `${direccionCompleta}, Depto ${dir.departamento} (${dir.referencia || 'Sin referencia'})`;
+          }
+          return `${direccionCompleta} (${dir.referencia || 'Sin referencia'})`;
+        })
+      : [],
   };
 }
