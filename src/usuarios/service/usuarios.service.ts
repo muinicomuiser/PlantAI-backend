@@ -20,6 +20,8 @@ import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
 import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
 import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
 import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
+import * as bcrypt from 'bcryptjs';
+
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 import { v4 as UUIDv4 } from 'uuid';
 
@@ -77,152 +79,249 @@ export class UsuariosService {
   }
 
   /**Actualiza un usuario según su id */
-  async updateOne(
-    id: number,
+  async updateUserProfile(
+    idUsuario: number,
     updateUsuarioDto: UpdateUsuarioDto,
+    currentUser: Usuario,
   ): Promise<OutputUserDTO> {
-    try {
-      const usuario = await this.usuariosRepository.findOne({
-        where: { id },
-        relations: ['rol'],
-      });
+    const usuario = await this.validateUserExists(idUsuario);
 
-      if (!usuario) {
-        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-      }
-
-      if (updateUsuarioDto.idRol) {
-        const rol = await this.rolRepository.findOne({
-          where: { id: updateUsuarioDto.idRol },
-        });
-
-        if (!rol) {
-          throw new NotFoundException(
-            `Rol con ID ${updateUsuarioDto.idRol} no encontrado`,
-          );
-        }
-
-        usuario.rol = rol;
-      }
-
-      const updatedData = { ...updateUsuarioDto, rol: usuario.rol };
-
-      const usuarioActualizado = await this.usuariosRepository.preload({
-        id,
-        ...updatedData,
-      });
-
-      if (!usuarioActualizado) {
-        throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-      }
-
-      console.log('Datos antes de guardar:', usuarioActualizado);
-
-      const usuarioGuardado =
-        await this.usuariosRepository.save(usuarioActualizado);
-
-      return toOutputUserDTO(usuarioGuardado);
-    } catch (error) {
-      console.error(
-        'Error en servicio de actualización de usuarios:',
-        error.message,
-      );
-
-      if (error.code === 'ER_DUP_ENTRY') {
-        throw new BadRequestException(
-          'Solicitud duplicada detectada. La data ingresada entra en conflicto con nuestros registros actuales.',
-        );
-      }
-
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
-      throw new InternalServerErrorException(
-        'Un error inesperado ocurrió actualizando usuarios',
+    if (currentUser.id !== usuario.id) {
+      throw new UnauthorizedException(
+        'No puedes modificar el perfil de otro usuario',
       );
     }
+
+    // Filtrar campos sensibles y combinar con los datos actuales
+    const updatedData = {
+      ...usuario,
+      ...updateUsuarioDto,
+    };
+
+    const usuarioActualizado = await this.usuariosRepository.preload({
+      id: usuario.id,
+      ...updatedData,
+    });
+
+    if (!usuarioActualizado) {
+      throw new NotFoundException(`Usuario con ID ${idUsuario} no encontrado`);
+    }
+
+    // Guarda el usuario actualizado en la base de datos
+    const usuarioGuardado =
+      await this.usuariosRepository.save(usuarioActualizado);
+
+    const usuarioConRelaciones = await this.usuariosRepository.findOne({
+      where: { id: usuarioGuardado.id },
+      relations: ['direccion', 'rol'],
+    });
+
+    if (!usuarioConRelaciones) {
+      throw new NotFoundException(
+        `Usuario con ID ${idUsuario} no encontrado después de actualizar`,
+      );
+    }
+
+    // Mapea al DTO y retorna
+    return toOutputUserDTO(usuarioConRelaciones);
+  }
+
+  //cambiar contraseña
+  async cambiarContrasena(
+    idUsuario: number,
+    nuevaContrasena: string,
+  ): Promise<void> {
+    const usuario = await this.validateUserExists(idUsuario);
+    usuario.contrasena = await bcrypt.hash(nuevaContrasena, 10);
+    await this.usuariosRepository.save(usuario);
+  }
+
+  async cambiarRol(
+    idUsuario: number,
+    idRol: number,
+    currentUser: { id: number; username: string; role: string }, // Tipo ajustado
+  ): Promise<OutputUserDTO> {
+    console.log('CurrentUser en cambiarRol:', currentUser);
+
+    // Validar si el usuario actual tiene un rol definido
+    if (!currentUser.role) {
+      throw new UnauthorizedException('Rol no definido en el usuario actual');
+    }
+
+    // Verificar que el usuario actual tiene permisos para cambiar roles
+    if (currentUser.role !== 'Super Admin' && currentUser.role !== 'Admin') {
+      throw new UnauthorizedException('No tienes permiso para cambiar roles');
+    }
+
+    // Cargar el usuario objetivo con sus relaciones
+    const usuario = await this.usuariosRepository.findOne({
+      where: { id: idUsuario },
+      relations: ['rol'],
+    });
+
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${idUsuario} no encontrado`);
+    }
+
+    // Cargar el nuevo rol a asignar
+    const rol = await this.rolRepository.findOne({ where: { id: idRol } });
+    if (!rol) {
+      throw new NotFoundException(`Rol con ID ${idRol} no encontrado`);
+    }
+
+    // Evitar que un administrador pueda asignar el rol de superadministrador
+    if (rol.nombre === 'Super Admin' && currentUser.role !== 'Super Admin') {
+      throw new UnauthorizedException(
+        'Solo un superadministrador puede asignar el rol de superadministrador',
+      );
+    }
+
+    // Evitar que un administrador pueda asignar el rol de administrador
+    if (rol.nombre === 'Admin' && currentUser.role !== 'Super Admin') {
+      throw new UnauthorizedException(
+        'Solo un superadministrador puede asignar el rol de administrador',
+      );
+    }
+
+    // Actualizar el rol del usuario objetivo
+    usuario.rol = rol;
+
+    // Guardar los cambios
+    const usuarioGuardado = await this.usuariosRepository.save(usuario);
+
+    // Recargar las relaciones para el DTO final
+    const usuarioConRelaciones = await this.usuariosRepository.findOne({
+      where: { id: usuarioGuardado.id },
+      relations: ['rol'],
+    });
+
+    if (!usuarioConRelaciones) {
+      throw new NotFoundException(
+        `Usuario con ID ${idUsuario} no encontrado después de actualizar`,
+      );
+    }
+
+    // Mapear al DTO y retornar
+    return toOutputUserDTO(usuarioConRelaciones);
   }
   /**Elimina un usuario según su id */
-  async deleteUser(id: number): Promise<{ message: string }> {
-    //verificar id
+  async deleteUser(
+    id: number,
+    currentUser: { id: number; role: string },
+  ): Promise<{ message: string }> {
+    // Verificar si el usuario a eliminar existe
     const usuario = await this.usuariosRepository.findOne({
       where: { id },
-      relations: { direccion: true },
+      relations: ['rol'], // Cargar relaciones necesarias
     });
+
     if (!usuario) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
-    // usuario.direccion = []
-    //eliminar usuario
-    await this.usuariosRepository.softDelete(id);
-    // await this.usuariosRepository.delete(id);
-    return { message: `Usuario con ID ${id} eliminado con éxito` };
-  }
 
-  async findByUsername(nombreUsuario: string): Promise<Usuario> {
-    const usuario = await this.usuariosRepository.findOne({
-      where: { nombreUsuario },
-      relations: ['rol'],
-    });
-    if (!usuario) {
-      throw new NotFoundException(
-        `Usuario con nombre de usuario ${nombreUsuario} no encontrado`,
+    if (currentUser.role === 'Super Admin') {
+      // Evitar que un Super Admin se elimine si es el último
+      if (currentUser.id === usuario.id) {
+        const superAdminsCount = await this.usuariosRepository.count({
+          where: { rol: { nombre: 'Super Admin' } },
+        });
+
+        if (superAdminsCount <= 1) {
+          throw new BadRequestException(
+            'No puedes eliminarte a ti mismo porque eres el último superadministrador',
+          );
+        }
+      }
+
+      // Evitar que un Super Admin elimine a otros Super Admins
+      if (
+        usuario.rol.nombre === 'Super Admin' &&
+        currentUser.id !== usuario.id
+      ) {
+        throw new UnauthorizedException(
+          'No puedes eliminar a otro superadministrador',
+        );
+      }
+    } else if (currentUser.role === 'Admin') {
+      // Un administrador no puede eliminar superadministradores ni otros administradores
+      if (
+        usuario.rol.nombre === 'Super Admin' ||
+        usuario.rol.nombre === 'Admin'
+      ) {
+        throw new UnauthorizedException(
+          'No tienes permiso para eliminar este usuario',
+        );
+      }
+    } else if (currentUser.role === 'Cliente') {
+      // Un cliente solo puede eliminarse a sí mismo
+      if (currentUser.id !== usuario.id) {
+        throw new UnauthorizedException(
+          'No tienes permiso para eliminar a otro usuario',
+        );
+      }
+    } else {
+      throw new UnauthorizedException(
+        'No tienes permisos para eliminar usuarios',
       );
     }
-    return usuario;
-  }
 
-  /**Retorna los pedidos asociados a un id de usuario */
+    await this.usuariosRepository.softDelete(id);
+
+    return { message: `Usuario con ID ${id} eliminado con éxito` };
+  }
+  //Obtener pedidos por usuario.
   async findPedidos(
-    user: any,
-    idUsuario?: number,
+    currentUser: any,
+    idUsuario: number,
   ): Promise<GetPedidoUsuarioDto[]> {
-    try {
-      if (user.role === 'Admin' || user.role === 'Super Admin') {
-        const pedidos: Pedido[] = await this.pedidosRepository.find({
-          where: { idUsuario: idUsuario },
-          relations: [
-            'medioPago',
-            'estadoPedido',
-            'tipoDespacho',
-            'carro',
-            'usuario',
-            'Pago',
-            'direccionEnvio',
-            'productosPedido',
-          ],
-        });
-        console.log('pedidos', pedidos);
-        if (pedidos.length > 0) {
-          return pedidos.map((pedido) => mapperPedido.toDtoUsuario(pedido));
-        } else {
-          return [];
-        }
-      }
-      if (user.role == 'Cliente') {
-        if (user.id !== idUsuario) {
-          throw new UnauthorizedException('error');
-        }
-        const pedidosCliente = await this.pedidosRepository.find({
-          where: {
-            idUsuario: user.id,
-          },
-        });
-        if (pedidosCliente.length > 0) {
-          return pedidosCliente.map((pedido) =>
-            mapperPedido.toDtoUsuario(pedido),
-          );
-        } else {
-          return [];
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException('Error al obtener pedidos del usuario');
+    if (currentUser.role === 'Admin' || currentUser.role === 'Super Admin') {
+      // Los administradores y superadministradores pueden acceder a cualquier usuario
+      const pedidos = await this.pedidosRepository.find({
+        where: { idUsuario },
+        relations: [
+          'medioPago',
+          'estadoPedido',
+          'tipoDespacho',
+          'carro',
+          'usuario',
+          'Pago',
+          'direccionEnvio',
+          'productosPedido',
+        ],
+      });
+      return pedidos.map((pedido) => mapperPedido.toDtoUsuario(pedido));
     }
-  }
 
+    if (currentUser.role === 'Cliente') {
+      // Verifica que el cliente solo acceda a sus propios pedidos
+      if (currentUser.id !== idUsuario) {
+        throw new UnauthorizedException(
+          'No tienes permiso para acceder a estos pedidos',
+        );
+      }
+
+      const pedidosCliente = await this.pedidosRepository.find({
+        where: { idUsuario: currentUser.id },
+        relations: [
+          'medioPago',
+          'estadoPedido',
+          'tipoDespacho',
+          'carro',
+          'usuario',
+          'Pago',
+          'direccionEnvio',
+          'productosPedido',
+        ],
+      });
+
+      return pedidosCliente.map((pedido) => mapperPedido.toDtoUsuario(pedido));
+    }
+
+    // Si el rol no es válido
+    throw new UnauthorizedException(
+      'No tienes permisos para acceder a los pedidos',
+    );
+  }
   /**Actualiza el medio de pago de un usuario según su id */
   async updateMedioPago(
     idUsuario: number,
@@ -306,5 +405,16 @@ export class UsuariosService {
     });
     await this.usuariosRepository.update(id, usuario);
     return toOutputUserDTO(usuario);
+  }
+
+  private async validateUserExists(id: number): Promise<Usuario> {
+    const usuario = await this.usuariosRepository.findOne({
+      where: { id },
+      relations: ['rol'],
+    });
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    return usuario;
   }
 }

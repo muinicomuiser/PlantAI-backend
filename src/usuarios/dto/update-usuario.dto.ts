@@ -19,11 +19,6 @@ export class UpdateUsuarioDto {
   @IsOptional()
   apellido?: string;
 
-  @ApiPropertyOptional({ example: 'clave1234' })
-  @IsString()
-  @IsOptional()
-  contrasena?: string;
-
   @ApiPropertyOptional({ example: 'jhon.smith' })
   @IsString()
   @IsOptional()
@@ -56,9 +51,4 @@ export class UpdateUsuarioDto {
   @IsISO8601()
   @IsOptional()
   fechaNacimiento?: string;
-
-  @ApiPropertyOptional({ example: 3 })
-  @IsNumber()
-  @IsOptional()
-  idRol?: number;
 }
