@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetCarroComprasDto } from 'src/carro-compras/dto/get-carro-compras.dto';
 import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
@@ -25,50 +30,61 @@ export class PedidosService {
     @InjectRepository(DireccionEnvio)
     private direccionEnvioRepository: Repository<DireccionEnvio>,
     @Inject(CarroComprasService)
-    private readonly carroComprasService: CarroComprasService
-  ) { }
+    private readonly carroComprasService: CarroComprasService,
+  ) {}
 
-  async create(idUsuario: number, createPedidoDto: CreatePedidoDto): Promise<GetPedidoDto> {
+  async create(
+    idUsuario: number,
+    createPedidoDto: CreatePedidoDto,
+  ): Promise<GetPedidoDto> {
     try {
       //Cerrar carro
-      const carroCerrado: GetCarroComprasDto = await this.carroComprasService.closeCarro(idUsuario, createPedidoDto);
+      const carroCerrado: GetCarroComprasDto =
+        await this.carroComprasService.closeCarro(idUsuario, createPedidoDto);
       //Crear carro nuevo al usuario
       await this.carroComprasService.createCarro(idUsuario);
       //Guardar pedido
-      const newPedido = Object.assign(new Pedido(), createPedidoDto)
+      const newPedido = Object.assign(new Pedido(), createPedidoDto);
       newPedido.idCarro = carroCerrado.id;
       newPedido.idUsuario = idUsuario;
-      newPedido.direccionEnvio = null
+      newPedido.direccionEnvio = null;
       const pedidoGuardado = await this.pedidoRepository.save(newPedido);
-      console.log(pedidoGuardado)
-      const nuevaDireccion: DireccionEnvio = Object.assign(new DireccionEnvio(), createPedidoDto.direccionEnvio)
-      nuevaDireccion.idPedido = pedidoGuardado.id
-      const direccionGuardada = await this.direccionEnvioRepository.save(nuevaDireccion)
+      console.log(pedidoGuardado);
+      const nuevaDireccion: DireccionEnvio = Object.assign(
+        new DireccionEnvio(),
+        createPedidoDto.direccionEnvio,
+      );
+      nuevaDireccion.idPedido = pedidoGuardado.id;
+      const direccionGuardada =
+        await this.direccionEnvioRepository.save(nuevaDireccion);
       //Llenar Productos-Pedido (Pasar a mapper)
-      const productosPedido: ProductoPedido[] = carroCerrado.carroProductos.map(carroProducto => {
-        const productoPedido: ProductoPedido = new ProductoPedido()
-        productoPedido.cantidad = carroProducto.cantidadProducto;
-        productoPedido.idPedido = pedidoGuardado.id;
-        productoPedido.idProducto = carroProducto.producto.id;
-        productoPedido.precioCompraUnidad = carroProducto.producto.precio;
-        return productoPedido
-      })
-      const newProductosPedido = await this.productoPedidoRepository.save(productosPedido)
+      const productosPedido: ProductoPedido[] = carroCerrado.carroProductos.map(
+        (carroProducto) => {
+          const productoPedido: ProductoPedido = new ProductoPedido();
+          productoPedido.cantidad = carroProducto.cantidadProducto;
+          productoPedido.idPedido = pedidoGuardado.id;
+          productoPedido.idProducto = carroProducto.producto.id;
+          productoPedido.precioCompraUnidad = carroProducto.producto.precio;
+          return productoPedido;
+        },
+      );
+      const newProductosPedido =
+        await this.productoPedidoRepository.save(productosPedido);
       await Promise.all(
-        newProductosPedido.map(async productoPedido => {
-          const producto: Producto = await this.productoRepository.findOneBy({ id: productoPedido.idProducto })
-          producto.unidadesVendidas += productoPedido.cantidad
-          producto.stock -= productoPedido.cantidad
-          await this.productoRepository.save(producto)
-        })
-      )
-      pedidoGuardado.productosPedido = newProductosPedido
-      pedidoGuardado.direccionEnvio = direccionGuardada
+        newProductosPedido.map(async (productoPedido) => {
+          const producto: Producto = await this.productoRepository.findOneBy({
+            id: productoPedido.idProducto,
+          });
+          producto.unidadesVendidas += productoPedido.cantidad;
+          producto.stock -= productoPedido.cantidad;
+          await this.productoRepository.save(producto);
+        }),
+      );
+      pedidoGuardado.productosPedido = newProductosPedido;
+      pedidoGuardado.direccionEnvio = direccionGuardada;
       return mapperPedido.toDto(pedidoGuardado);
-    }
-    catch (error) {
-      console.log(error)
-      throw new BadRequestException('Error al crear el pedido')
+    } catch (error) {
+      throw new BadRequestException('Error al crear el pedido');
     }
   }
 

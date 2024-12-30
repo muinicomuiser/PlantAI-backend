@@ -13,6 +13,7 @@ import { UsuariosService } from 'src/usuarios/service/usuarios.service';
 import { Repository } from 'typeorm';
 import { LoginDto } from '../dto/login.dto';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
 @Injectable()
 export class AuthService {
@@ -21,42 +22,61 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+    @InjectRepository(Usuario)
+    private readonly userRepository: Repository<Usuario>,
+  ) {}
 
-  private createTokenPayload(user: any) {
-    return {
-      username: user.username,
-      sub: user.id,
-      role: user.rol,
-    };
-  }
-  async validarUsuario(
-    nombreUsuario: string,
-    contrasena: string,
-  ): Promise<any> {
-    const user = await this.usuariosService.findByUsername(nombreUsuario);
+  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+    const { usernameOrEmail, password } = loginDto;
+
+    const user = await this.userRepository.findOne({
+      where: [{ nombreUsuario: usernameOrEmail }, { email: usernameOrEmail }],
+    });
+
     if (!user) {
-      return null;
+      throw new UnauthorizedException('Usuario no encontrado');
     }
-    // poder gestionar usuarios de legado con contraseñas  texto plano:
-    const isPasswordValid =
-      user.contrasena.length === 60
-        ? await bcrypt.compare(contrasena, user.contrasena)
-        : user.contrasena === contrasena;
-    if (user.contrasena.length !== 60) {
-      console.warn(
-        `usuario con ID ${user.id} no tiene cifrada su contraseña. Considerar actualuizar`,
-      );
+
+    // Verificar contraseña
+    const isPasswordValid = await this.validatePassword(
+      password,
+      user.contrasena,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Contraseña incorrecta');
     }
-    if (isPasswordValid) {
-      return {
-        id: user.id,
-        username: user.nombreUsuario,
-        rol: user.rol.nombre,
-      };
-    }
-    return null;
+
+    const payload = this.createTokenPayload(user);
+    const token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET || 'defaultSecretKey',
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
+
+    return { access_token: token };
   }
+
+  private async validatePassword(
+    plainPassword: string,
+    storedPassword: string,
+  ): Promise<boolean> {
+    // Verificar si la contraseña almacenada está encriptada (bcrypt)
+    const isEncrypted =
+      storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2a$');
+
+    if (isEncrypted) {
+      // Comparar usando bcrypt
+      return bcrypt.compare(plainPassword, storedPassword);
+    }
+
+    // Comparar contraseñas sin encriptar (usuarios antiguos)
+    return plainPassword === storedPassword;
+  }
+
+  private createTokenPayload(user: Usuario): any {
+    return { sub: user.id, username: user.nombreUsuario, role: user.rol };
+  }
+
   async register(createUsuarioDto: CreateUsuarioDto): Promise<OutputUserDTO> {
     try {
       const salt = 10;
@@ -66,7 +86,7 @@ export class AuthService {
       );
       // buscar rol en base
       const rol = await this.rolRepository.findOne({
-        where: { id: createUsuarioDto.idRol },  // <-- Los usuarios nuevos registrados quedan siempre como Cliente
+        where: { id: createUsuarioDto.idRol }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente
       });
       if (!rol) {
         throw new NotFoundException(
@@ -75,25 +95,8 @@ export class AuthService {
       }
       //pasar rol al metodo de crea
       return this.usuariosService.createUser(createUsuarioDto, rol);
+    } catch (error) {
+      throw new BadRequestException('Error al registrar usuario');
     }
-    catch (error) {
-      throw new BadRequestException('Error al registrar usuario')
-    }
-  }
-
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
-    const { username, password } = loginDto;
-    const user = await this.validarUsuario(username, password);
-
-    if (!user) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-    const payload = this.createTokenPayload(user);
-    const token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET || 'defaultSecretKey',
-      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
-    });
-
-    return { access_token: token };
   }
 }
