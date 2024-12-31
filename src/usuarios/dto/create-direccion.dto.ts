@@ -1,23 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from "class-validator"
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator"
 
 export class CreateDireccionDto {
 
-    @ApiProperty({ name: 'nombre', example: 'Juanito' })
+    @ApiProperty({ name: 'nombre', example: 'Juanito', required: false })
     @IsString()
     @IsNotEmpty()
     @MaxLength(25, {
         message: 'El nombre excede la extensión máxima de 25 caracteres',
     })
-    nombre: string
+    @IsOptional()
+    nombre?: string
 
-    @ApiProperty({ name: 'apellido', example: 'Alcornoque' })
+    @ApiProperty({ name: 'apellido', example: 'Alcornoque', required: false })
     @IsString()
     @IsNotEmpty()
     @MaxLength(15, {
         message: 'El nombre excede la extensión máxima de 15 caracteres',
     })
-    apellido: string
+    @IsOptional()
+    apellido?: string
 
     @ApiProperty({ name: 'region', example: 'Región Metropolitana' })
     @IsString()
@@ -41,14 +43,17 @@ export class CreateDireccionDto {
     @IsString()
     numero: string
 
-    @ApiProperty({ name: 'departamento', example: '1201' })
-    @IsString()
-    departamento: string
-    @ApiProperty({ name: 'referencia', example: 'Al lado de la copec' })
+    @ApiProperty({ name: 'departamento', example: '1201', required: false })
+    @MaxLength(4)
     @IsString()
     @IsOptional()
+    departamento?: string
+
+    @ApiProperty({ name: 'referencia', example: 'Al lado de la copec', required: false })
+    @IsString()
     @MaxLength(30, {
         message: 'La referencia excede el máximo de caracteres',
     })
+    @IsOptional()
     referencia?: string
 }

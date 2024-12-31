@@ -7,7 +7,7 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 @ApiTags('Equipo')
 @Controller('equipo')
 export class EquipoController {
-  constructor(private readonly equipoService: EquipoService) {}
+  constructor(private readonly equipoService: EquipoService) { }
 
   /**Responde con toda la información del equipo.*/
   @ApiOperation({ summary: 'Obtener toda la información del equipo' })
@@ -20,6 +20,7 @@ export class EquipoController {
   /**Responde con información del área del equipo correspondiente al parámetro ingresado.*/
   @ApiOperation({ summary: 'Obtener área por nombre' })
   @ApiResponse({ status: 200, description: 'Devuelve información del área' })
+  @ApiParam({ name: 'area', enum: ['UXUI', 'Mobile', 'Frontend', 'Backend'] })
   @ApiResponse({ status: 404, description: 'No existe un area con ese nombre' })
   @Get('area/:area')
   obtenerEquipoPorArea(

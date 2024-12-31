@@ -63,7 +63,7 @@ export class EquipoService {
 
   constructor() {
     /**Inicialización de equipo y arreglo de áreas.*/
-    this.equipo = new Equipo('Cotiledón', borisSuazo, nicoLavanderos, [
+    this.equipo = new Equipo('Cotiledón', vicenteDonoso, [
       uxui,
       frontend,
       backend,

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Request,
   Get,
   Param,
   ParseIntPipe,
@@ -23,7 +24,7 @@ import { ProductoExistentePipe } from '../pipe/validar-producto-existente.pipe';
 import { CarroComprasService } from '../service/carro-compras.service';
 import { NoStockProductosCarroDto } from '../dto/no-stock-carro-productos.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtUser, RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 
 /**Historia de Usuario 9: Añadir Productos al Carrito de Compras */
@@ -91,7 +92,8 @@ export class CarroComprasController {
 
   // Crear carro de compras
   @ApiTags('Carro de compras - Admin')
-  @ApiOperation({ summary: 'Crea un nuevo carro de compras para un usuario.' })
+  @ApiTags('Carro de compras - Cliente')
+  @ApiOperation({ summary: 'Crea un nuevo carro de compras para un usuario. Si el usuario logueado es Cliente, solo puede crearse un carro a sí mismo.' })
   @ApiResponse({
     status: 201,
     description: 'Carro creado',
@@ -105,7 +107,7 @@ export class CarroComprasController {
   @ApiResponse({ status: 404, description: 'No existe un usuario con el ID' })
   @ApiBearerAuth('access-token')
   @Post(':idUsuario')
-  @Roles('Super Admin', 'Admin')
+  @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async createCarro(
     @Param(
@@ -115,8 +117,10 @@ export class CarroComprasController {
       ValidarCarroActivoPipe,
     )
     idUsuario: number,
+    @Request() request: Request
   ) {
-    return await this.carroComprasService.createCarro(idUsuario);
+    const currentUser: JwtUser = request['user']
+    return await this.carroComprasService.validateCreateCarro(idUsuario, currentUser);
   }
 
   // Eliminar carro de compras

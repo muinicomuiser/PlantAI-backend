@@ -25,12 +25,6 @@ export class GetPedidoUsuarioDto {
   })
   fechaEntrega: Date;
 
-  @ApiProperty({ type: [GetProductoPedidoDto] })
-  productosPedido: GetProductoPedidoDto[]
-
-  @ApiProperty({ type: GetDireccionEnvioDto })
-  direccionEnvio: GetDireccionEnvioDto;
-
   @ApiProperty({ example: 'Entregado' })
   nombreEstadoPedido: string; // Por id_estado
 
@@ -39,6 +33,13 @@ export class GetPedidoUsuarioDto {
 
   @ApiProperty({ example: 'Juanito' })
   receptor: string;
+
+  @ApiProperty({ type: GetDireccionEnvioDto })
+  direccionEnvio: GetDireccionEnvioDto;
+
+  @ApiProperty({ type: [GetProductoPedidoDto] })
+  productosPedido: GetProductoPedidoDto[]
+
 
   // @ApiProperty()
   // usuario?: Usuario; // Por id_usuario

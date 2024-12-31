@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
@@ -19,6 +20,7 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import { CARRO_RELATIONS } from '../shared/constants/carro-relaciones';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { NoStockProductosCarroDto } from '../dto/no-stock-carro-productos.dto';
+import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 
 @Injectable()
 export class CarroComprasService {
@@ -31,11 +33,28 @@ export class CarroComprasService {
     private readonly carroProductoRepository: Repository<CarroProducto>,
   ) { }
 
+  async validateCreateCarro(idUsuario: number, currentUser: JwtUser): Promise<GetCarroComprasDto> {
+    if (currentUser.role == 'Cliente' || currentUser.role == 'Visitante') {
+      if (idUsuario != currentUser.id) {
+        throw new UnauthorizedException()
+      }
+    }
+    return await this.createCarro(idUsuario)
+  }
+
   /**Crea un carro activo a un usuario. */
   async createCarro(idUsuario: number): Promise<GetCarroComprasDto> {
-    const nuevoCarro = new CarroCompra(idUsuario);
-    const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
-    return CarroComprasMapper.carroEntityToDto(carroGuardado);
+    const carroActivoExiste: boolean = await this.carroComprasRepository.exists({
+      where: {
+        idUsuario: idUsuario,
+        fecha_cierre: null
+      }
+    })
+    if (!carroActivoExiste) {
+      const nuevoCarro = new CarroCompra(idUsuario);
+      const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
+      return CarroComprasMapper.carroEntityToDto(carroGuardado);
+    }
   }
 
   /**Retorna un DTO de carro de compras según su id. */

@@ -9,12 +9,10 @@ export class Equipo {
   constructor(
     nombre: string,
     lider: Integrante,
-    scrumMaster: Integrante,
     areas: Area[],
   ) {
     this.nombre = nombre;
     this.lider = lider;
-    this.scrumMaster = scrumMaster;
     this.areas = areas;
   }
 }
