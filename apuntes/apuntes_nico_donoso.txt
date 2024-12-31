@@ -7,6 +7,7 @@ Aut:
 Usuarios:
     Paginación de Get todos los usuarios.
     Considerar por búsqueda por nombreusuario, email y rut.
+    Verificar cómo se guardan y relacionan los usuarios visitantes. Si al repetir correo se modifica el mismo registro, o se guardan aparte.
 
 Productos:
     Falta:

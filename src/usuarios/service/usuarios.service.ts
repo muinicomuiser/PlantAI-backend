@@ -24,9 +24,11 @@ import * as bcrypt from 'bcryptjs';
 
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 import { v4 as UUIDv4 } from 'uuid';
+import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { CreateDireccionDto } from '../dto/create-direccion.dto';
 import { Direccion } from '../entities/direccion.entity';
 import { create } from 'domain';
+
 
 @Injectable()
 export class UsuariosService {
@@ -143,7 +145,7 @@ export class UsuariosService {
   async cambiarRol(
     idUsuario: number,
     idRol: number,
-    currentUser: { id: number; username: string; role: string }, // Tipo ajustado
+    currentUser: JwtUser, // Tipo ajustado
   ): Promise<OutputUserDTO> {
     console.log('CurrentUser en cambiarRol:', currentUser);
 
@@ -152,20 +154,16 @@ export class UsuariosService {
       throw new UnauthorizedException('Rol no definido en el usuario actual');
     }
 
-    // Verificar que el usuario actual tiene permisos para cambiar roles
-    if (currentUser.role !== 'Super Admin' && currentUser.role !== 'Admin') {
-      throw new UnauthorizedException('No tienes permiso para cambiar roles');
-    }
+    // // Verificar que el usuario actual tiene permisos para cambiar roles
+    // if (currentUser.role !== 'Super Admin' && currentUser.role !== 'Admin') {
+    //   throw new UnauthorizedException('No tienes permiso para cambiar roles');
+    // }
 
     // Cargar el usuario objetivo con sus relaciones
     const usuario = await this.usuariosRepository.findOne({
       where: { id: idUsuario },
       relations: ['rol'],
     });
-
-    if (!usuario) {
-      throw new NotFoundException(`Usuario con ID ${idUsuario} no encontrado`);
-    }
 
     // Cargar el nuevo rol a asignar
     const rol = await this.rolRepository.findOne({ where: { id: idRol } });
@@ -193,7 +191,6 @@ export class UsuariosService {
     // Guardar los cambios
     const usuarioGuardado = await this.usuariosRepository.save(usuario);
 
-    // Recargar las relaciones para el DTO final
     const usuarioConRelaciones = await this.usuariosRepository.findOne({
       where: { id: usuarioGuardado.id },
       relations: ['rol'],
@@ -208,6 +205,7 @@ export class UsuariosService {
     // Mapear al DTO y retornar
     return toOutputUserDTO(usuarioConRelaciones);
   }
+
   /**Elimina un usuario según su id */
   async deleteUser(
     id: number,
@@ -218,10 +216,6 @@ export class UsuariosService {
       where: { id },
       relations: ['rol'], // Cargar relaciones necesarias
     });
-
-    if (!usuario) {
-      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-    }
 
     if (currentUser.role === 'Super Admin') {
       // Evitar que un Super Admin se elimine si es el último
@@ -275,7 +269,7 @@ export class UsuariosService {
   }
   //Obtener pedidos por usuario.
   async findPedidos(
-    currentUser: any,
+    currentUser: JwtUser,
     idUsuario: number,
   ): Promise<GetPedidoUsuarioDto[]> {
     if (currentUser.role === 'Admin' || currentUser.role === 'Super Admin') {
@@ -376,8 +370,12 @@ export class UsuariosService {
     const rol = await this.rolRepository.findOne({
       where: { id: 4 },
     });
-    const nombreUsuario =
-      createGuestUsuarioDto.nombre + '-' + UUIDv4().split('-')[1];
+    let nombreUsuario =
+      createGuestUsuarioDto.nombre + '-' + UUIDv4().split('-')[4];
+    if (nombreUsuario.length > 25) {
+      nombreUsuario = nombreUsuario.slice(0, 25)
+      console.log(nombreUsuario)
+    }
     const usuario = this.usuariosRepository.create({
       ...createGuestUsuarioDto,
       nombreUsuario,
@@ -396,12 +394,14 @@ export class UsuariosService {
     return user;
   }
 
+
+  // Revisar. Si se está permitiendo que se repita el mail en usuarios visitantes, qué usuario actualizará??
   async updateGuestUser(
     id: number,
     createUsuarioDto: CreateUsuarioDto,
   ): Promise<OutputUserDTO> {
     const rol = await this.rolRepository.findOne({
-      where: { id: createUsuarioDto.idRol },
+      where: { id: 3 },
     });
     const usuario = this.usuariosRepository.create({
       ...createUsuarioDto,

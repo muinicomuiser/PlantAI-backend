@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/auth/decorators/roles.decorator';
 
-interface JwtPayload {
+export interface JwtPayload {
   role: string;
   username: string;
   sub: number;
@@ -21,7 +21,7 @@ export interface JwtUser {
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) { }
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(

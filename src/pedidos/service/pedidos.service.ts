@@ -17,6 +17,10 @@ import { PEDIDOS_RELATIONS } from '../shared/constants/pedidos.constants';
 import { CreateDireccionEnvioDto } from '../dto/create-direccion-envio.dto';
 import { DireccionEnvio } from '../entities/direccion-envio.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { UsuariosService } from 'src/usuarios/service/usuarios.service';
+import { Direccion } from 'src/usuarios/entities/direccion.entity';
+import { GetCarroProductoDto } from 'src/carro-compras/dto/get-carro-producto.dto';
 
 @Injectable()
 export class PedidosService {
@@ -29,40 +33,123 @@ export class PedidosService {
     private productoRepository: Repository<Producto>,
     @InjectRepository(DireccionEnvio)
     private direccionEnvioRepository: Repository<DireccionEnvio>,
+    @InjectRepository(Usuario)
+    private usuarioRepository: Repository<Usuario>,
     @Inject(CarroComprasService)
     private readonly carroComprasService: CarroComprasService,
-  ) {}
+
+  ) { }
 
   async create(
     idUsuario: number,
     createPedidoDto: CreatePedidoDto,
   ): Promise<GetPedidoDto> {
     try {
-      //Cerrar carro
+
+      // Validar índice de dirección guardada, si aplica
+      if (!createPedidoDto.direccionEnvio) {
+        await this.validarIndiceDireccion(idUsuario, createPedidoDto.idxDireccion)
+      }
+
+      // Cerrar carro del usuario
       const carroCerrado: GetCarroComprasDto =
         await this.carroComprasService.closeCarro(idUsuario, createPedidoDto);
-      //Crear carro nuevo al usuario
+
+      // Guardar pedido
+      const pedidoGuardado = await this.guardarPedido(createPedidoDto, carroCerrado.id, idUsuario);
+
+      // Asociar dirección nueva o guardada al pedido
+      const direccion: DireccionEnvio = createPedidoDto.direccionEnvio
+        ? await this.guardarDireccion(createPedidoDto, pedidoGuardado.id)
+        : await this.direccionRegistrada(idUsuario, createPedidoDto.idxDireccion, pedidoGuardado.id)
+
+      // Registrar productos del pedido
+      const productosPedido: ProductoPedido[] = await this.guardarProductosPedido(carroCerrado.carroProductos, pedidoGuardado.id)
+
+      // Crear carro nuevo activo al usuario
       await this.carroComprasService.createCarro(idUsuario);
-      //Guardar pedido
-      const newPedido = Object.assign(new Pedido(), createPedidoDto);
-      newPedido.idCarro = carroCerrado.id;
-      newPedido.idUsuario = idUsuario;
-      newPedido.direccionEnvio = null;
-      const pedidoGuardado = await this.pedidoRepository.save(newPedido);
-      console.log(pedidoGuardado);
+
+      // Dto salida
+      pedidoGuardado.productosPedido = productosPedido;
+      pedidoGuardado.direccionEnvio = direccion;
+      return mapperPedido.toDto(pedidoGuardado);
+    } catch (error) {
+      throw new BadRequestException('Error al crear el pedido');
+    }
+  }
+
+  private async validarIndiceDireccion(idUsuario: number, idxDireccion: number): Promise<void> {
+    try {
+      const usuario: Usuario = await this.usuarioRepository.findOne({
+        where: { id: idUsuario },
+        relations: ['direccion']
+      });
+      if (usuario.direccion.length <= idxDireccion) {
+        throw new BadRequestException('Error al utilizar dirección registrada')
+      }
+    }
+    catch (error) {
+      throw new BadRequestException('Error al utilizar dirección registrada')
+    }
+  }
+
+  private async guardarDireccion(createPedidoDto: CreatePedidoDto, idPedido: number): Promise<DireccionEnvio> {
+    try {
       const nuevaDireccion: DireccionEnvio = Object.assign(
         new DireccionEnvio(),
         createPedidoDto.direccionEnvio,
       );
-      nuevaDireccion.idPedido = pedidoGuardado.id;
-      const direccionGuardada =
-        await this.direccionEnvioRepository.save(nuevaDireccion);
-      //Llenar Productos-Pedido (Pasar a mapper)
-      const productosPedido: ProductoPedido[] = carroCerrado.carroProductos.map(
+      nuevaDireccion.idPedido = idPedido;
+      return await this.direccionEnvioRepository.save(nuevaDireccion);
+    }
+    catch (error) {
+      throw new BadRequestException('Error al guardar la dirección')
+    }
+  }
+
+  /**Obtiene la dirección, dentro del conjunto de direcciones del usuario, correspondiente al índice ingresado. */
+  private async direccionRegistrada(idUsuario: number, idxDireccion: number, idPedido: number): Promise<DireccionEnvio> {
+    try {
+      const usuario: Usuario = await this.usuarioRepository.findOne({
+        where: { id: idUsuario },
+        relations: ['direccion']
+      });
+
+      const direccionUsuario: Direccion = usuario.direccion[idxDireccion];
+      const direccionEnvio: DireccionEnvio = new DireccionEnvio()
+      direccionEnvio.calle = direccionUsuario.calle;
+      direccionEnvio.comuna = direccionUsuario.comuna
+      direccionEnvio.departamento = direccionUsuario.departamento;
+      direccionEnvio.idPedido = idPedido
+      direccionEnvio.numero = direccionUsuario.numero;
+      direccionEnvio.referencia = direccionUsuario.referencia
+      return await this.direccionEnvioRepository.save(direccionEnvio);
+    }
+    catch (error) {
+      throw new BadRequestException('Error al utilizar dirección registrada')
+    }
+  }
+
+  private async guardarPedido(createPedidoDto: CreatePedidoDto, idCarro: number, idUsuario: number): Promise<Pedido> {
+    try {
+      const newPedido = Object.assign(new Pedido(), createPedidoDto);
+      newPedido.idCarro = idCarro;
+      newPedido.idUsuario = idUsuario;
+      newPedido.direccionEnvio = null;
+      return await this.pedidoRepository.save(newPedido);
+    }
+    catch (error) {
+      throw new BadRequestException('Error al guardar pedido')
+    }
+  }
+
+  private async guardarProductosPedido(carroProductos: GetCarroProductoDto[], idPedido: number): Promise<ProductoPedido[]> {
+    try {
+      const productosPedido: ProductoPedido[] = carroProductos.map(
         (carroProducto) => {
           const productoPedido: ProductoPedido = new ProductoPedido();
           productoPedido.cantidad = carroProducto.cantidadProducto;
-          productoPedido.idPedido = pedidoGuardado.id;
+          productoPedido.idPedido = idPedido;
           productoPedido.idProducto = carroProducto.producto.id;
           productoPedido.precioCompraUnidad = carroProducto.producto.precio;
           return productoPedido;
@@ -80,11 +167,10 @@ export class PedidosService {
           await this.productoRepository.save(producto);
         }),
       );
-      pedidoGuardado.productosPedido = newProductosPedido;
-      pedidoGuardado.direccionEnvio = direccionGuardada;
-      return mapperPedido.toDto(pedidoGuardado);
-    } catch (error) {
-      throw new BadRequestException('Error al crear el pedido');
+      return newProductosPedido;
+    }
+    catch (error) {
+      throw new BadRequestException('Error al registrar productos del pedido')
     }
   }
 

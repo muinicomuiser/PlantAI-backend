@@ -1,18 +1,18 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 
-import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
-import { AuthService } from '../service/auth.service';
-import { LoginDto } from '../dto/login.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
-import { Roles } from '../decorators/roles.decorator';
 import { ValidarCrearUsuarioPipe } from 'src/usuarios/pipe/validar-crear-usuario.pipe';
+import { LoginDto } from '../dto/login.dto';
+import { AuthService } from '../service/auth.service';
+import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 /**Historia de Usuario 2: Autenticación y Gestión de Sesiones */
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   // Registrar un usuario
   @ApiOperation({ summary: 'Registro de usuario' })

@@ -11,25 +11,26 @@ import {
   Put,
   Query,
   Request,
-  UseGuards,
-  UseInterceptors,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOperation,
-  ApiParam,
   ApiResponse,
   ApiTags,
-  getSchemaPath,
+  getSchemaPath
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { JwtUser, RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
-import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
-import { SanitizeInputInterceptor } from 'src/commons/interceptor/sanitize-create-usuario.interceptor';
 import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { ChangeRoleDto } from '../dto/change-rol-dto';
+import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -38,20 +39,16 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
-import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
-import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import { Usuario } from '../entities/usuario.entity';
-import { ChangeRoleDto } from '../dto/change-rol-dto';
-import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateDireccionDto } from '../dto/create-direccion.dto';
+
 
 @ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) { }
 
-  //Controladores de administrador.
+  // CONTROLADORES DE ADMINISTRADOR
 
   // Obtener todos los usuarios
   @ApiTags('Usuarios - Admin')
@@ -88,7 +85,10 @@ export class UsuariosController {
 
   //Modificar roles.
   @ApiTags('Usuarios - Admin')
-  @ApiOperation({ summary: 'Modifica el Rol de un usuario (Admin)' })
+  @ApiOperation({
+    summary: 'Modifica el Rol de un usuario (Admin)',
+    description: 'Solo Admin y Super Admin.'
+  })
   @ApiResponse({
     status: 200,
     description: 'Rol actualizado exitosamente',
@@ -99,12 +99,12 @@ export class UsuariosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':idUsuario/cambiar-rol')
   async cambiarRol(
-    @Param('idUsuario', ParseIntPipe) idUsuario: number,
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
     @Body() changeRoleDto: ChangeRoleDto,
-    @Request() req,
+    @Request() req: Request,
   ): Promise<OutputUserDTO> {
-    const currentUser = req.user;
-    return this.usuariosService.cambiarRol(
+    const currentUser: JwtUser = req['user'];
+    return await this.usuariosService.cambiarRol(
       idUsuario,
       changeRoleDto.idRol,
       currentUser,
@@ -162,6 +162,8 @@ export class UsuariosController {
   ): Promise<OutputUserDTO> {
     return await this.usuariosService.createUser(createUsuarioDTO, rol);
   }
+
+  // Eliminar usuario
   @ApiTags('Usuarios - Admin')
   @ApiTags('Usuarios - Admin')
   @ApiOperation({
@@ -179,13 +181,15 @@ export class UsuariosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':idUsuario')
   async deleteOne(
-    @Param('idUsuario', ParseIntPipe) idUsuario: number,
-    @Request() req,
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
+    @Request() req: Request,
   ): Promise<{ message: string }> {
-    const currentUser = req.user;
-
+    const currentUser: JwtUser = req['user'];
     return await this.usuariosService.deleteUser(idUsuario, currentUser);
   }
+
+  // CONTROLADORES DE CLIENTE
+
   // Usuarios - Clientes
   @ApiTags('Usuarios - Clientes')
   @ApiOperation({ summary: 'Actualiza la información del perfil (Cliente)' })
@@ -232,7 +236,7 @@ export class UsuariosController {
     return { message: 'Contraseña actualizada exitosamente' };
   }
 
-  //por clasificar:
+  //Obtener pedidos de un usuario
   @ApiTags('Usuarios - Clientes')
   @ApiTags('Usuarios - Admin')
   @ApiExtraModels(GetPedidoUsuarioDto)
@@ -265,7 +269,6 @@ export class UsuariosController {
     @Param('idUsuario', ParseIntPipe) idUsuario: number,
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
     const currentUser = req.user;
-    // Llama al servicio para obtener los pedidos según la lógica de roles
     const pedidosUsuario = await this.usuariosService.findPedidos(
       currentUser,
       idUsuario,
@@ -276,8 +279,9 @@ export class UsuariosController {
       pedidosUsuario.length,
     );
   }
-  @ApiTags('Usuarios - Clientes')
+
   // Modificar o agregar medio de pago
+  @ApiTags('Usuarios - Clientes')
   @ApiOperation({
     summary: 'Modifica o agrega el medio de pago de un usuario',
   })
@@ -307,9 +311,10 @@ export class UsuariosController {
       medioPagoEntity,
     );
   }
+
+  //Obtener medios de pago de un usuario
   @ApiTags('Usuarios - Clientes')
   @ApiTags('Usuarios - Admin')
-  //Obtener medios de pago de un usuario
   @ApiOperation({ summary: 'Obtiene los métodos de pago de un usuario' })
   @ApiResponse({
     status: 200,
@@ -344,10 +349,6 @@ export class UsuariosController {
   @ApiResponse({
     status: 400,
     description: 'El email ya está registrado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'El nombre de usuario ya está registrado',
   })
   @ApiBody({ type: CreateGuestUsuarioDto })
   @Post('invitado')

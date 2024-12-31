@@ -13,7 +13,7 @@ import { Producto } from 'src/productos/entities/producto.entity';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido, Producto, EstadoPedido, TipoDespacho, ProductoPedido, Usuario, DireccionEnvio]), CarroComprasModule],
+  imports: [TypeOrmModule.forFeature([Pedido, Usuario, Producto, EstadoPedido, TipoDespacho, ProductoPedido, Usuario, DireccionEnvio]), CarroComprasModule],
   controllers: [PedidosController],
   providers: [PedidosService, JwtService],
 })

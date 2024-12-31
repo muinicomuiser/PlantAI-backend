@@ -13,10 +13,10 @@ export class ValidarUsuarioExistePipe implements PipeTransform {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
-  ) {}
+  ) { }
 
   async transform(value: number, metadata: ArgumentMetadata) {
-    const usuarioExiste = await this.usuarioRepository.exist({
+    const usuarioExiste = await this.usuarioRepository.exists({
       where: { id: value },
     });
     if (!usuarioExiste) {
