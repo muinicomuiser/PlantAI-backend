@@ -136,8 +136,8 @@ Versión 1.12.0
     
     Agregados:
         - Usuarios:
-            Crear usuario invitado:
-                POST usuarios/invitado
+            Crear usuario visitante:
+                POST usuarios/visitante
 
             Modificar perfil de usuario:
                 PUT usuarios

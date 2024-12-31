@@ -42,7 +42,7 @@ import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
 
 
-@ApiBearerAuth('access-token')
+
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) { }
@@ -70,6 +70,7 @@ export class UsuariosController {
     },
   })
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
@@ -108,6 +109,7 @@ export class UsuariosController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('rut/:rut')
@@ -146,6 +148,7 @@ export class UsuariosController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('email/:email')
@@ -184,6 +187,7 @@ export class UsuariosController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('name/:name')
@@ -208,6 +212,7 @@ export class UsuariosController {
     type: OutputUserDTO,
   })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':idUsuario/cambiar-rol')
@@ -240,6 +245,7 @@ export class UsuariosController {
     status: 404,
     description: 'No hay un usuario con ese id',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':idUsuario')
@@ -272,6 +278,7 @@ export class UsuariosController {
     description: 'El nombre de usuario ya está registrado',
   })
   @ApiBody({ type: CreateUsuarioDto })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @Post()
   async create(
@@ -294,6 +301,7 @@ export class UsuariosController {
       example: { message: 'Usuario con ID 1 eliminado con éxito' },
     },
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':idUsuario')
@@ -319,6 +327,7 @@ export class UsuariosController {
     status: 403,
     description: 'No puedes modificar el perfil de otro usuario',
   })
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Put()
   async actualizarPerfil(
@@ -336,6 +345,7 @@ export class UsuariosController {
   @ApiTags('Usuarios - Clientes')
   @ApiOperation({ summary: 'Cambia la contraseña (Cliente)' })
   @ApiResponse({ status: 200, description: 'Contraseña actualizada' })
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Put('cambiar-contrasena')
   async cambiarContrasena(
@@ -377,6 +387,7 @@ export class UsuariosController {
     status: 400,
     description: 'Error al buscar los pedidos',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('pedidos/:idUsuario')
@@ -450,6 +461,31 @@ export class UsuariosController {
     return await this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
   }
 
+  //crear una dirección a un usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({ summary: 'Crea una dirección al usuario autenticado' })
+  @ApiResponse({
+    status: 201,
+    description: 'Dirección creada'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiBody({ type: CreateDireccionDto })
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Post('direcciones')
+  async createAddres(
+    @Body() createDireccionDto: CreateDireccionDto,
+    @Request() req,
+  ) {
+    const currentUser = req.user;
+    return await this.usuariosService.createAddres(currentUser, createDireccionDto)
+  }
+
+  // CONTROLADORES DE Visitantes
+
   // Crear un usuario invitado
   @ApiTags('Usuarios - Visitantes')
   @ApiOperation({ summary: 'Crea un usuario' })
@@ -467,32 +503,11 @@ export class UsuariosController {
     description: 'El email ya está registrado',
   })
   @ApiBody({ type: CreateGuestUsuarioDto })
-  @Post('invitado')
+  @Post('visitante')
   async createGuest(
     @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
   ): Promise<OutputUserDTO> {
     return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
   }
 
-  //crear una dirección a un usuario
-  @ApiTags('Usuarios - Clientes')
-  @ApiOperation({ summary: 'Crea una dirección al usuario autenticado' })
-  @ApiResponse({
-    status: 201,
-    description: 'Dirección creada'
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized',
-  })
-  @ApiBody({ type: CreateDireccionDto })
-  @UseGuards(JwtAuthGuard)
-  @Post('direcciones')
-  async createAddres(
-    @Body() createDireccionDto: CreateDireccionDto,
-    @Request() req,
-  ) {
-    const currentUser = req.user;
-    return await this.usuariosService.createAddres(currentUser, createDireccionDto)
-  }
 }
