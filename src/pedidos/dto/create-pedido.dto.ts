@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { CreateDireccionEnvioDto } from './create-direccion-envio.dto';
 
 export class CreatePedidoDto {
@@ -61,6 +61,14 @@ export class CreatePedidoDto {
   @ValidateNested()
   @IsNotEmpty()
   @ValidateIf((pedido) => pedido.idTipoDespacho != 1)
+  @IsOptional()
   @ApiProperty({ type: CreateDireccionEnvioDto })
-  direccionEnvio: CreateDireccionEnvioDto;
+  direccionEnvio?: CreateDireccionEnvioDto;
+
+  @ApiProperty({ example: 0, description: 'Índice de la dirección registrada del usuario para el envío' })
+  @IsInt()
+  @IsNumber()
+  @ValidateIf((pedido) => pedido.idTipoDespacho != 1)
+  @IsOptional()
+  idxDireccion?: number
 }

@@ -21,6 +21,7 @@ import { ValidarCarroLlenoPipe } from '../pipe/validar-carro-lleno.pipe';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { ValidarDireccionPedidoPipe } from '../pipe/validar-direccion-pedido.pipe';
 
 /**Historia de Usuario 10: Proceso de Checkout y Confirmación de Pedidos*/
 @ApiTags('Pedidos')
@@ -40,7 +41,10 @@ export class PedidosController {
   @Post(':idUsuario')
   @Roles('Visitante', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Param('idUsuario', ValidarUsuarioExistePipe, ValidarCarroLlenoPipe) idUsuario: number, @Body() createPedidoDTO: CreatePedidoDto): Promise<GetPedidoDto> {
+  async create(
+    @Param('idUsuario', ValidarUsuarioExistePipe, ValidarCarroLlenoPipe) idUsuario: number,
+    @Body(ValidarDireccionPedidoPipe) createPedidoDTO: CreatePedidoDto
+  ): Promise<GetPedidoDto> {
     return await this.pedidosService.create(+idUsuario, createPedidoDTO);
   }
 

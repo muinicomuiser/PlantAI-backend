@@ -78,7 +78,7 @@ export class CreateUsuarioDto {
   @IsNotEmpty()
   fechaNacimiento: string;
 
-  @ApiProperty({ example: 3 })
-  @IsNotEmpty()
-  idRol: number;
+  // @ApiProperty({ example: 3 })
+  // @IsNotEmpty()
+  // idRol: number;
 }
