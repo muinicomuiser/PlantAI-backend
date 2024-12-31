@@ -44,11 +44,12 @@ import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import { Usuario } from '../entities/usuario.entity';
 import { ChangeRoleDto } from '../dto/change-rol-dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { CreateDireccionDto } from '../dto/create-direccion.dto';
 
 @ApiBearerAuth('access-token')
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   //Controladores de administrador.
 
@@ -223,13 +224,6 @@ export class UsuariosController {
   ): Promise<{ message: string }> {
     const currentUser = req.user;
 
-    if (
-      changePasswordDto.nuevaContrasena !==
-      changePasswordDto.confirmarNuevaContrasena
-    ) {
-      throw new BadRequestException('Las contraseñas no coinciden');
-    }
-
     await this.usuariosService.cambiarContrasena(
       currentUser.id,
       changePasswordDto.nuevaContrasena,
@@ -361,5 +355,27 @@ export class UsuariosController {
     @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
   ): Promise<OutputUserDTO> {
     return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
+  }
+
+  //crear una dirección a un usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({ summary: 'Crea una dirección al usuario autenticado' })
+  @ApiResponse({
+    status: 201,
+    description: 'Dirección creada'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unathorized',
+  })
+  @ApiBody({ type: CreateDireccionDto })
+  @UseGuards(JwtAuthGuard)
+  @Post('direcciones')
+  async createAddres(
+    @Body() createDireccionDto: CreateDireccionDto,
+    @Request() req,
+  ) {
+    const currentUser = req.user;
+    return await this.usuariosService.createAddres(currentUser, createDireccionDto)
   }
 }

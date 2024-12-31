@@ -24,6 +24,9 @@ import * as bcrypt from 'bcryptjs';
 
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 import { v4 as UUIDv4 } from 'uuid';
+import { CreateDireccionDto } from '../dto/create-direccion.dto';
+import { Direccion } from '../entities/direccion.entity';
+import { create } from 'domain';
 
 @Injectable()
 export class UsuariosService {
@@ -32,13 +35,15 @@ export class UsuariosService {
     private readonly usuariosRepository: Repository<Usuario>,
     @InjectRepository(Pedido)
     private readonly pedidosRepository: Repository<Pedido>,
+    @InjectRepository(Direccion)
+    private readonly direccionRepository: Repository<Direccion>,
     @InjectRepository(MedioPago)
     private readonly medioPagoRepository: Repository<MedioPago>,
     @InjectRepository(UsuarioMedioPago)
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -97,7 +102,6 @@ export class UsuariosService {
       ...usuario,
       ...updateUsuarioDto,
     };
-
     const usuarioActualizado = await this.usuariosRepository.preload({
       id: usuario.id,
       ...updatedData,
@@ -416,5 +420,27 @@ export class UsuariosService {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
     return usuario;
+  }
+
+  async createAddres(
+    currentUser: { id: number },
+    createDireccionDto: CreateDireccionDto
+  ) {
+    const usuarioEncontrado = await this.usuariosRepository.findOne({
+      where: {
+        id: currentUser.id
+      },
+      relations: ['direccion']
+    })
+    const nuevaDireccion = await this.direccionRepository.create({
+      ...createDireccionDto,
+      idUsuario: usuarioEncontrado.id
+    })
+
+    await this.direccionRepository.save(nuevaDireccion);
+
+    return {
+      message: 'Dirección creada con éxito'
+    };
   }
 }
