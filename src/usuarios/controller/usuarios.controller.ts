@@ -30,6 +30,7 @@ import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { ChangeRoleDto } from '../dto/change-rol-dto';
+import { CreateDireccionDto } from '../dto/create-direccion.dto';
 import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
@@ -39,8 +40,6 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
-import { Usuario } from '../entities/usuario.entity';
-import { CreateDireccionDto } from '../dto/create-direccion.dto';
 
 
 @ApiBearerAuth('access-token')
@@ -83,6 +82,120 @@ export class UsuariosController {
     );
   }
 
+  // Obtener coincidencias de usuario por rut
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Obtener usuarios que coincidan con el rut',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene usuarios según rut',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(OutputUserDTO) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('rut/:rut')
+  async findByRut(@Param('rut') rut: string): Promise<GetDataDto<OutputUserDTO[]>> {
+    const users = await this.usuariosService.findByRut(rut);
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
+  }
+
+  // Obtener coincidencias de usuario por email
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Obtener usuarios que coincidan con el email',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene usuarios según email',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(OutputUserDTO) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('email/:email')
+  async findByEmail(@Param('email') email: string): Promise<GetDataDto<OutputUserDTO[]>> {
+    const users = await this.usuariosService.findByEmail(email);
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
+  }
+
+  // Obtener coincidencias de usuario por nombre
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Obtener usuarios que coincidan con el nombre o apellido',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene usuarios según nombre o apellido',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(OutputUserDTO) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('name/:name')
+  async findByName(@Param('name') name: string): Promise<GetDataDto<OutputUserDTO[]>> {
+    const users = await this.usuariosService.findByName(name)
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
+  }
+
   //Modificar roles.
   @ApiTags('Usuarios - Admin')
   @ApiOperation({
@@ -113,7 +226,11 @@ export class UsuariosController {
 
   // Obtener un usuario según su ID
   @ApiTags('Usuarios - Admin')
-  @ApiOperation({ summary: 'Obtiene un Usuario según id.' })
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({
+    summary: 'Obtiene un Usuario según id. Permite a un cliente ver solo su información.',
+    description: 'Un Super Admin y Admin pueden revisar cualquier id de usuario. Un cliente solo puede revisar la información que coincida con su id.'
+  })
   @ApiResponse({
     status: 200,
     description: 'Usuario encontrado',
@@ -123,14 +240,15 @@ export class UsuariosController {
     status: 404,
     description: 'No hay un usuario con ese id',
   })
-  @Roles('Super Admin', 'Admin')
+  @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':idUsuario')
   async findById(
-    //validar que el cliente sólo puede ver si información
     @Param('idUsuario', ParseIntPipe) idUsuario: number,
+    @Request() request: Request
   ): Promise<OutputUserDTO> {
-    return await this.usuariosService.findById(idUsuario);
+    const currentUser: JwtUser = request['user']
+    return await this.usuariosService.findById(idUsuario, currentUser);
   }
 
   // Crear un usuario
@@ -164,7 +282,6 @@ export class UsuariosController {
   }
 
   // Eliminar usuario
-  @ApiTags('Usuarios - Admin')
   @ApiTags('Usuarios - Admin')
   @ApiOperation({
     summary:
@@ -219,7 +336,6 @@ export class UsuariosController {
   @ApiTags('Usuarios - Clientes')
   @ApiOperation({ summary: 'Cambia la contraseña (Cliente)' })
   @ApiResponse({ status: 200, description: 'Contraseña actualizada' })
-  @ApiResponse({ status: 400, description: 'Las contraseñas no coinciden' })
   @UseGuards(JwtAuthGuard)
   @Put('cambiar-contrasena')
   async cambiarContrasena(
@@ -367,7 +483,7 @@ export class UsuariosController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Unathorized',
+    description: 'Unauthorized',
   })
   @ApiBody({ type: CreateDireccionDto })
   @UseGuards(JwtAuthGuard)

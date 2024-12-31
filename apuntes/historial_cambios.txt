@@ -123,6 +123,10 @@ Versión 1.12.0
                 PUT usuarios/idUsuario/cambiar-rol
                 (Antes era PUT usuarios/isUsuario)
                 El json solo es { idRol: number }, pero no afecta si se envían más datos en el json.
+            
+            Para obtener un usuario según su id, un Admin o Super Admin puede ver cualquier id, 
+                y un usuario puede ver su propio perfil asociado a su id.
+                Requiere el JWT para autenticar y discriminar permisos.
         
         - Pedidos:
             Se agrega la propiedad idxDirección.
@@ -142,6 +146,11 @@ Versión 1.12.0
             Cambiar contraseña:
                 PUT usuarios/cambiar-contrasena
                 Requiere el JWT, modifica solo la contraseña del usuario del JWT
+            
+            Crear dirección a usuario:
+                POST usuarios/direcciones
+                Requiere el JWT, agrega la dirección al usuario del JWT
+
 
 
 

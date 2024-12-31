@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   HttpException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { mapperPedido } from 'src/pedidos/mapper/pedido.mapper';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -28,6 +29,8 @@ import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { CreateDireccionDto } from '../dto/create-direccion.dto';
 import { Direccion } from '../entities/direccion.entity';
 import { create } from 'domain';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
+import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
 
 
 @Injectable()
@@ -45,6 +48,8 @@ export class UsuariosService {
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
+    @Inject(CarroComprasService)
+    private readonly carroComprasService: CarroComprasService
   ) { }
 
   /**Retorna todos los usuarios */
@@ -61,7 +66,10 @@ export class UsuariosService {
   }
 
   /**Obtiene un usuario según su id */
-  async findById(id: number): Promise<OutputUserDTO> {
+  async findById(id: number, currentUser: JwtUser): Promise<OutputUserDTO> {
+    if (currentUser.role == "Cliente" && currentUser.id != id) {
+      throw new UnauthorizedException()
+    }
     const usuario = await this.usuariosRepository.findOne({
       where: { id },
       relations: ['rol', 'direccion', 'usuarioMedioPago', 'carros', 'pedidos'],
@@ -82,6 +90,9 @@ export class UsuariosService {
       rol,
     });
     const usuarioCreado = await this.usuariosRepository.save(usuario);
+    if (rol.nombre == 'Cliente' || rol.nombre == 'Visitante') {
+      await this.carroComprasService.createCarro(usuarioCreado.id)
+    }
     return toOutputUserDTO(usuarioCreado);
   }
 
@@ -442,5 +453,48 @@ export class UsuariosService {
     return {
       message: 'Dirección creada con éxito'
     };
+  }
+
+  async findByEmail(email: string): Promise<OutputUserDTO[]> {
+    try {
+      const usuarios: Usuario[] = await this.usuariosRepository.find({
+        where: {
+          email: Like(`%${email}%`)
+        },
+        relations: ['rol', 'direccion']
+      })
+      return usuarios.map(usuario => toOutputUserDTO(usuario))
+    }
+    catch (error) {
+      throw new BadRequestException('Error al obtener usuarios')
+    }
+  }
+  async findByRut(rut: string): Promise<OutputUserDTO[]> {
+    try {
+      const usuarios: Usuario[] = await this.usuariosRepository.find({
+        where: {
+          rut: Like(`%${rut}%`)
+        },
+        relations: ['rol', 'direccion']
+      })
+      console.log(usuarios)
+      return usuarios.map(usuario => toOutputUserDTO(usuario))
+    }
+    catch (error) {
+      console.error(error)
+      throw new BadRequestException('Error al obtener usuarios')
+    }
+  }
+  async findByName(name: string): Promise<OutputUserDTO[]> {
+    try {
+      const usuarios: Usuario[] = await this.usuariosRepository.find({
+        where: [{ nombre: Like(`%${name}%`) }, { apellido: Like(`%${name}%`) }],
+        relations: ['rol', 'direccion']
+      })
+      return usuarios.map(usuario => toOutputUserDTO(usuario))
+    }
+    catch (error) {
+      throw new BadRequestException('Error al obtener usuarios')
+    }
   }
 }

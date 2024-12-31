@@ -16,6 +16,13 @@ export class GetCarroComprasDto {
   })
   idUsuario: number;
 
+  @ApiProperty({ description: 'Fecha de creación del carro.' })
+  fecha_creacion: Date;
+
+  @ApiProperty({ description: 'Fecha de compra, cierre del carro.' })
+  @ApiProperty()
+  fecha_cierre: Date;
+
   // @ApiProperty({
   //   name: 'productos',
   //   description: 'Productos del carro de compras',
@@ -30,13 +37,7 @@ export class GetCarroComprasDto {
   })
   precioTotal: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: [GetCarroProductoDto] })
   carroProductos: GetCarroProductoDto[];
 
-  @ApiProperty({ description: 'Fecha de creación del carro.' })
-  fecha_creacion: Date;
-
-  @ApiProperty({ description: 'Fecha de compra, cierre del carro.' })
-  @ApiProperty()
-  fecha_cierre: Date;
 }

@@ -95,7 +95,7 @@ export class AuthService {
     return {
       sub: user.id,
       username: user.nombreUsuario,
-      role: user.rol?.nombre, // Asegúrate de enviar solo el nombre del rol
+      role: user.rol?.nombre
     };
   }
 
@@ -123,7 +123,7 @@ export class AuthService {
         return await this.usuariosService.updateGuestUser(user.id, createUsuarioDto);
       }
       //pasar rol al metodo de crea
-      return this.usuariosService.createUser(createUsuarioDto, rol);
+      return await this.usuariosService.createUser(createUsuarioDto, rol);
     } catch (error) {
       throw new BadRequestException('Error al registrar usuario');
     }
