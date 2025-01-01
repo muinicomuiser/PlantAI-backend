@@ -25,7 +25,7 @@ export class AuthService {
     private readonly rolRepository: Repository<Rol>,
     @InjectRepository(Usuario)
     private readonly userRepository: Repository<Usuario>,
-  ) { }
+  ) {}
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
     try {
@@ -38,12 +38,14 @@ export class AuthService {
             rol: {
               id: Not(4),
             },
-          }, {
+          },
+          {
             email: usernameOrEmail,
             rol: {
               id: Not(4),
             },
-          }],
+          },
+        ],
         relations: ['rol'],
       });
 
@@ -68,9 +70,8 @@ export class AuthService {
       });
 
       return { access_token: token };
-    }
-    catch (error) {
-      throw new BadRequestException('Error en el login')
+    } catch (error) {
+      throw new BadRequestException('Error en el login');
     }
   }
 
@@ -95,7 +96,7 @@ export class AuthService {
     return {
       sub: user.id,
       username: user.nombreUsuario,
-      role: user.rol?.nombre
+      role: user.rol?.nombre,
     };
   }
 
@@ -108,19 +109,21 @@ export class AuthService {
       );
       // buscar rol en base
       const rol = await this.rolRepository.findOne({
-        where: { id: 3 }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente
+        where: { id: 3 }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente // eso debe ser asi ya que si no se podrian registrar como admin
       });
       if (!rol) {
-        throw new NotFoundException(
-          `Rol con ID ${3} no existe`,
-        );
+        throw new NotFoundException(`Rol con ID ${3} no existe`);
       }
       // editar usuario si es visitante
       const user = await this.usuariosService.findUserByEmailAddress(
         createUsuarioDto.email,
       );
       if (user && user.rol.id === 4) {
-        return await this.usuariosService.updateGuestUser(user.id, createUsuarioDto);
+        return await this.usuariosService.updateGuestUser(
+          user.id,
+          createUsuarioDto,
+          rol,
+        );
       }
       //pasar rol al metodo de crea
       return await this.usuariosService.createUser(createUsuarioDto, rol);

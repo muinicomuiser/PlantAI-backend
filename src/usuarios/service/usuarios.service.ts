@@ -1,9 +1,7 @@
 import {
   BadRequestException,
-  HttpException,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -28,10 +26,7 @@ import { v4 as UUIDv4 } from 'uuid';
 import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { CreateDireccionDto } from '../dto/create-direccion.dto';
 import { Direccion } from '../entities/direccion.entity';
-import { create } from 'domain';
-import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
-
 
 @Injectable()
 export class UsuariosService {
@@ -49,8 +44,8 @@ export class UsuariosService {
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
     @Inject(CarroComprasService)
-    private readonly carroComprasService: CarroComprasService
-  ) { }
+    private readonly carroComprasService: CarroComprasService,
+  ) {}
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -67,8 +62,8 @@ export class UsuariosService {
 
   /**Obtiene un usuario según su id */
   async findById(id: number, currentUser: JwtUser): Promise<OutputUserDTO> {
-    if (currentUser.role == "Cliente" && currentUser.id != id) {
-      throw new UnauthorizedException()
+    if (currentUser.role == 'Cliente' && currentUser.id != id) {
+      throw new UnauthorizedException();
     }
     const usuario = await this.usuariosRepository.findOne({
       where: { id },
@@ -91,7 +86,7 @@ export class UsuariosService {
     });
     const usuarioCreado = await this.usuariosRepository.save(usuario);
     if (rol.nombre == 'Cliente' || rol.nombre == 'Visitante') {
-      await this.carroComprasService.createCarro(usuarioCreado.id)
+      await this.carroComprasService.createCarro(usuarioCreado.id);
     }
     return toOutputUserDTO(usuarioCreado);
   }
@@ -378,14 +373,21 @@ export class UsuariosService {
   async createGuestUser(
     createGuestUsuarioDto: CreateGuestUsuarioDto,
   ): Promise<OutputUserDTO> {
+    const guestUser = await this.usuariosRepository.findOne({
+      where: { email: createGuestUsuarioDto.email },
+    });
+    console.log(guestUser);
+    if (guestUser) {
+      return await this.updateGuestUser(guestUser.id, createGuestUsuarioDto);
+    }
     const rol = await this.rolRepository.findOne({
       where: { id: 4 },
     });
     let nombreUsuario =
       createGuestUsuarioDto.nombre + '-' + UUIDv4().split('-')[4];
     if (nombreUsuario.length > 25) {
-      nombreUsuario = nombreUsuario.slice(0, 25)
-      console.log(nombreUsuario)
+      nombreUsuario = nombreUsuario.slice(0, 25);
+      console.log(nombreUsuario);
     }
     const usuario = this.usuariosRepository.create({
       ...createGuestUsuarioDto,
@@ -405,21 +407,22 @@ export class UsuariosService {
     return user;
   }
 
-
   // Revisar. Si se está permitiendo que se repita el mail en usuarios visitantes, qué usuario actualizará??
   async updateGuestUser(
     id: number,
-    createUsuarioDto: CreateUsuarioDto,
+    createUsuarioDto: CreateUsuarioDto | CreateGuestUsuarioDto,
+    rol?: Rol,
   ): Promise<OutputUserDTO> {
-    const rol = await this.rolRepository.findOne({
-      where: { id: 3 },
-    });
     const usuario = this.usuariosRepository.create({
       ...createUsuarioDto,
       rol,
     });
     await this.usuariosRepository.update(id, usuario);
-    return toOutputUserDTO(usuario);
+    const usuarioActualizado = await this.usuariosRepository.findOne({
+      where: { id },
+      relations: ['rol', 'direccion'],
+    });
+    return toOutputUserDTO(usuarioActualizado);
   }
 
   private async validateUserExists(id: number): Promise<Usuario> {
@@ -435,23 +438,23 @@ export class UsuariosService {
 
   async createAddres(
     currentUser: { id: number },
-    createDireccionDto: CreateDireccionDto
+    createDireccionDto: CreateDireccionDto,
   ) {
     const usuarioEncontrado = await this.usuariosRepository.findOne({
       where: {
-        id: currentUser.id
+        id: currentUser.id,
       },
-      relations: ['direccion']
-    })
+      relations: ['direccion'],
+    });
     const nuevaDireccion = await this.direccionRepository.create({
       ...createDireccionDto,
-      idUsuario: usuarioEncontrado.id
-    })
+      idUsuario: usuarioEncontrado.id,
+    });
 
     await this.direccionRepository.save(nuevaDireccion);
 
     return {
-      message: 'Dirección creada con éxito'
+      message: 'Dirección creada con éxito',
     };
   }
 
@@ -459,42 +462,39 @@ export class UsuariosService {
     try {
       const usuarios: Usuario[] = await this.usuariosRepository.find({
         where: {
-          email: Like(`%${email}%`)
+          email: Like(`%${email}%`),
         },
-        relations: ['rol', 'direccion']
-      })
-      return usuarios.map(usuario => toOutputUserDTO(usuario))
-    }
-    catch (error) {
-      throw new BadRequestException('Error al obtener usuarios')
+        relations: ['rol', 'direccion'],
+      });
+      return usuarios.map((usuario) => toOutputUserDTO(usuario));
+    } catch (error) {
+      throw new BadRequestException('Error al obtener usuarios');
     }
   }
   async findByRut(rut: string): Promise<OutputUserDTO[]> {
     try {
       const usuarios: Usuario[] = await this.usuariosRepository.find({
         where: {
-          rut: Like(`%${rut}%`)
+          rut: Like(`%${rut}%`),
         },
-        relations: ['rol', 'direccion']
-      })
-      console.log(usuarios)
-      return usuarios.map(usuario => toOutputUserDTO(usuario))
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException('Error al obtener usuarios')
+        relations: ['rol', 'direccion'],
+      });
+      console.log(usuarios);
+      return usuarios.map((usuario) => toOutputUserDTO(usuario));
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('Error al obtener usuarios');
     }
   }
   async findByName(name: string): Promise<OutputUserDTO[]> {
     try {
       const usuarios: Usuario[] = await this.usuariosRepository.find({
         where: [{ nombre: Like(`%${name}%`) }, { apellido: Like(`%${name}%`) }],
-        relations: ['rol', 'direccion']
-      })
-      return usuarios.map(usuario => toOutputUserDTO(usuario))
-    }
-    catch (error) {
-      throw new BadRequestException('Error al obtener usuarios')
+        relations: ['rol', 'direccion'],
+      });
+      return usuarios.map((usuario) => toOutputUserDTO(usuario));
+    } catch (error) {
+      throw new BadRequestException('Error al obtener usuarios');
     }
   }
 }
