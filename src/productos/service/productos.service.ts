@@ -131,7 +131,6 @@ export class ProductosService {
       }
       return await this.getById(nuevoProducto.id);
     } catch (error) {
-      console.error(error);
       throw new BadRequestException('Error al crear producto');
     }
   }
@@ -257,7 +256,6 @@ export class ProductosService {
       return ProductoMapper.entityToDto(producto);
     }
     catch (error) {
-      console.error(error)
       throw new BadRequestException('Error al eliminar producto')
     }
   }
@@ -330,7 +328,6 @@ export class ProductosService {
       await this.imageService.deleteImage(rutaImage);
       await this.imagenProductoRepository.remove(imagenEliminada)
     } catch (error) {
-      console.error(error);
       throw new BadRequestException(
         error.message,
         'Error al eliminar la imagen',

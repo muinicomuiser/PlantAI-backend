@@ -45,7 +45,7 @@ export class UsuariosService {
     private readonly rolRepository: Repository<Rol>,
     @Inject(CarroComprasService)
     private readonly carroComprasService: CarroComprasService,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {
@@ -153,7 +153,7 @@ export class UsuariosService {
     idRol: number,
     currentUser: JwtUser, // Tipo ajustado
   ): Promise<OutputUserDTO> {
-    console.log('CurrentUser en cambiarRol:', currentUser);
+    // console.log('CurrentUser en cambiarRol:', currentUser);
 
     // Validar si el usuario actual tiene un rol definido
     if (!currentUser.role) {
@@ -376,7 +376,7 @@ export class UsuariosService {
     const guestUser = await this.usuariosRepository.findOne({
       where: { email: createGuestUsuarioDto.email },
     });
-    console.log(guestUser);
+    // console.log(guestUser);
     if (guestUser) {
       return await this.updateGuestUser(guestUser.id, createGuestUsuarioDto);
     }
@@ -387,7 +387,7 @@ export class UsuariosService {
       createGuestUsuarioDto.nombre + '-' + UUIDv4().split('-')[4];
     if (nombreUsuario.length > 25) {
       nombreUsuario = nombreUsuario.slice(0, 25);
-      console.log(nombreUsuario);
+      // console.log(nombreUsuario);
     }
     const usuario = this.usuariosRepository.create({
       ...createGuestUsuarioDto,
@@ -479,10 +479,8 @@ export class UsuariosService {
         },
         relations: ['rol', 'direccion'],
       });
-      console.log(usuarios);
       return usuarios.map((usuario) => toOutputUserDTO(usuario));
     } catch (error) {
-      console.error(error);
       throw new BadRequestException('Error al obtener usuarios');
     }
   }

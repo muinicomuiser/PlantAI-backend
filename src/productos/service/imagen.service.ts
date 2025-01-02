@@ -15,7 +15,6 @@ export class ImageService {
   async addImage(base64Content: string) {
     //crear uuid para nombre de archivo
     const uuid = uuidv4();
-    console.log(base64Content);
     //cortar base64 string
     try {
       const baseValido = base64Content.split(',')[1];

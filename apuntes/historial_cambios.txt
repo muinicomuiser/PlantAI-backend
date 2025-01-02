@@ -138,6 +138,11 @@ Versión 1.12.0
         - Usuarios:
             Crear usuario visitante:
                 POST usuarios/visitante
+            
+            Buscar usuarios por coincidencias de nombre/apellido, rut y email
+                GET usuarios/name/:name
+                GET usuarios/rut/:rut
+                GET usuarios/email/:email
 
             Modificar perfil de usuario:
                 PUT usuarios

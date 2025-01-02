@@ -34,16 +34,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
       responseBody =
         typeof exceptionResponse === 'object'
           ? {
-              ...exceptionResponse,
-              path: request.url,
-              timestamp,
-            }
+            ...exceptionResponse,
+            path: request.url,
+            timestamp,
+          }
           : {
-              statusCode: status,
-              message: exception.message,
-              path: request.url,
-              timestamp,
-            };
+            statusCode: status,
+            message: exception.message,
+            path: request.url,
+            timestamp,
+          };
     } else if (exception instanceof QueryFailedError) {
       console.error('Error de SQL:', exception.message);
       message = 'Error en la base de datos. Verifique los datos enviados.';

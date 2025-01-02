@@ -77,7 +77,6 @@ export class CarroComprasService {
       });
       return CarroComprasMapper.arrayCarroEntityToDto(encontrados);
     } catch (error) {
-      console.error(error);
       throw new BadRequestException('Error al obtener carros.', error);
     }
   }
@@ -178,7 +177,6 @@ export class CarroComprasService {
       await this.carroProductoRepository.remove(carroProducto);
       return CarroComprasMapper.carroProductoEntityToDto(carroProducto);
     } catch (error) {
-      console.error(error);
       throw new BadRequestException(error.message);
     }
   }
@@ -249,7 +247,6 @@ export class CarroComprasService {
         nuevosCarroProductos,
       );
     } catch (error) {
-      console.error(error);
       throw new BadRequestException('Error al reemplazar contenido del carro');
     }
   }
@@ -263,13 +260,10 @@ export class CarroComprasService {
         },
         relations: ['carroProductos', ...CARRO_RELATIONS]
       })
-      console.log(carroCerrado)
-      // carroCerrado.fecha_cierre = pedido.fechaCreacion
       await this.carroComprasRepository.update({ id: carroCerrado.id }, { fecha_cierre: pedido.fechaCreacion })
       return CarroComprasMapper.carroEntityToDto(carroCerrado)
     }
     catch (error) {
-      console.error(error)
       throw new BadRequestException('Error al cerrar el Carro')
     }
   }
@@ -299,7 +293,6 @@ export class CarroComprasService {
       }
     }
     catch (error) {
-      console.error(error)
       throw new BadRequestException(error)
     }
   }
