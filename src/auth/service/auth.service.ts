@@ -25,9 +25,9 @@ export class AuthService {
     private readonly rolRepository: Repository<Rol>,
     @InjectRepository(Usuario)
     private readonly userRepository: Repository<Usuario>,
-  ) {}
+  ) { }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string, id?: number, expToken?: number }> {
     try {
       const { usernameOrEmail, password } = loginDto;
 
@@ -68,8 +68,9 @@ export class AuthService {
         secret: process.env.JWT_SECRET || 'defaultSecretKey',
         expiresIn: process.env.JWT_EXPIRES_IN || '1h',
       });
+      const tokenDecodificado = this.jwtService.decode(token)
 
-      return { access_token: token };
+      return { access_token: token, expToken: tokenDecodificado.exp, id: payload.sub };
     } catch (error) {
       throw new BadRequestException('Error en el login');
     }

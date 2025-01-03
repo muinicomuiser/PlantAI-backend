@@ -161,4 +161,21 @@ Versión 1.12.0
 
     Cambios en procesos:
     Al registrar usuario, si se encuentra un usuario invitado con el mismo correo, se actualizará con los datos del usuario registrado.
-        
+
+=========================================================================================================================
+Versión 1.12.1
+
+    Cambios
+        - Auth:
+            El login retorna además el id del usuario y el timestamp de la expiración del token.
+                id: number, expToken: number
+        - Usuarios:
+            /usuarios/visitante
+            El registro de usuario visitante retorna además el id del usuario y el timestamp de la expiración del token.
+                id: number, expToken: number
+
+    Agregados
+        - Usuarios:
+            Obtener perfil de usuario asociado al JWT.
+                GET usuarios/perfil
+                Requiere el JWT, retorna los datos del usuario

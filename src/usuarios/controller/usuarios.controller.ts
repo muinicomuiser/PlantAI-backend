@@ -40,6 +40,7 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
+import { OutputGuestUserDTO } from '../dto/output-guest-userDTO';
 
 
 
@@ -164,11 +165,11 @@ export class UsuariosController {
   // Obtener coincidencias de usuario por nombre
   @ApiTags('Usuarios - Admin')
   @ApiOperation({
-    summary: 'Obtener usuarios que coincidan con el nombre o apellido',
+    summary: 'Obtener usuarios que coincidan con el nombre de usuario, nombre o apellido',
   })
   @ApiResponse({
     status: 200,
-    description: 'Obtiene usuarios según nombre o apellido',
+    description: 'Obtiene usuarios según nombre de usuario, nombre o apellido',
     schema: {
       type: 'object',
       properties: {
@@ -229,12 +230,37 @@ export class UsuariosController {
     );
   }
 
+  //Obtener perfil de usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({ summary: 'Obtiene perfil y datos del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario encontrado',
+    type: OutputUserDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado',
+  })
+  @ApiBearerAuth('access-token')
+  @Roles('Super Admin', 'Admin', 'Cliente', 'Visitante')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('perfil')
+  async getPerfilUsuario(
+    @Request() req,
+  ): Promise<OutputUserDTO> {
+    const currentUser = req.user;
+    const usuario = await this.usuariosService.getUserProfile(currentUser);
+    return usuario;
+  }
+
   // Obtener un usuario según su ID
   @ApiTags('Usuarios - Admin')
   @ApiTags('Usuarios - Clientes')
   @ApiOperation({
-    summary: 'Obtiene un Usuario según id. Permite a un cliente ver solo su información.',
-    description: 'Un Super Admin y Admin pueden revisar cualquier id de usuario. Un cliente solo puede revisar la información que coincida con su id.'
+    summary: 'Obtiene un Usuario según id.',
+    description: 'Un Super Admin y Admin pueden revisar cualquier id de usuario. Un cliente solo puede obtener la información que coincida con su id.'
   })
   @ApiResponse({
     status: 200,
@@ -484,6 +510,8 @@ export class UsuariosController {
     return await this.usuariosService.createAddres(currentUser, createDireccionDto)
   }
 
+
+
   // CONTROLADORES DE Visitantes
 
   // Crear un usuario invitado
@@ -492,7 +520,7 @@ export class UsuariosController {
   @ApiResponse({
     status: 201,
     description: 'Usuario creado',
-    type: OutputUserDTO,
+    type: OutputGuestUserDTO,
   })
   @ApiResponse({
     status: 400,
@@ -506,8 +534,7 @@ export class UsuariosController {
   @Post('visitante')
   async createGuest(
     @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
-  ): Promise<OutputUserDTO> {
+  ): Promise<OutputGuestUserDTO | OutputUserDTO> {
     return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
   }
-
 }

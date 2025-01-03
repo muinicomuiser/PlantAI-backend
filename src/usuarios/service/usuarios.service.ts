@@ -23,10 +23,13 @@ import * as bcrypt from 'bcryptjs';
 
 //import { toOutputUserDTO } from '../mapper/entitty-to-dto-usuarios';
 import { v4 as UUIDv4 } from 'uuid';
-import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { JwtPayload, JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { CreateDireccionDto } from '../dto/create-direccion.dto';
 import { Direccion } from '../entities/direccion.entity';
 import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
+import { JwtService } from '@nestjs/jwt';
+import { AuthService } from 'src/auth/service/auth.service';
+import { OutputGuestUserDTO } from '../dto/output-guest-userDTO';
 
 @Injectable()
 export class UsuariosService {
@@ -41,6 +44,7 @@ export class UsuariosService {
     private readonly medioPagoRepository: Repository<MedioPago>,
     @InjectRepository(UsuarioMedioPago)
     private readonly usuarioMedioPagoRepository: Repository<UsuarioMedioPago>,
+    private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
     @Inject(CarroComprasService)
@@ -89,6 +93,20 @@ export class UsuariosService {
       await this.carroComprasService.createCarro(usuarioCreado.id);
     }
     return toOutputUserDTO(usuarioCreado);
+  }
+
+  async getUserProfile(currentUser: JwtUser): Promise<OutputUserDTO> {
+    try {
+      const usuario: Usuario = await this.usuariosRepository.findOne(
+        {
+          where: { id: +currentUser.id },
+          relations: ['rol']
+        })
+      return toOutputUserDTO(usuario)
+    }
+    catch (error) {
+      throw new BadRequestException('Error al obtener los datos del usuario')
+    }
   }
 
   /**Actualiza un usuario según su id */
@@ -372,13 +390,27 @@ export class UsuariosService {
   // crear usuario invitado para el carro
   async createGuestUser(
     createGuestUsuarioDto: CreateGuestUsuarioDto,
-  ): Promise<OutputUserDTO> {
+  ): Promise<OutputGuestUserDTO | OutputUserDTO> {
     const guestUser = await this.usuariosRepository.findOne({
       where: { email: createGuestUsuarioDto.email },
     });
-    // console.log(guestUser);
+
+    // Carro para usuario visitante
     if (guestUser) {
-      return await this.updateGuestUser(guestUser.id, createGuestUsuarioDto);
+      try {
+        await this.carroComprasService.findByUserId(guestUser.id)
+      }
+      catch (error) {
+        if (error.status == 404) {
+          await this.carroComprasService.createCarro(guestUser.id);
+        }
+      }
+      await this.updateGuestUser(guestUser.id, createGuestUsuarioDto);
+      const updatedUser: Usuario = await this.usuariosRepository.findOne({
+        where: { id: guestUser.id },
+        relations: ['rol']
+      })
+      return this.getOutputGuest(updatedUser)
     }
     const rol = await this.rolRepository.findOne({
       where: { id: 4 },
@@ -387,7 +419,6 @@ export class UsuariosService {
       createGuestUsuarioDto.nombre + '-' + UUIDv4().split('-')[4];
     if (nombreUsuario.length > 25) {
       nombreUsuario = nombreUsuario.slice(0, 25);
-      // console.log(nombreUsuario);
     }
     const usuario = this.usuariosRepository.create({
       ...createGuestUsuarioDto,
@@ -396,7 +427,23 @@ export class UsuariosService {
       rol,
     });
     const usuarioCreado = await this.usuariosRepository.save(usuario);
-    return toOutputUserDTO(usuarioCreado);
+    // Crear carro nuevo
+    await this.carroComprasService.createCarro(usuarioCreado.id);
+    return this.getOutputGuest(usuarioCreado)
+  }
+
+  /**Retorna un DTO con el usuario visitante, que incluye sus datos, token y timestamp de expiración */
+  private getOutputGuest(guest: Usuario): OutputGuestUserDTO {
+    const payload = this.createTokenPayload(guest);
+    const token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET || 'defaultSecretKey',
+      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    });
+    const tokenDecodificado = this.jwtService.decode(token)
+    const usuarioDto: OutputGuestUserDTO = Object.assign(new OutputGuestUserDTO, toOutputUserDTO(guest))
+    usuarioDto.access_token = token;
+    usuarioDto.expToken = tokenDecodificado.exp;
+    return usuarioDto
   }
 
   async findUserByEmailAddress(email: string): Promise<Usuario> {
@@ -487,12 +534,20 @@ export class UsuariosService {
   async findByName(name: string): Promise<OutputUserDTO[]> {
     try {
       const usuarios: Usuario[] = await this.usuariosRepository.find({
-        where: [{ nombre: Like(`%${name}%`) }, { apellido: Like(`%${name}%`) }],
+        where: [{ nombre: Like(`%${name}%`) }, { apellido: Like(`%${name}%`) }, { nombreUsuario: Like(`%${name}%`) }],
         relations: ['rol', 'direccion'],
       });
       return usuarios.map((usuario) => toOutputUserDTO(usuario));
     } catch (error) {
       throw new BadRequestException('Error al obtener usuarios');
     }
+  }
+
+  private createTokenPayload(user: Usuario): JwtPayload {
+    return {
+      sub: user.id,
+      username: user.nombreUsuario,
+      role: user.rol?.nombre,
+    };
   }
 }
