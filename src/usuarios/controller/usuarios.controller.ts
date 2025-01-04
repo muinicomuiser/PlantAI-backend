@@ -513,10 +513,14 @@ export class UsuariosController {
 
 
   // CONTROLADORES DE Visitantes
-
   // Crear un usuario invitado
   @ApiTags('Usuarios - Visitantes')
-  @ApiOperation({ summary: 'Crea un usuario' })
+  @ApiOperation({
+    summary: 'Crea un usuario visitante. Si hay un visitante autenticado lo actualiza.',
+    description: 'Crea un usuario visitante, sin contraseña.\n'
+      + '\n Permite agregar opcionalmente un JWT de usuario visitante y actualizar sus datos.\n'
+      + '\n Si no se envía un JWT, se creará un usuario completamente nuevo.\n'
+  })
   @ApiResponse({
     status: 201,
     description: 'Usuario creado',
@@ -531,10 +535,33 @@ export class UsuariosController {
     description: 'El email ya está registrado',
   })
   @ApiBody({ type: CreateGuestUsuarioDto })
+  @ApiBearerAuth('access-token')
   @Post('visitante')
   async createGuest(
     @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
+    @Request() req: Request
   ): Promise<OutputGuestUserDTO | OutputUserDTO> {
+    if (req.headers['authorization']) {
+      return await this.usuariosService.updateEmptyGuestUser(req.headers['authorization'], createGuestUsuarioDto)
+    }
     return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
+  }
+
+
+  // Crear un usuario visitante vacío
+  @ApiTags('Usuarios - Visitantes')
+  @ApiOperation({ summary: 'Crea un usuario visitante sin datos.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario creado',
+    type: OutputGuestUserDTO,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al crear usuario',
+  })
+  @Post('visitante-vacio')
+  async createEmptyGuestUser(): Promise<OutputGuestUserDTO> {
+    return await this.usuariosService.createEmptyGuestUser()
   }
 }

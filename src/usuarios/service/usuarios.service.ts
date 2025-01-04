@@ -550,4 +550,54 @@ export class UsuariosService {
       role: user.rol?.nombre,
     };
   }
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  // Métodos para facilitar la adaptación de Mobile al flujo del carro, previo a la entrega final //
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  async createEmptyGuestUser(): Promise<OutputGuestUserDTO> {
+    const rol = await this.rolRepository.findOne({
+      where: { id: 4 },
+    });
+
+    const usuarioVacio: Usuario = this.generateRandomUser()
+    const usuario = this.usuariosRepository.create({
+      ...usuarioVacio,
+      contrasena: null,
+      rol,
+    });
+    const usuarioCreado = await this.usuariosRepository.save(usuario);
+    // Crear carro nuevo
+    await this.carroComprasService.createCarro(usuarioCreado.id);
+    return this.getOutputGuest(usuarioCreado)
+  }
+
+  private generateRandomUser(): Usuario {
+    const randomUser: Usuario = new Usuario()
+    const uuid: string = UUIDv4()
+    randomUser.nombreUsuario = uuid.slice(0, 25);
+    randomUser.nombre = uuid.split('-')[0];
+    randomUser.apellido = uuid.split('-')[1];
+    randomUser.contrasena = null;
+    randomUser.email = uuid.split('-')[0] + '@mail.com';
+    randomUser.rut = '00000000-0';
+    return randomUser
+  }
+
+  async updateEmptyGuestUser(token: string, createGuestUsuarioDto: CreateGuestUsuarioDto): Promise<OutputUserDTO> {
+    const splitToken = token.split(' ')[1]
+    const currentUser: JwtPayload = this.jwtService.decode(splitToken)
+    const usuario = this.usuariosRepository.create({
+      ...createGuestUsuarioDto,
+    });
+    if (currentUser.role == 'Visitante') {
+      await this.usuariosRepository.update(currentUser.sub, usuario)
+    }
+    const usuarioActualizado = await this.usuariosRepository.findOne({
+      where: { id: currentUser.sub },
+      relations: ['rol', 'direccion'],
+    });
+    return toOutputUserDTO(usuarioActualizado);
+  }
 }
