@@ -48,6 +48,7 @@ export class ProductosController {
       'Retorna todos los productos registrados. PREFERIR GET productos/admin para paginación.',
     description:
       'Ahora está habilitado el GET productos/admin, que retorna todos los productos y permite paginar.',
+    deprecated: true
   })
   @ApiResponse({
     status: 200,

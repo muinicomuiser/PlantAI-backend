@@ -161,4 +161,38 @@ Versión 1.12.0
 
     Cambios en procesos:
     Al registrar usuario, si se encuentra un usuario invitado con el mismo correo, se actualizará con los datos del usuario registrado.
+
+=========================================================================================================================
+Versión 1.12.1
+
+    Cambios
+        - Auth:
+            El login retorna además el id del usuario y el timestamp de la expiración del token.
+                id: number, expToken: number
+        - Usuarios:
+            /usuarios/visitante
+            El registro de usuario visitante retorna además el id del usuario y el timestamp de la expiración del token.
+                id: number, expToken: number
+
+    Agregados
+        - Usuarios:
+            Obtener perfil de usuario asociado al JWT.
+                GET usuarios/perfil
+                Requiere el JWT, retorna los datos del usuario
+
+=========================================================================================================================
+Versión 1.12.2
+
+    Cambios
+        - Usuarios:
+            Crear usuario visitante, ahora permite adjuntar opcionalmente un JWT de visitante para actualizar en vez de crear un visitante nuevo
+                POST usuarios/visitante
         
+    Agregados
+        - Usuarios:
+            Crear visitante con body vacío.
+            Crea un usuario visitante sin requerir body, con datos aleatorios, y retorna el usuario con su ID, JWT y timestamp de expiración
+                Post usuarios/visitante-vacio
+
+    La idea de esta actualización es compensar la falta de IDs de usuario y carro requeridos en el flujo de carro de compras de visitante.
+    Hace falta una revisión a ese flujo, a lo que se espera de cada proceso.

@@ -7,7 +7,6 @@ import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
 import { ValidarCrearUsuarioPipe } from 'src/usuarios/pipe/validar-crear-usuario.pipe';
 import { LoginDto } from '../dto/login.dto';
 import { AuthService } from '../service/auth.service';
-import { ValidarUsuarioExistePipe } from 'src/usuarios/pipe/validar-usuario-existe.pipe';
 /**Historia de Usuario 2: Autenticación y Gestión de Sesiones */
 @ApiTags('Autenticación')
 @Controller('auth')
@@ -30,7 +29,10 @@ export class AuthController {
   }
 
   // Loguear un usuario
-  @ApiOperation({ summary: 'Inicia sesión con nombre de usuario o email' })
+  @ApiOperation({
+    summary: 'Inicia sesión con nombre de usuario o email',
+    description: 'Retorna el token de autenticación, junto con el id del usuario y el tiempo de expiración del token.'
+  })
   @ApiResponse({
     status: 201,
     description: 'Usuario logeado exitosamente',
@@ -38,12 +40,14 @@ export class AuthController {
       type: 'object',
       properties: {
         access_token: { type: 'string' },
+        id: { type: 'number' },
+        expToken: { type: 'number' },
       },
     },
   })
   @ApiResponse({ status: 401, description: 'Credenciales invalidas' })
   @Post('login')
-  async login(@Body() loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(@Body() loginDto: LoginDto): Promise<{ access_token: string, id?: number, expToken?: number }> {
     return await this.authService.login(loginDto);
   }
 }
