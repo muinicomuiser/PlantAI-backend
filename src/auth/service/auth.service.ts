@@ -15,6 +15,7 @@ import { LoginDto } from '../dto/login.dto';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { JwtPayload } from '../guards/jwt-auth.guard/roles.guard';
+import { Logger } from 'winston';
 
 @Injectable()
 export class AuthService {
@@ -25,9 +26,12 @@ export class AuthService {
     private readonly rolRepository: Repository<Rol>,
     @InjectRepository(Usuario)
     private readonly userRepository: Repository<Usuario>,
-  ) { }
+    @Inject('winston') private readonly logger: Logger,
+  ) {}
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string, id?: number, expToken?: number }> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ access_token: string; id?: number; expToken?: number }> {
     try {
       const { usernameOrEmail, password } = loginDto;
 
@@ -68,9 +72,13 @@ export class AuthService {
         secret: process.env.JWT_SECRET || 'defaultSecretKey',
         expiresIn: process.env.JWT_EXPIRES_IN || '1h',
       });
-      const tokenDecodificado = this.jwtService.decode(token)
-
-      return { access_token: token, expToken: tokenDecodificado.exp, id: payload.sub };
+      const tokenDecodificado = this.jwtService.decode(token);
+      this.logger.info(`Usuario ${user.nombreUsuario} ha iniciado sesión`);
+      return {
+        access_token: token,
+        expToken: tokenDecodificado.exp,
+        id: payload.sub,
+      };
     } catch (error) {
       throw new BadRequestException('Error en el login');
     }
@@ -126,6 +134,9 @@ export class AuthService {
           rol,
         );
       }
+      this.logger.info(
+        `Usuario ${createUsuarioDto.nombreUsuario} ha sido registrado`,
+      );
       //pasar rol al metodo de crea
       return await this.usuariosService.createUser(createUsuarioDto, rol);
     } catch (error) {

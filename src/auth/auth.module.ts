@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Rol } from 'src/usuarios/entities/rol.entity';
+import { LoggingModule } from 'src/logger/logger.module';
 
 @Module({
   imports: [
@@ -18,9 +19,10 @@ import { Rol } from 'src/usuarios/entities/rol.entity';
       secret: process.env.JWT_SECRET || 'defaultSecretKey',
       signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
     }),
+    LoggingModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService, JwtModule],
 })
-export class AuthModule { }
+export class AuthModule {}
