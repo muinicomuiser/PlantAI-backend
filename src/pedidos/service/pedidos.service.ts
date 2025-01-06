@@ -67,7 +67,9 @@ export class PedidosService {
       const productosPedido: ProductoPedido[] = await this.guardarProductosPedido(carroCerrado.carroProductos, pedidoGuardado.id)
 
       // Crear carro nuevo activo al usuario
-      await this.carroComprasService.createCarro(idUsuario);
+      if (carroCerrado) {
+        await this.carroComprasService.createCarro(idUsuario);
+      }
 
       // Dto salida
       pedidoGuardado.productosPedido = productosPedido;
