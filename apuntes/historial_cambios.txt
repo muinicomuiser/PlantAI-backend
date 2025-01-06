@@ -200,5 +200,9 @@ Versión 1.12.2
 =========================================================================================================================
 Versión 1.12.3
 
+    Agregados: 
+        Logs para presentar los flujos de forma más didáctica. Se agregan en puntos clave, para mostrar los procesos que se están llevando a cabo, como creación de usuarios, de pedidos y etcétera.
+
     Corrección:
         - Catálogo: Corregido orden ascendente/descendente
+        - Carro: Corregida creación de carro
