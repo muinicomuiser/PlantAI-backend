@@ -47,7 +47,7 @@ export class CarroComprasService {
     const carroActivoExiste: boolean = await this.carroComprasRepository.exists({
       where: {
         idUsuario: idUsuario,
-        fecha_cierre: null
+        fecha_cierre: IsNull()
       }
     })
     if (!carroActivoExiste) {

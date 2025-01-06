@@ -25,12 +25,13 @@ Carro:
 
 Pedidos:
     Falta:
-        Historial de compra. <-- Se pueden obtener todos los pedidos de un usuairo
+        Historial de compra. <-- Se pueden obtener todos los pedidos de un usuario
+        Que al crear el pedido se verifique primero el stock de cada producto en el carro
+
 
 IA:
     Falta:
-        Resolver el tema de la paginación. ¿Cómo se va a conservar la query si su construcción es dinámica?
-        Quizás en vez de retornar productos, debería retornar un query.
+        + Quizás en vez de retornar productos, debería retornar un query.
 
 
 pal gpt

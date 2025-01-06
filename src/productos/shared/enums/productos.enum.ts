@@ -5,6 +5,6 @@ export enum ORDENARPOR {
 }
 
 export enum ORDENCATALOGO {
-  asc = 'ASC',
-  desc = 'DESC',
+  ASC = 'ASC',
+  DESC = 'DESC',
 }

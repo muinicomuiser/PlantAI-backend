@@ -196,3 +196,9 @@ Versión 1.12.2
 
     La idea de esta actualización es compensar la falta de IDs de usuario y carro requeridos en el flujo de carro de compras de visitante.
     Hace falta una revisión a ese flujo, a lo que se espera de cada proceso.
+
+=========================================================================================================================
+Versión 1.12.3
+
+    Corrección:
+        - Catálogo: Corregido orden ascendente/descendente
