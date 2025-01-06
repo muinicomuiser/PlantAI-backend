@@ -11,10 +11,24 @@ import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { DireccionEnvio } from './entities/direccion-envio.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { JwtService } from '@nestjs/jwt';
+import { LoggingModule } from 'src/logger/logger.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido, Usuario, Producto, EstadoPedido, TipoDespacho, ProductoPedido, Usuario, DireccionEnvio]), CarroComprasModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Pedido,
+      Usuario,
+      Producto,
+      EstadoPedido,
+      TipoDespacho,
+      ProductoPedido,
+      Usuario,
+      DireccionEnvio,
+    ]),
+    CarroComprasModule,
+    LoggingModule,
+  ],
   controllers: [PedidosController],
   providers: [PedidosService, JwtService],
 })
-export class PedidosModule { }
+export class PedidosModule {}

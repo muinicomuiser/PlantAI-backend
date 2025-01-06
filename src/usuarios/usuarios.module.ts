@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
 import { Pago } from 'src/commons/entities/pagos.entity';
 import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
+import { LoggingModule } from 'src/logger/logger.module';
 
 @Module({
   imports: [
@@ -26,13 +27,14 @@ import { CarroCompra } from 'src/carro-compras/entities/carro.entity';
       MedioPago,
       CarroCompra,
       ProductoPedido,
-      Pago
+      Pago,
     ]),
     CarroComprasModule,
     JwtModule.register({}),
+    LoggingModule,
   ],
   controllers: [UsuariosController],
   providers: [UsuariosService, RolesGuard],
   exports: [UsuariosService, TypeOrmModule],
 })
-export class UsuariosModule { }
+export class UsuariosModule {}
