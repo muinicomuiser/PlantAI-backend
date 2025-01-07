@@ -15,18 +15,16 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
 import { ReviewsModule } from './reviews/reviews.module';
 
-console.log(
-  `Cargando archivo de entorno: .env.${process.env.AMBIENTE || 'dev'}`,
-); //agrego interfaz para ver que archivo carga
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath:
-        [process.env.AMBIENTE != undefined
+      envFilePath: [
+        process.env.AMBIENTE != undefined
           ? `.env.${process.env.AMBIENTE}`
-          : `.env.dev`, `.env.ia`],
+          : `.env.dev`,
+        `.env.ia`,
+      ],
     }),
 
     TypeOrmModule.forRoot({

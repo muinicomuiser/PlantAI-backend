@@ -23,9 +23,9 @@ export class Usuario {
   nombre: string;
   @Column()
   apellido: string;
-  @Column({ name: 'nombre_usuario' })
+  @Column({ name: 'nombre_usuario', unique: true })
   nombreUsuario: string;
-  @Column()
+  @Column({ unique: true })
   email: string;
   @Column()
   telefono: string;
@@ -33,7 +33,7 @@ export class Usuario {
   genero: string;
   @Column()
   rut: string;
-  @Column({ name: 'fecha_nacimiento' })
+  @Column({ name: 'fecha_nacimiento', type: 'date' })
   fechaNacimiento: Date;
 
   /**One to Many */

@@ -1,14 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { InterceptorOkLogInterceptor } from './commons/interceptor/interceptor_ok_log.interceptor';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './commons/filter/httpexception.filter';
 import { ConfigService } from '@nestjs/config';
-import { setupSwagger } from './config/swagger/swagger.config';
-import { WinstonModule } from 'nest-winston';
-import { winstonLogger } from './config/winston/winston.config';
-import { LoggingInterceptor } from './commons/interceptor/logger.interceptor';
+import { NestFactory } from '@nestjs/core';
 import { json } from 'express';
+import { WinstonModule } from 'nest-winston';
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './commons/filter/httpexception.filter';
+import { LoggingInterceptor } from './commons/interceptor/logger.interceptor';
+import { setupSwagger } from './config/swagger/swagger.config';
+import { winstonLogger } from './config/winston/winston.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -38,7 +37,7 @@ async function bootstrap() {
 
   // Configuración de puerto
   const port = app.get(ConfigService).get<number>('PORT');
-  console.log('JWT_SECRET:', configService.get<string>('JWT_SECRET')); // Esto debe imprimir tu clave secreta
+  // console.log('JWT_SECRET:', configService.get<string>('JWT_SECRET')); // Esto debe imprimir tu clave secreta
 
   await app.listen(port);
 

@@ -12,9 +12,9 @@ export class GetDataDto<T> {
     data: T;
 
     constructor(data: T, message?: string, totalItems?: number) {
-        this.data = data;
-        this.message = message
         this.totalItems = totalItems
+        this.message = message
+        this.data = data;
     }
 
 }

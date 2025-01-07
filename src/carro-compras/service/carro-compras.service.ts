@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
@@ -19,6 +21,8 @@ import { CARRO_PRODUCTOS_RELATIONS } from '../shared/constants/carro-productos-r
 import { CARRO_RELATIONS } from '../shared/constants/carro-relaciones';
 import { CreatePedidoDto } from 'src/pedidos/dto/create-pedido.dto';
 import { NoStockProductosCarroDto } from '../dto/no-stock-carro-productos.dto';
+import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { Logger } from 'winston';
 
 @Injectable()
 export class CarroComprasService {
@@ -29,17 +33,42 @@ export class CarroComprasService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(CarroProducto)
     private readonly carroProductoRepository: Repository<CarroProducto>,
-  ) { }
+    @Inject('winston') private readonly logger: Logger,
+  ) {}
+
+  async validateCreateCarro(
+    idUsuario: number,
+    currentUser: JwtUser,
+  ): Promise<GetCarroComprasDto> {
+    if (currentUser.role == 'Cliente' || currentUser.role == 'Visitante') {
+      if (idUsuario != currentUser.id) {
+        throw new UnauthorizedException();
+      }
+    }
+    return await this.createCarro(idUsuario);
+  }
 
   /**Crea un carro activo a un usuario. */
   async createCarro(idUsuario: number): Promise<GetCarroComprasDto> {
-    const nuevoCarro = new CarroCompra(idUsuario);
-    const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
-    return CarroComprasMapper.carroEntityToDto(carroGuardado);
+    const carroActivoExiste: boolean = await this.carroComprasRepository.exists(
+      {
+        where: {
+          idUsuario: idUsuario,
+          fecha_cierre: IsNull(),
+        },
+      },
+    );
+    if (!carroActivoExiste) {
+      const nuevoCarro = new CarroCompra(idUsuario);
+      const carroGuardado = await this.carroComprasRepository.save(nuevoCarro);
+      this.logger.info(`Carro creado con ID: ${carroGuardado.id}`);
+      return CarroComprasMapper.carroEntityToDto(carroGuardado);
+    }
   }
 
   /**Retorna un DTO de carro de compras según su id. */
   async findByCarroId(id: number): Promise<GetCarroComprasDto> {
+    this.logger.info(`Buscando carro con ID: ${id}`);
     const carroEncontrado: CarroCompra =
       await this.carroComprasRepository.findOne({
         where: {
@@ -58,7 +87,6 @@ export class CarroComprasService {
       });
       return CarroComprasMapper.arrayCarroEntityToDto(encontrados);
     } catch (error) {
-      console.error(error);
       throw new BadRequestException('Error al obtener carros.', error);
     }
   }
@@ -82,6 +110,7 @@ export class CarroComprasService {
   }
 
   async addProductToCarro(idCarro: number, addProductDto: AddProductCarro) {
+    this.logger.info(`agregando productos al carro ${idCarro}`);
     const producto = await this.productoRepository.findOne({
       where: {
         id: addProductDto.productoId,
@@ -159,7 +188,6 @@ export class CarroComprasService {
       await this.carroProductoRepository.remove(carroProducto);
       return CarroComprasMapper.carroProductoEntityToDto(carroProducto);
     } catch (error) {
-      console.error(error);
       throw new BadRequestException(error.message);
     }
   }
@@ -230,58 +258,65 @@ export class CarroComprasService {
         nuevosCarroProductos,
       );
     } catch (error) {
-      console.error(error);
       throw new BadRequestException('Error al reemplazar contenido del carro');
     }
   }
 
-  async closeCarro(idUsuario: number, pedido: CreatePedidoDto): Promise<GetCarroComprasDto> {
+  async closeCarro(
+    idUsuario: number,
+    pedido: CreatePedidoDto,
+  ): Promise<GetCarroComprasDto> {
     try {
-      const carroCerrado: CarroCompra = await this.carroComprasRepository.findOne({
-        where: {
-          idUsuario: idUsuario,
-          fecha_cierre: IsNull()
-        },
-        relations: ['carroProductos', ...CARRO_RELATIONS]
-      })
-      console.log(carroCerrado)
-      // carroCerrado.fecha_cierre = pedido.fechaCreacion
-      await this.carroComprasRepository.update({ id: carroCerrado.id }, { fecha_cierre: pedido.fechaCreacion })
-      return CarroComprasMapper.carroEntityToDto(carroCerrado)
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException('Error al cerrar el Carro')
+      const carroCerrado: CarroCompra =
+        await this.carroComprasRepository.findOne({
+          where: {
+            idUsuario: idUsuario,
+            fecha_cierre: IsNull(),
+          },
+          relations: ['carroProductos', ...CARRO_RELATIONS],
+        });
+      await this.carroComprasRepository.update(
+        { id: carroCerrado.id },
+        { fecha_cierre: pedido.fechaCreacion },
+      );
+      return CarroComprasMapper.carroEntityToDto(carroCerrado);
+    } catch (error) {
+      throw new BadRequestException('Error al cerrar el Carro');
     }
   }
 
-  async validateProductosCarro(idCarro: number, contenidoCarroDto: UpdateContenidoCarroDto): Promise<GetCarroProductoDto[]> {
+  async validateProductosCarro(
+    idCarro: number,
+    contenidoCarroDto: UpdateContenidoCarroDto,
+  ): Promise<GetCarroProductoDto[]> {
     try {
-      const idProductos: number[] = contenidoCarroDto.productosCarro.map(productoCarro => productoCarro.productoId)
+      const idProductos: number[] = contenidoCarroDto.productosCarro.map(
+        (productoCarro) => productoCarro.productoId,
+      );
       const productos: Producto[] = await this.productoRepository.find({
         where: {
-          id: In(idProductos)
-        }
-      })
-      const productosConflicto: NoStockProductosCarroDto = new NoStockProductosCarroDto()
-      productosConflicto.productosEnConflicto = []
-      contenidoCarroDto.productosCarro.forEach(productoCarro => {
-        const producto: Producto = productos.find(producto => producto.id == productoCarro.productoId)
+          id: In(idProductos),
+        },
+      });
+      const productosConflicto: NoStockProductosCarroDto =
+        new NoStockProductosCarroDto();
+      productosConflicto.productosEnConflicto = [];
+      contenidoCarroDto.productosCarro.forEach((productoCarro) => {
+        const producto: Producto = productos.find(
+          (producto) => producto.id == productoCarro.productoId,
+        );
         if (producto.stock < productoCarro.cantidadProducto) {
-          productoCarro.cantidadProducto = producto.stock
-          productosConflicto.productosEnConflicto.push(productoCarro)
+          productoCarro.cantidadProducto = producto.stock;
+          productosConflicto.productosEnConflicto.push(productoCarro);
         }
-      })
+      });
       if (productosConflicto.productosEnConflicto.length > 0) {
-        throw new BadRequestException(productosConflicto)
+        throw new BadRequestException(productosConflicto);
+      } else {
+        return await this.replaceProductosCarro(idCarro, contenidoCarroDto);
       }
-      else {
-        return await this.replaceProductosCarro(idCarro, contenidoCarroDto)
-      }
-    }
-    catch (error) {
-      console.error(error)
-      throw new BadRequestException(error)
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

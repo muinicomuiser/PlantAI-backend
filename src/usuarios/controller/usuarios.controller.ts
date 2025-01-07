@@ -11,25 +11,27 @@ import {
   Put,
   Query,
   Request,
-  UseGuards,
-  UseInterceptors,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiExtraModels,
   ApiOperation,
-  ApiParam,
   ApiResponse,
   ApiTags,
-  getSchemaPath,
+  getSchemaPath
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { JwtUser, RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 import { MedioPago } from 'src/commons/entities/medio_pago.entity';
-import { RemoveInvisibleCharsInterceptor } from 'src/commons/interceptor/remove-invisible-chars.interceptor';
-import { SanitizeInputInterceptor } from 'src/commons/interceptor/sanitize-create-usuario.interceptor';
 import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { ChangeRoleDto } from '../dto/change-rol-dto';
+import { CreateDireccionDto } from '../dto/create-direccion.dto';
+import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { OutputUserDTO } from '../dto/output-userDTO';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -38,45 +40,41 @@ import { RolExistsPipe } from '../pipe/rol-exist.pipe';
 import { ValidarCrearUsuarioPipe } from '../pipe/validar-crear-usuario.pipe';
 import { ValidarUsuarioExistePipe } from '../pipe/validar-usuario-existe.pipe';
 import { UsuariosService } from '../service/usuarios.service';
-import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
-import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
+import { OutputGuestUserDTO } from '../dto/output-guest-userDTO';
 
-/**Historia de Usuario 3: Creación de usuarios y perfiles de compradores */
-@ApiTags('Usuarios')
-@ApiBearerAuth('access-token')
+
+
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
+
+  // CONTROLADORES DE ADMINISTRADOR
 
   // Obtener todos los usuarios
-  @ApiOperation({ summary: 'Obtiene los Usuarios' })
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({ summary: 'Obtiene todos los Usuarios (Admin)' })
   @ApiResponse({
     status: 200,
-    description: 'Devuelve todos los usuarios',
-    // Esto es para construir el ejemplo en Swagger, porque la data es tipo genérico
+    description: 'Devuelve todos los usuarios registrados',
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string' },
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
         data: {
           type: 'array',
-          items: {
-            $ref: getSchemaPath(OutputUserDTO),
-          },
+          items: { $ref: getSchemaPath(OutputUserDTO) },
         },
       },
     },
   })
-  @ApiResponse({
-    status: 403,
-    description: 'Acceso denegado',
-  })
-  @Get()
-  //@UseGuards(RolesGuard)
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  // async findAll(): Promise<{ data: OutputUserDTO[]; message: string }> {
+  @Get()
   async findAll(): Promise<GetDataDto<OutputUserDTO[]>> {
     const users = await this.usuariosService.findAll();
     return new GetDataDto(
@@ -86,8 +84,184 @@ export class UsuariosController {
     );
   }
 
+  // Obtener coincidencias de usuario por rut
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Obtener usuarios que coincidan con el rut',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene usuarios según rut',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(OutputUserDTO) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiBearerAuth('access-token')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('rut/:rut')
+  async findByRut(@Param('rut') rut: string): Promise<GetDataDto<OutputUserDTO[]>> {
+    const users = await this.usuariosService.findByRut(rut);
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
+  }
+
+  // Obtener coincidencias de usuario por email
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Obtener usuarios que coincidan con el email',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene usuarios según email',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(OutputUserDTO) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiBearerAuth('access-token')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('email/:email')
+  async findByEmail(@Param('email') email: string): Promise<GetDataDto<OutputUserDTO[]>> {
+    const users = await this.usuariosService.findByEmail(email);
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
+  }
+
+  // Obtener coincidencias de usuario por nombre
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Obtener usuarios que coincidan con el nombre de usuario, nombre o apellido',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Obtiene usuarios según nombre de usuario, nombre o apellido',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Usuarios obtenidos exitosamente.',
+        },
+        data: {
+          type: 'array',
+          items: { $ref: getSchemaPath(OutputUserDTO) },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiBearerAuth('access-token')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('name/:name')
+  async findByName(@Param('name') name: string): Promise<GetDataDto<OutputUserDTO[]>> {
+    const users = await this.usuariosService.findByName(name)
+    return new GetDataDto(
+      users,
+      'Usuarios obtenidos exitosamente.',
+      users.length,
+    );
+  }
+
+  //Modificar roles.
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary: 'Modifica el Rol de un usuario (Admin)',
+    description: 'Solo Admin y Super Admin.'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Rol actualizado exitosamente',
+    type: OutputUserDTO,
+  })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiBearerAuth('access-token')
+  @Roles('Super Admin', 'Admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Put(':idUsuario/cambiar-rol')
+  async cambiarRol(
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
+    @Body() changeRoleDto: ChangeRoleDto,
+    @Request() req: Request,
+  ): Promise<OutputUserDTO> {
+    const currentUser: JwtUser = req['user'];
+    return await this.usuariosService.cambiarRol(
+      idUsuario,
+      changeRoleDto.idRol,
+      currentUser,
+    );
+  }
+
+  //Obtener perfil de usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({ summary: 'Obtiene perfil y datos del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario encontrado',
+    type: OutputUserDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado',
+  })
+  @ApiBearerAuth('access-token')
+  @Roles('Super Admin', 'Admin', 'Cliente', 'Visitante')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('perfil')
+  async getPerfilUsuario(
+    @Request() req,
+  ): Promise<OutputUserDTO> {
+    const currentUser = req.user;
+    const usuario = await this.usuariosService.getUserProfile(currentUser);
+    return usuario;
+  }
+
   // Obtener un usuario según su ID
-  @ApiOperation({ summary: 'Obtiene un Usuario según id.' })
+  @ApiTags('Usuarios - Admin')
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({
+    summary: 'Obtiene un Usuario según id.',
+    description: 'Un Super Admin y Admin pueden revisar cualquier id de usuario. Un cliente solo puede obtener la información que coincida con su id.'
+  })
   @ApiResponse({
     status: 200,
     description: 'Usuario encontrado',
@@ -97,17 +271,20 @@ export class UsuariosController {
     status: 404,
     description: 'No hay un usuario con ese id',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':idUsuario')
   async findById(
-    //validar que el cliente sólo puede ver si información
     @Param('idUsuario', ParseIntPipe) idUsuario: number,
+    @Request() request: Request
   ): Promise<OutputUserDTO> {
-    return await this.usuariosService.findById(idUsuario);
+    const currentUser: JwtUser = request['user']
+    return await this.usuariosService.findById(idUsuario, currentUser);
   }
 
   // Crear un usuario
+  @ApiTags('Usuarios - Admin')
   @ApiOperation({ summary: 'Crea un usuario' })
   @ApiResponse({
     status: 201,
@@ -127,6 +304,7 @@ export class UsuariosController {
     description: 'El nombre de usuario ya está registrado',
   })
   @ApiBody({ type: CreateUsuarioDto })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin')
   @Post()
   async create(
@@ -136,76 +314,88 @@ export class UsuariosController {
     return await this.usuariosService.createUser(createUsuarioDTO, rol);
   }
 
-  // Actualizar un usuario según el id
-  @ApiOperation({ summary: 'Actualiza un usuario según su id' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuario actualizado',
-    type: OutputUserDTO,
+  // Eliminar usuario
+  @ApiTags('Usuarios - Admin')
+  @ApiOperation({
+    summary:
+      'Elimina un usuario por ID. Los clientes sólo pueden autoeliminarse.',
   })
-  @ApiResponse({
-    status: 400,
-    description: 'No se ha podido actualizar el usuario',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Usuario o rol no encontrado',
-  })
-  @ApiBody({ type: UpdateUsuarioDto })
-  @Put(':idUsuario')
-  @UseInterceptors(SanitizeInputInterceptor, RemoveInvisibleCharsInterceptor)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('Super Admin', 'Admin')
-  async updateOne(
-    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe)
-    idUsuario: number,
-    @Body(ValidarCrearUsuarioPipe) updateUsuarioDto: UpdateUsuarioDto,
-  ): Promise<OutputUserDTO> {
-    const updatedUser = await this.usuariosService.updateOne(
-      idUsuario,
-      updateUsuarioDto,
-    );
-
-    /****Comentado para aplicarlo después de la entrega 11, pa no descalibrarle a Front el uso del endpoint tan encima. */
-    // const respuesta = {
-    //   status: 200,
-    //   message: 'Usuario actualizado exitosamente',
-    //   data: updatedUser,
-    //   timestamp: new Date().toISOString(),
-    // };
-    /********** */
-    return updatedUser;
-  }
-  // Eliminar un usuario según el id
-  @ApiOperation({ summary: 'Elimina un usuario según su id' })
   @ApiResponse({
     status: 204,
-    description: 'Usuario eliminado',
+    description: 'Usuario eliminado exitosamente',
     schema: {
       example: { message: 'Usuario con ID 1 eliminado con éxito' },
     },
   })
-  @ApiResponse({
-    status: 404,
-    description: 'No existe un usuario con ese id',
-  })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin', 'Cliente')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':idUsuario')
-  //en el caso del cliente autoeliminarse. No eliminar otros
   async deleteOne(
-    @Param('idUsuario') idUsuario: number,
+    @Param('idUsuario', ParseIntPipe, ValidarUsuarioExistePipe) idUsuario: number,
+    @Request() req: Request,
   ): Promise<{ message: string }> {
-    return await this.usuariosService.deleteUser(idUsuario);
+    const currentUser: JwtUser = req['user'];
+    return await this.usuariosService.deleteUser(idUsuario, currentUser);
   }
-  //Obtener pedidos de usuario
-  @ApiExtraModels(GetPedidoUsuarioDto)
-  @ApiOperation({
-    summary: 'Obtiene los pedidos de un usuario según ID',
-  })
+
+  // CONTROLADORES DE CLIENTE
+
+  // Usuarios - Clientes
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({ summary: 'Actualiza la información del perfil (Cliente)' })
   @ApiResponse({
     status: 200,
-    description: 'Devuelve todos los usuarios',
-    // Esto es para construir el ejemplo en Swagger, porque la data es tipo genérico
+    description: 'Perfil actualizado exitosamente',
+    type: OutputUserDTO,
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No puedes modificar el perfil de otro usuario',
+  })
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Put()
+  async actualizarPerfil(
+    @Request() req,
+    @Body() updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<OutputUserDTO> {
+    const currentUser = req.user;
+    return this.usuariosService.updateUserProfile(
+      currentUser.id,
+      updateUsuarioDto,
+      currentUser,
+    );
+  }
+
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({ summary: 'Cambia la contraseña (Cliente)' })
+  @ApiResponse({ status: 200, description: 'Contraseña actualizada' })
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Put('cambiar-contrasena')
+  async cambiarContrasena(
+    @Request() req,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    const currentUser = req.user;
+
+    await this.usuariosService.cambiarContrasena(
+      currentUser.id,
+      changePasswordDto.nuevaContrasena,
+    );
+
+    return { message: 'Contraseña actualizada exitosamente' };
+  }
+
+  //Obtener pedidos de un usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiTags('Usuarios - Admin')
+  @ApiExtraModels(GetPedidoUsuarioDto)
+  @ApiOperation({ summary: 'Obtiene los pedidos de un usuario según ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve todos los pedidos del usuario',
     schema: {
       type: 'object',
       properties: {
@@ -223,21 +413,19 @@ export class UsuariosController {
     status: 400,
     description: 'Error al buscar los pedidos',
   })
+  @ApiBearerAuth('access-token')
   @Roles('Super Admin', 'Admin', 'Cliente')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiParam({ name: 'idUsuario', required: false })
   @Get('pedidos/:idUsuario')
   async findPedidos(
-    //en caso de cliente sólo buscar pedidos de sí mismo
     @Request() req,
-    @Param('idUsuario', /* ParseIntPipe, */ ValidarUsuarioExistePipe)
-    idUsuario?: number,
+    @Param('idUsuario', ParseIntPipe) idUsuario: number,
   ): Promise<GetDataDto<GetPedidoUsuarioDto[]>> {
-    const user = req.user;
-    console.log(user);
-    const pedidosUsuario: GetPedidoUsuarioDto[] =
-      await this.usuariosService.findPedidos(user, idUsuario);
-    console.log(pedidosUsuario);
+    const currentUser = req.user;
+    const pedidosUsuario = await this.usuariosService.findPedidos(
+      currentUser,
+      idUsuario,
+    );
     return new GetDataDto(
       pedidosUsuario,
       `Pedidos del usuario con id ${idUsuario}`,
@@ -246,6 +434,7 @@ export class UsuariosController {
   }
 
   // Modificar o agregar medio de pago
+  @ApiTags('Usuarios - Clientes')
   @ApiOperation({
     summary: 'Modifica o agrega el medio de pago de un usuario',
   })
@@ -277,6 +466,8 @@ export class UsuariosController {
   }
 
   //Obtener medios de pago de un usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiTags('Usuarios - Admin')
   @ApiOperation({ summary: 'Obtiene los métodos de pago de un usuario' })
   @ApiResponse({
     status: 200,
@@ -296,12 +487,44 @@ export class UsuariosController {
     return await this.usuariosService.findMedioPagoByUsuarioId(idUsuario);
   }
 
-  // Crear un usuario
-  @ApiOperation({ summary: 'Crea un usuario' })
+  //crear una dirección a un usuario
+  @ApiTags('Usuarios - Clientes')
+  @ApiOperation({ summary: 'Crea una dirección al usuario autenticado' })
+  @ApiResponse({
+    status: 201,
+    description: 'Dirección creada'
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiBody({ type: CreateDireccionDto })
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Post('direcciones')
+  async createAddres(
+    @Body() createDireccionDto: CreateDireccionDto,
+    @Request() req,
+  ) {
+    const currentUser = req.user;
+    return await this.usuariosService.createAddres(currentUser, createDireccionDto)
+  }
+
+
+
+  // CONTROLADORES DE Visitantes
+  // Crear un usuario invitado
+  @ApiTags('Usuarios - Visitantes')
+  @ApiOperation({
+    summary: 'Crea un usuario visitante. Si hay un visitante autenticado lo actualiza.',
+    description: 'Crea un usuario visitante, sin contraseña.\n'
+      + '\n Permite agregar opcionalmente un JWT de usuario visitante y actualizar sus datos.\n'
+      + '\n Si no se envía un JWT, se creará un usuario completamente nuevo.\n'
+  })
   @ApiResponse({
     status: 201,
     description: 'Usuario creado',
-    type: OutputUserDTO,
+    type: OutputGuestUserDTO,
   })
   @ApiResponse({
     status: 400,
@@ -311,15 +534,34 @@ export class UsuariosController {
     status: 400,
     description: 'El email ya está registrado',
   })
-  @ApiResponse({
-    status: 400,
-    description: 'El nombre de usuario ya está registrado',
-  })
   @ApiBody({ type: CreateGuestUsuarioDto })
-  @Post('invitado')
+  @ApiBearerAuth('access-token')
+  @Post('visitante')
   async createGuest(
     @Body(ValidarCrearUsuarioPipe) createGuestUsuarioDto: CreateGuestUsuarioDto,
-  ): Promise<OutputUserDTO> {
+    @Request() req: Request
+  ): Promise<OutputGuestUserDTO | OutputUserDTO> {
+    if (req.headers['authorization']) {
+      return await this.usuariosService.updateEmptyGuestUser(req.headers['authorization'], createGuestUsuarioDto)
+    }
     return await this.usuariosService.createGuestUser(createGuestUsuarioDto);
+  }
+
+
+  // Crear un usuario visitante vacío
+  @ApiTags('Usuarios - Visitantes')
+  @ApiOperation({ summary: 'Crea un usuario visitante sin datos.' })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuario creado',
+    type: OutputGuestUserDTO,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al crear usuario',
+  })
+  @Post('visitante-vacio')
+  async createEmptyGuestUser(): Promise<OutputGuestUserDTO> {
+    return await this.usuariosService.createEmptyGuestUser()
   }
 }

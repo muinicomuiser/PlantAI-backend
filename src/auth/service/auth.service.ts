@@ -10,9 +10,12 @@ import * as bcrypt from 'bcryptjs';
 import { CreateUsuarioDto } from 'src/usuarios/dto/create-usuario.dto';
 import { Rol } from 'src/usuarios/entities/rol.entity';
 import { UsuariosService } from 'src/usuarios/service/usuarios.service';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { LoginDto } from '../dto/login.dto';
 import { OutputUserDTO } from 'src/usuarios/dto/output-userDTO';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { JwtPayload } from '../guards/jwt-auth.guard/roles.guard';
+import { Logger } from 'winston';
 
 @Injectable()
 export class AuthService {
@@ -21,42 +24,91 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
+    @InjectRepository(Usuario)
+    private readonly userRepository: Repository<Usuario>,
+    @Inject('winston') private readonly logger: Logger,
   ) {}
 
-  private createTokenPayload(user: any) {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ access_token: string; id?: number; expToken?: number }> {
+    try {
+      const { usernameOrEmail, password } = loginDto;
+
+      const user = await this.userRepository.findOne({
+        where: [
+          {
+            nombreUsuario: usernameOrEmail,
+            rol: {
+              id: Not(4),
+            },
+          },
+          {
+            email: usernameOrEmail,
+            rol: {
+              id: Not(4),
+            },
+          },
+        ],
+        relations: ['rol'],
+      });
+
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+
+      // Verificar contraseña
+      const isPasswordValid = await this.validatePassword(
+        password,
+        user.contrasena,
+      );
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Contraseña incorrecta');
+      }
+
+      const payload = this.createTokenPayload(user);
+      const token = this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET || 'defaultSecretKey',
+        expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+      });
+      const tokenDecodificado = this.jwtService.decode(token);
+      this.logger.info(`Usuario ${user.nombreUsuario} ha iniciado sesión`);
+      return {
+        access_token: token,
+        expToken: tokenDecodificado.exp,
+        id: payload.sub,
+      };
+    } catch (error) {
+      throw new BadRequestException('Error en el login');
+    }
+  }
+
+  private async validatePassword(
+    plainPassword: string,
+    storedPassword: string,
+  ): Promise<boolean> {
+    // Verificar si la contraseña almacenada está encriptada (bcrypt)
+    const isEncrypted =
+      storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2a$');
+
+    if (isEncrypted) {
+      // Comparar usando bcrypt
+      return bcrypt.compare(plainPassword, storedPassword);
+    }
+
+    // Comparar contraseñas sin encriptar (usuarios antiguos)
+    return plainPassword === storedPassword;
+  }
+
+  private createTokenPayload(user: Usuario): JwtPayload {
     return {
-      username: user.username,
       sub: user.id,
-      role: user.rol,
+      username: user.nombreUsuario,
+      role: user.rol?.nombre,
     };
   }
-  async validarUsuario(
-    nombreUsuario: string,
-    contrasena: string,
-  ): Promise<any> {
-    const user = await this.usuariosService.findByUsername(nombreUsuario);
-    if (!user) {
-      return null;
-    }
-    // poder gestionar usuarios de legado con contraseñas  texto plano:
-    const isPasswordValid =
-      user.contrasena.length === 60
-        ? await bcrypt.compare(contrasena, user.contrasena)
-        : user.contrasena === contrasena;
-    if (user.contrasena.length !== 60) {
-      console.warn(
-        `usuario con ID ${user.id} no tiene cifrada su contraseña. Considerar actualuizar`,
-      );
-    }
-    if (isPasswordValid) {
-      return {
-        id: user.id,
-        username: user.nombreUsuario,
-        rol: user.rol.nombre,
-      };
-    }
-    return null;
-  }
+
   async register(createUsuarioDto: CreateUsuarioDto): Promise<OutputUserDTO> {
     try {
       const salt = 10;
@@ -66,40 +118,29 @@ export class AuthService {
       );
       // buscar rol en base
       const rol = await this.rolRepository.findOne({
-        where: { id: createUsuarioDto.idRol }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente
+        where: { id: 3 }, // <-- Los usuarios nuevos registrados quedan siempre como Cliente // eso debe ser asi ya que si no se podrian registrar como admin
       });
       if (!rol) {
-        throw new NotFoundException(
-          `Rol con ID ${createUsuarioDto.idRol} no existe`,
-        );
+        throw new NotFoundException(`Rol con ID ${3} no existe`);
       }
       // editar usuario si es visitante
       const user = await this.usuariosService.findUserByEmailAddress(
         createUsuarioDto.email,
       );
       if (user && user.rol.id === 4) {
-        return this.usuariosService.updateGuestUser(user.id, createUsuarioDto);
+        return await this.usuariosService.updateGuestUser(
+          user.id,
+          createUsuarioDto,
+          rol,
+        );
       }
+      this.logger.info(
+        `Usuario ${createUsuarioDto.nombreUsuario} ha sido registrado`,
+      );
       //pasar rol al metodo de crea
-      return this.usuariosService.createUser(createUsuarioDto, rol);
+      return await this.usuariosService.createUser(createUsuarioDto, rol);
     } catch (error) {
       throw new BadRequestException('Error al registrar usuario');
     }
-  }
-
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
-    const { username, password } = loginDto;
-    const user = await this.validarUsuario(username, password);
-
-    if (!user) {
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-    const payload = this.createTokenPayload(user);
-    const token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET || 'defaultSecretKey',
-      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
-    });
-
-    return { access_token: token };
   }
 }

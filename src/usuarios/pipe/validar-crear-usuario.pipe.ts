@@ -13,7 +13,7 @@ export class ValidarCrearUsuarioPipe implements PipeTransform {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepository: Repository<Usuario>,
-  ) {}
+  ) { }
 
   async transform(value: any, metadata: ArgumentMetadata) {
     const { id, email, nombreUsuario } = value;
@@ -40,9 +40,9 @@ export class ValidarCrearUsuarioPipe implements PipeTransform {
       const nombreUsuarioEnUso = await this.usuarioRepository.findOne({
         where: {
           nombreUsuario,
-          rol: {
-            id: Not(4),
-          },
+          // rol: {
+          //   id: Not(4),  // Aunque sea invitado, el nombre de usuario no debería repetirse, o no?? como se generará automáticamente
+          // },
         },
         select: ['id'],
       });

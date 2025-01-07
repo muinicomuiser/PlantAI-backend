@@ -21,7 +21,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
-import { ProductosService } from '../service/productos.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
@@ -35,19 +34,21 @@ import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto
 import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
 import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ProductosService } from '../service/productos.service';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
 /**Historia de Usuario 7: Búsqueda de Productos */
 @ApiTags('Gestión de productos')
 @Controller('productos')
 export class ProductosController {
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(private readonly productosService: ProductosService) { }
 
   @ApiOperation({
     summary:
       'Retorna todos los productos registrados. PREFERIR GET productos/admin para paginación.',
     description:
       'Ahora está habilitado el GET productos/admin, que retorna todos los productos y permite paginar.',
+    deprecated: true
   })
   @ApiResponse({
     status: 200,
