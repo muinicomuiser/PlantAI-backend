@@ -34,5 +34,6 @@ services:
       - RUTA_FISICA=${RUTA_FISICA}
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
       - JWT_SECRET=${JWT_SECRET}
+      - LIMITE_TAMANO_ENTRADA=${LIMITE_TAMANO_ENTRADA}
     ports:
       - '8080:${API_PORT}'
