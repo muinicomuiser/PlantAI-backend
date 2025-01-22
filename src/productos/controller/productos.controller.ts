@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -14,6 +16,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiNoContentResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -175,8 +178,8 @@ export class ProductosController {
   // Eliminar un producto
   @ApiOperation({ summary: 'Elimina un producto según su id' })
   @ApiResponse({
-    status: 200,
-    description: 'Producto eliminado',
+    status: 204,
+    description: 'Producto eliminado. Respuesta sin contenido',
   })
   @ApiResponse({
     status: 404,
@@ -186,10 +189,13 @@ export class ProductosController {
   @Delete(':idProducto')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @HttpCode(204)
   async deleteOne(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
   ): Promise<GetProductoDto> {
-    return await this.productosService.deleteOne(idProducto);
+    await this.productosService.deleteOne(idProducto);
+    // throw HttpStatus.NO_CONTENT
+    return;
   }
 
   //Subir imagen en bas64 a un producto

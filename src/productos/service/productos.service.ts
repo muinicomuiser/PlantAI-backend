@@ -29,26 +29,39 @@ export class ProductosService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(ImagenProducto)
     private readonly imagenProductoRepository: Repository<ImagenProducto>,
-    @InjectRepository(CarroProducto)
-    private readonly carroProductoRepository: Repository<CarroProducto>,
     private readonly imageService: ImageService,
   ) { }
 
+  /**
+   * BÚSQUEDA
+   */
+
   /**Retorna el producto cuyo id coincida con el ingresado.*/
   async getById(id: number): Promise<GetProductoDto> {
-    const producto = await this.productoRepository.findOne({
-      where: { id: id },
-      relations: PRODUCTO_RELATIONS,
-    });
+    const producto = await this.getEntityById(id, PRODUCTO_RELATIONS)
     if (!producto) {
       throw new NotFoundException('No existe un producto con ese id.');
     }
     return ProductoMapper.entityToDto(producto);
   }
 
-  /**Retorna el conjunto de productos que coincida con los filtros.*/
-  getByFilters() {
-    return { mensaje: 'endpoint en desarrollo' };
+  /**Retorna todos los productos registrados, con paginación. Para endpoints de Gestión de Productos (Admins) */
+  async findAllPaginated(
+    paginacionDto: PaginacionDto,
+  ): Promise<GetProductosAdminDto> {
+    const { page, pageSize } = paginacionDto;
+    const limit = pageSize;
+    const offset = (page - 1) * limit;
+    const [result, totalItems] = await this.productoRepository.findAndCount({
+      take: limit,
+      skip: offset,
+      relations: PRODUCTO_RELATIONS,
+    });
+    const productos = result.map((producto) =>
+      ProductoMapper.entityToDto(producto),
+    );
+
+    return { data: productos, totalItems };
   }
 
   /**Retorna todos los productos registrados.*/
@@ -59,7 +72,25 @@ export class ProductosService {
     return productos.map((producto) => ProductoMapper.entityToDto(producto));
   }
 
-  // Crear producto
+  /**Retorna una entidad Producto por id. Método auxiliar. */
+  private async getEntityById(idProducto: number, relaciones: string[]): Promise<Producto> {
+    try {
+      const producto = await this.productoRepository.findOne({
+        where: { id: idProducto },
+        relations: relaciones,
+      });
+      return producto;
+    }
+    catch (error) {
+      throw new BadRequestException('Error al obtener producto')
+    }
+  }
+
+  /**
+   * CREACIÓN
+   */
+
+  /**Crea un producto nuevo. */
   async create(createProductoDto: CreateProductoDto): Promise<GetProductoDto> {
     let imagenNueva: string = null;
     if (createProductoDto.imagen) {
@@ -135,6 +166,11 @@ export class ProductosService {
     }
   }
 
+  /**
+   * ACTUALIZACIÓN
+   */
+
+  /**Actualiza un producto segpun su id. */
   async update(
     id: number,
     updateProductoDto: UpdateProductoDto,
@@ -194,14 +230,15 @@ export class ProductosService {
     return await this.getById(updateProducto.id);
   }
 
-  /**Elimina un producto según su id */
-  async deleteOne(idProducto: number): Promise<GetProductoDto> {
-    try {
+  /**
+   * ELIMINACIÓN
+   */
 
-      const producto = await this.productoRepository.findOne({
-        where: { id: idProducto },
-        relations: PRODUCTO_RELATIONS,
-      });
+  /**Elimina un producto según su id. */
+  async deleteOne(idProducto: number): Promise<void> {
+    try {
+      const producto = await this.getEntityById(idProducto, PRODUCTO_RELATIONS)
+
       await this.productoRepository.manager.transaction(
         async (transactionalEntityManager) => {
           await transactionalEntityManager.delete(CarroProducto, {
@@ -248,17 +285,23 @@ export class ProductosService {
       if (producto.imagenes) {
         if (producto.imagenes.length > 0) {
           await Promise.all(producto.imagenes.map(async imagen => {
-            const rutaImage = this.reemplazarRutaEstaticoAFisico(imagen.ruta)
+            const rutaImage = this.rutaEstaticaAFisica(imagen.ruta)
             await this.imageService.deleteImage(rutaImage);
           }))
         }
       }
-      return ProductoMapper.entityToDto(producto);
+      // return ProductoMapper.entityToDto(producto);
+      return;
     }
     catch (error) {
+      console.log(error)
       throw new BadRequestException('Error al eliminar producto')
     }
   }
+
+  /**
+   * MÉTODOS DE IMÁGENES
+   */
 
   /**Subir una imagen en Base64; guardar ruta en DB y SV estáticos*/
   async addProductImage(
@@ -313,18 +356,16 @@ export class ProductosService {
   //   }
   // }
 
-  /**Elimina una imagen de un producto en Base64; borra la ruta de DB y el archivo de la ruta de estáticos*/
+  /**Elimina una imagen de un producto en Base64. Borra la imagen del índice del arreglo de imágenes del producto, borra la ruta de DB y el archivo. */
   async deleteProductImage(idProducto: number, indiceImagen: number) {
     try {
-      const producto = await this.productoRepository.findOne({
-        where: { id: idProducto },
-        relations: PRODUCTO_RELATIONS,
-      });
+      const producto = await this.getEntityById(idProducto, ['imagenes'])
+
       if (producto.imagenes.length < indiceImagen + 1 || indiceImagen < 0) {
         throw new BadRequestException('Índice inválido');
       }
       const imagenEliminada: ImagenProducto = producto.imagenes[indiceImagen]
-      const rutaImage = this.reemplazarRutaEstaticoAFisico(imagenEliminada.ruta)
+      const rutaImage = this.rutaEstaticaAFisica(imagenEliminada.ruta)
       await this.imageService.deleteImage(rutaImage);
       await this.imagenProductoRepository.remove(imagenEliminada)
     } catch (error) {
@@ -336,30 +377,12 @@ export class ProductosService {
     return true;
   }
 
-  private reemplazarRutaEstaticoAFisico(ruta: string): string {
+  /**Convierte un string de ruta estática a ruta física, de acuerdo a las variables respectivos de entorno. */
+  private rutaEstaticaAFisica(ruta: string): string {
     const rutaImagen = ruta.replace(
       `${process.env.RUTA_ESTATICOS}`,
       `${process.env.RUTA_FISICA}/`,
     );
     return rutaImagen
-  }
-
-  /**Retorna todos los productos */
-  async findAllPaginated(
-    paginacionDto: PaginacionDto,
-  ): Promise<GetProductosAdminDto> {
-    const { page, pageSize } = paginacionDto;
-    const limit = pageSize;
-    const offset = (page - 1) * limit;
-    const [result, totalItems] = await this.productoRepository.findAndCount({
-      take: limit,
-      skip: offset,
-      relations: PRODUCTO_RELATIONS,
-    });
-    const productos = result.map((producto) =>
-      ProductoMapper.entityToDto(producto),
-    );
-
-    return { data: productos, totalItems };
   }
 }
