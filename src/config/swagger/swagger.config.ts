@@ -53,6 +53,7 @@ export function setupSwagger(app: INestApplication) {
   const golbalDocument = SwaggerModule.createDocument(app, globalConfig);
   SwaggerModule.setup('api', app, golbalDocument, {
     yamlDocumentUrl: 'swagger/yaml',
+    customSiteTitle: 'PlantAI - BackEnd'
   });
 
   // Configuraciones de modulos

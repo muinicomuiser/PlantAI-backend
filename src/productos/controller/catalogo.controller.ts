@@ -1,12 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
-import { GetProductoDto } from 'src/productos/dto/producto/get-producto.dto';
-import { CatalogoService } from '../service/catalogo.service';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   FiltrosCatalogoDto,
   SearchCatalogoDto,
 } from '../dto/catalogo/paginacion.dto';
-import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
+import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
+import { CatalogoService } from '../service/catalogo.service';
 
 /**Historia de Usuario 12: Visualización del catálogo*/
 @ApiTags('Catálogo')
@@ -19,18 +18,7 @@ export class CatalogoController {
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos del catálogo',
-    schema: {
-      type: 'object',
-      properties: {
-        totalItems: { type: 'number' },
-        data: {
-          type: 'array',
-          items: {
-            $ref: getSchemaPath(GetProductoDto)
-          }
-        },
-      }
-    },
+    type: GetProductosPaginadosDto
   })
 
   @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
@@ -40,30 +28,19 @@ export class CatalogoController {
     description: 'Cantidad de elementos por página',
   })
   @Get()
-  async findAll(@Query() filtrosCatalogoDto: FiltrosCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
+  async findAll(@Query() filtrosCatalogoDto: FiltrosCatalogoDto): Promise<GetProductosPaginadosDto> {
     return await this.catalogoService.findAll(filtrosCatalogoDto);
   }
 
-  // obtener catalogo por search
+  // Obtener catalogo por search
   @ApiOperation({ summary: 'Obtener productos del catálogo según búsqueda por texto' })
   @ApiResponse({
     status: 200,
     description: 'Retorna los productos del catálogo por búsqueda',
-    schema: {
-      type: 'object',
-      properties: {
-        totalItems: { type: 'number' },
-        data: {
-          type: 'array',
-          items: {
-            $ref: getSchemaPath(GetProductoDto)
-          }
-        },
-      }
-    },
+    type: GetProductosPaginadosDto
   })
   @Get('search')
-  async findBySearch(@Query() searchCatalogoDto: SearchCatalogoDto): Promise<GetDataDto<GetProductoDto[]>> {
+  async findBySearch(@Query() searchCatalogoDto: SearchCatalogoDto): Promise<GetProductosPaginadosDto> {
     return await this.catalogoService.findBySearch(searchCatalogoDto);
   }
 }

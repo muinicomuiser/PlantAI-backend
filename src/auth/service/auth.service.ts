@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -27,7 +28,7 @@ export class AuthService {
     @InjectRepository(Usuario)
     private readonly userRepository: Repository<Usuario>,
     @Inject('winston') private readonly logger: Logger,
-  ) {}
+  ) { }
 
   async login(
     loginDto: LoginDto,
