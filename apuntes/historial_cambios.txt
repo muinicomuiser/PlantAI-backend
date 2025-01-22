@@ -206,3 +206,11 @@ Versión 1.12.3
     Corrección:
         - Catálogo: Corregido orden ascendente/descendente
         - Carro: Corregida creación de carro
+
+
+=========================================================================================================================
+** Próxima Versión
+
+    Cambios:
+        - Productos:
+            Los endpoints de DELETE ahora solo retornan un código 204, sin body.

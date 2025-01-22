@@ -4,39 +4,36 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
   Query,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiNoContentResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-import { GetProductoDto } from '../dto/producto/get-producto.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { ProductoExistentePipe } from 'src/carro-compras/pipe/validar-producto-existente.pipe';
-import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
-import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
+import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
+import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { ValidarBase64Pipe } from '../pipe/validar-base64.pipe';
 import { ValidarCategoriaProductoPipe } from '../pipe/validar-categoria-producto.pipe';
 import { ValidarImagenProductoExistePipe } from '../pipe/validar-imagen-producto-existe.pipe';
 import { ValidarPropiedadesProductoPipe } from '../pipe/validar-propiedades-producto.pipe';
-import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ProductosService } from '../service/productos.service';
 
 /**Historia de Usuario 5: Implementación de "gestión de productos" Administrador */
@@ -46,6 +43,7 @@ import { ProductosService } from '../service/productos.service';
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) { }
 
+  // Obtener todos, sin paginación
   @ApiOperation({
     summary:
       'Retorna todos los productos registrados. PREFERIR GET productos/admin para paginación.',
@@ -63,9 +61,10 @@ export class ProductosController {
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll(): Promise<GetProductoDto[]> {
-    return this.productosService.getAll();
+    return await this.productosService.getAll();
   }
 
+  // Obtener todos, paginados
   @ApiOperation({
     summary: 'Retorna todos los productos registrados paginados.',
   })
@@ -78,7 +77,7 @@ export class ProductosController {
   @ApiResponse({
     status: 200,
     description: 'Retorna todos los productos',
-    type: GetProductosAdminDto,
+    type: GetProductosPaginadosDto,
   })
   @ApiBearerAuth('access-token')
   @Get('admin')
@@ -89,12 +88,8 @@ export class ProductosController {
     page?: number,
     @Query('pageSize')
     pageSize?: number,
-  ): Promise<GetProductosAdminDto> {
-    const paginacionDto: PaginacionDto = {
-      page: page ? +page : 1,
-      pageSize: pageSize ? +pageSize : 10,
-    };
-    return await this.productosService.findAllPaginated(paginacionDto);
+  ): Promise<GetProductosPaginadosDto> {
+    return await this.productosService.findAllPaginated({ page, pageSize });
   }
 
   // Obtener producto por id
@@ -192,13 +187,12 @@ export class ProductosController {
   @HttpCode(204)
   async deleteOne(
     @Param('idProducto', ProductoExistentePipe) idProducto: number,
-  ): Promise<GetProductoDto> {
+  ): Promise<void> {
     await this.productosService.deleteOne(idProducto);
-    // throw HttpStatus.NO_CONTENT
     return;
   }
 
-  //Subir imagen en bas64 a un producto
+  // Subir imagen en bas64 a un producto
   @ApiOperation({
     summary:
       'Sube la imagen de un producto, guarda la ruta de acceso en el producto y retorna la ruta',
@@ -245,16 +239,18 @@ export class ProductosController {
   //   // );
   // }
 
+  // Eliminar imagen
   @ApiOperation({
     summary:
       'Eliminar la imagen de un producto según el índice de la imagen en el arreglo.',
   })
-  @ApiResponse({ status: 200, description: 'Imagen eliminada con éxito' })
+  @ApiResponse({ status: 204, description: 'Imagen eliminada con éxito. Respuesta sin contenido' })
   @ApiResponse({ status: 400, description: 'Error al eliminar imagen' })
   @ApiBearerAuth('access-token')
   @Delete('deleteProductImage/:idProducto/:indiceImagen')
   @Roles('Super Admin', 'Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @HttpCode(204)
   async deleteProductImage(
     @Param(
       'idProducto',
@@ -265,7 +261,7 @@ export class ProductosController {
     idProducto: number,
     @Param('indiceImagen', ParseIntPipe)
     indiceImagen: number,
-  ) {
+  ): Promise<void> {
     return await this.productosService.deleteProductImage(
       idProducto,
       indiceImagen,

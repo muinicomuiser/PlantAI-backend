@@ -38,11 +38,11 @@ export class ImageService {
   }
 
   /** Elimina un archivo de imagen según su ruta física.*/
-  async deleteImage(rutaArchivo: string) {
+  async deleteImageFile(rutaArchivo: string) {
     try {
       await FS.rm(rutaArchivo);
     } catch (err) {
-      throw new BadRequestException('Error al eliminar imagen');
+      throw new BadRequestException('Error al eliminar archivo de imagen');
     }
   }
 
@@ -50,7 +50,7 @@ export class ImageService {
   async updateImage(base64Content: string, rutaArchivo: string) {
     try {
       //Elimina archivo
-      await this.deleteImage(rutaArchivo);
+      await this.deleteImageFile(rutaArchivo);
 
       //Agrega nueva imagen
       return await this.addImage(base64Content);
