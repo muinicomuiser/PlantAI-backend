@@ -20,5 +20,9 @@ IA:
 /**
 Proceso refactorización productos:
 branch refactor_productos
-        - Cambiar respuesta endpoint deleteProductImage/
+        - Cambio respuestas en DELETE productos/
+/**
+
+/**
+Proceso precios con descuento
 /**

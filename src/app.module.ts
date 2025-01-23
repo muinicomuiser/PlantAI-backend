@@ -14,6 +14,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { PromocionesModule } from './promociones/promociones.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     AuthModule,
     IaconsultasModule,
     ReviewsModule,
+    PromocionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
