@@ -171,7 +171,12 @@ export class ProductosController {
   }
 
   // Eliminar un producto
-  @ApiOperation({ summary: 'Elimina un producto según su id' })
+  @ApiOperation({
+    summary: 'Elimina un producto según su id',
+    description: 'Ejecuta dos métodos de eliminación: \n'
+      + '\n - Si el producto nunca ha sido comprado, se elimina completamente.\n'
+      + '\n - Si el producto ya ha sido comprado, se ejecuta un Soft Delete (se invisibiliza toda su información, pero se conservan las asociaciones con el historial de pedidos).'
+  })
   @ApiResponse({
     status: 204,
     description: 'Producto eliminado. Respuesta sin contenido',

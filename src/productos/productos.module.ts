@@ -27,6 +27,7 @@ import { ToleranciaTemperatura } from './entities/plantas/tolerancia_temperatura
 import { ImageService } from './service/imagen.service';
 import { ImagenProducto } from './entities/imagenes.entity';
 import { JwtService } from '@nestjs/jwt';
+import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
 
 @Module({
   imports: [
@@ -50,7 +51,8 @@ import { JwtService } from '@nestjs/jwt';
       Accesorio,
       TipoAccesorio,
       CarroProducto,
-      ImagenProducto
+      ImagenProducto,
+      ProductoPedido
     ]),
   ],
   controllers: [ProductosController, CatalogoController],

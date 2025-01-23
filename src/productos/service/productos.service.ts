@@ -21,6 +21,7 @@ import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
 import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
 import { ImageService } from './imagen.service';
+import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
 
 @Injectable()
 export class ProductosService {
@@ -29,6 +30,8 @@ export class ProductosService {
     private readonly productoRepository: Repository<Producto>,
     @InjectRepository(ImagenProducto)
     private readonly imagenProductoRepository: Repository<ImagenProducto>,
+    @InjectRepository(ProductoPedido)
+    private readonly productoPedidoRepository: Repository<ProductoPedido>,
     private readonly imageService: ImageService,
   ) { }
 
@@ -229,55 +232,85 @@ export class ProductosService {
     try {
       const producto = await this.getEntityById(idProducto, PRODUCTO_RELATIONS)
 
-      await this.productoRepository.manager.transaction(
-        async (transactionalEntityManager) => {
-          await transactionalEntityManager.delete(CarroProducto, {
-            idProducto: idProducto,
-          });
-          await transactionalEntityManager.delete('productos_etiquetas', {
-            id_producto: idProducto,
-          });
-          if (producto.planta) {
-            await transactionalEntityManager.delete(
-              Planta,
-              producto.planta.idProducto,
-            );
+      // Revisar si el producto ha sido comprado
+      const productoComprado: boolean = await this.productoPedidoRepository.existsBy({ idProducto: idProducto })
+
+      // Si fue comprado, se eliminan las imagenes y se hace un soft delete del producto
+      if (productoComprado) {
+        await this.productoRepository.manager.transaction(
+          async (transactionalEntityManager) => {
+            if (producto.imagenes) {
+              if (producto.imagenes.length > 0) {
+                await transactionalEntityManager.delete(
+                  ImagenProducto,
+                  producto.imagenes,
+                );
+              }
+            }
+            await transactionalEntityManager.softDelete(Producto, { id: producto.id })
+          })
+        if (producto.imagenes) {
+          if (producto.imagenes.length > 0) {
+            await Promise.all(producto.imagenes.map(async imagen => {
+              const rutaImage = this.rutaEstaticaAFisica(imagen.ruta)
+              await this.imageService.deleteImageFile(rutaImage);
+            }))
           }
-          if (producto.macetero) {
-            await transactionalEntityManager.delete(
-              Macetero,
-              producto.macetero.idProducto,
-            );
-          }
-          if (producto.insumo) {
-            await transactionalEntityManager.delete(
-              Insumo,
-              producto.insumo.idProducto,
-            );
-          }
-          if (producto.accesorio) {
-            await transactionalEntityManager.delete(
-              Accesorio,
-              producto.accesorio.idProducto,
-            );
-          }
-          if (producto.imagenes) {
-            if (producto.imagenes.length > 0) {
+        }
+      }
+
+      // Si no se ha comprado, se elimina el producto completo
+      else {
+        await this.productoRepository.manager.transaction(
+          async (transactionalEntityManager) => {
+            await transactionalEntityManager.delete(CarroProducto, {
+              idProducto: idProducto,
+            });
+            await transactionalEntityManager.delete('productos_etiquetas', {
+              id_producto: idProducto,
+            });
+            if (producto.planta) {
               await transactionalEntityManager.delete(
-                ImagenProducto,
-                producto.imagenes,
+                Planta,
+                producto.planta.idProducto,
               );
             }
+            if (producto.macetero) {
+              await transactionalEntityManager.delete(
+                Macetero,
+                producto.macetero.idProducto,
+              );
+            }
+            if (producto.insumo) {
+              await transactionalEntityManager.delete(
+                Insumo,
+                producto.insumo.idProducto,
+              );
+            }
+            if (producto.accesorio) {
+              await transactionalEntityManager.delete(
+                Accesorio,
+                producto.accesorio.idProducto,
+              );
+            }
+            if (producto.imagenes) {
+              if (producto.imagenes.length > 0) {
+                await transactionalEntityManager.delete(
+                  ImagenProducto,
+                  producto.imagenes,
+                );
+              }
+            }
+            await transactionalEntityManager.delete(Producto, idProducto);
+          },
+        );
+        if (producto.imagenes) {
+          if (producto.imagenes.length > 0) {
+            await Promise.all(producto.imagenes.map(async imagen => {
+              const rutaImage = this.rutaEstaticaAFisica(imagen.ruta)
+              await this.imageService.deleteImageFile(rutaImage);
+            }))
           }
-          await transactionalEntityManager.delete(Producto, idProducto);
-        },
-      );
-      if (producto.imagenes) {
-        if (producto.imagenes.length > 0) {
-          await Promise.all(producto.imagenes.map(async imagen => {
-            const rutaImage = this.rutaEstaticaAFisica(imagen.ruta)
-            await this.imageService.deleteImageFile(rutaImage);
-          }))
         }
       }
       return;

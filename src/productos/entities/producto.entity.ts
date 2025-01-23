@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -99,4 +100,8 @@ export class Producto {
   @OneToMany(() => ImagenProducto, (imagen: ImagenProducto) => imagen.producto)
   @JoinColumn({ name: 'imagenes_productos', referencedColumnName: 'id' })
   imagenes: ImagenProducto[];
+
+  /**Propiedad para el soft delete */
+  @DeleteDateColumn({ name: 'fecha_eliminacion' })
+  deletedAt?: Date;
 }
