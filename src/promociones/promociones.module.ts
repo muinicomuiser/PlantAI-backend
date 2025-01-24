@@ -16,6 +16,7 @@ import { TipoDescuento } from './entities/tipo_descuento.entity';
   ])
   ],
   controllers: [PromocionesController],
-  providers: [PromocionesService]
+  providers: [PromocionesService],
+  exports: [PromocionesService]
 })
 export class PromocionesModule { }

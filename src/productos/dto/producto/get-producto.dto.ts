@@ -5,6 +5,7 @@ import { GetImagenDto } from '../imagen/get-imagen.dto';
 import { GetInsumoDto } from '../insumo/get-insumo.dto';
 import { GetMaceteroDto } from '../macetero/get-macetero.dto';
 import { GetPlantaDto } from '../planta/get-planta.dto';
+import { GetPromocionProductoDto } from 'src/promociones/dto/get_promocion_producto.dto';
 
 export class GetProductoDto {
   @ApiProperty({ example: 1, description: 'Identificador único del producto' })
@@ -25,8 +26,14 @@ export class GetProductoDto {
   })
   idCategoria: number;
 
-  @ApiProperty({ example: 1000.5, description: 'Precio del producto' })
+  @ApiProperty({ example: 15000, description: 'Precio del producto' })
   precio: number;
+
+  /**Es opcional, porque para el caso de cupones solo se le dará un valor cuando se active el cupón. 
+   * Para el caso de las promociones tradicionales, el precio final se enviará siempre.
+  */
+  @ApiProperty({ example: 11990, description: 'Precio del producto después de aplicar descuento' })
+  precioFinal?: number;
 
   @ApiProperty({
     example: 'Macetero hecho a mano',
@@ -124,4 +131,9 @@ export class GetProductoDto {
     required: false,
   })
   insumo?: GetInsumoDto;
+
+  @ApiProperty({
+    type: [GetPromocionProductoDto],
+  })
+  promociones?: GetPromocionProductoDto[]
 }

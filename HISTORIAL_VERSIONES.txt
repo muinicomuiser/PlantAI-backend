@@ -214,3 +214,13 @@ Versión 1.12.3
     Cambios:
         - Productos:
             Los endpoints de DELETE ahora solo retornan un código 204, sin body.
+            Soft Delete para Productos
+                Los productos solo se eliminan si nunca han sido comprado. Si se han comprado se les da una fecha de eliminación, para no rompper los registros de compras.
+        
+    Agregados:
+        - Módulo de Promociones
+
+        - Productos:
+            Propiedad "promociones: GetPromocionesDto[]"
+                Arreglo de promociones activas de cada producto.
+

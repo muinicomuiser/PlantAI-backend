@@ -28,6 +28,7 @@ import { ImageService } from './service/imagen.service';
 import { ImagenProducto } from './entities/imagenes.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
+import { PromocionesModule } from 'src/promociones/promociones.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
       ImagenProducto,
       ProductoPedido
     ]),
+    PromocionesModule
   ],
   controllers: [ProductosController, CatalogoController],
   providers: [ProductosService, CatalogoService, ImageService, JwtService],
