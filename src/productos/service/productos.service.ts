@@ -1,13 +1,11 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
 import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
-import { PromocionesService } from 'src/promociones/service/promociones.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
@@ -29,14 +27,12 @@ import { ImageService } from './imagen.service';
 export class ProductosService {
   constructor(
     @InjectRepository(Producto)
-    private readonly productoRepository: Repository<Producto>,
+    readonly productoRepository: Repository<Producto>,
     @InjectRepository(ImagenProducto)
     private readonly imagenProductoRepository: Repository<ImagenProducto>,
     @InjectRepository(ProductoPedido)
     private readonly productoPedidoRepository: Repository<ProductoPedido>,
     private readonly imageService: ImageService,
-    @Inject(PromocionesService)
-    private readonly promocionesService: PromocionesService
   ) { }
 
   /**

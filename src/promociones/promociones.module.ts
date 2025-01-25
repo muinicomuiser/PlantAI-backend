@@ -1,19 +1,21 @@
 import { Module } from '@nestjs/common';
-import { PromocionesController } from './controller/promociones.controller';
-import { PromocionesService } from './service/promociones.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PromocionesController } from './controller/promociones.controller';
 import { Promocion } from './entities/promocion.entity';
+import { TipoDescuento } from './entities/tipo_descuento.entity';
 import { TipoPromocion } from './entities/tipo_promocion.entity';
 import { TipoSeleccionProducto } from './entities/tipo_seleccion_producto.entity';
-import { TipoDescuento } from './entities/tipo_descuento.entity';
+import { PromocionesService } from './service/promociones.service';
+import { ProductosModule } from 'src/productos/productos.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     Promocion,
     TipoPromocion,
     TipoSeleccionProducto,
-    TipoDescuento
-  ])
+    TipoDescuento,
+  ]),
+    ProductosModule
   ],
   controllers: [PromocionesController],
   providers: [PromocionesService],
