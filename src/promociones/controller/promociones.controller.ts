@@ -8,6 +8,7 @@ import { UpdatePromocionDto } from '../dto/update_promocion.dto';
 import { PromocionesService } from '../service/promociones.service';
 import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pipe';
 import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
+import { AplanarCodigoCuponPipe } from '../pipe/aplanar-codigo-cupon.pipe';
 
 @ApiTags('Promociones')
 @Controller('promociones')
@@ -82,7 +83,7 @@ export class PromocionesController {
         description: 'Error al comprobar código'
     })
     @Get('coupon/:codigoPromocion')
-    async validateCoupon(@Param('codigoPromocion') code: string): Promise<GetCuponValidadoDto> {
+    async validateCoupon(@Param('codigoPromocion', AplanarCodigoCuponPipe) code: string): Promise<GetCuponValidadoDto> {
         return await this.promocionesService.validateCoupon(code)
     }
 
