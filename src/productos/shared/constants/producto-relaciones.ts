@@ -21,8 +21,4 @@ export const PRODUCTO_RELATIONS = [
   'insumo.marca',
   'macetero.tipoMacetero',
   'macetero.marca',
-  // 'promociones',
-  // 'promociones.tipoPromocion',
-  // 'promociones.tipoDescuento',
-  // 'promociones.tipoSeleccionProducto'
 ];

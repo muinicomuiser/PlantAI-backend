@@ -216,11 +216,27 @@ Versión 1.12.3
             Los endpoints de DELETE ahora solo retornan un código 204, sin body.
             Soft Delete para Productos
                 Los productos solo se eliminan si nunca han sido comprado. Si se han comprado se les da una fecha de eliminación, para no rompper los registros de compras.
-        
+
+        - Catálogo:
+            Agregado el módulo Catálogo para permitir importaciones de servicios que estaban cruzadas, entre catálogo, promociones y productos
+
     Agregados:
         - Módulo de Promociones
+            CRUD
+            Obtener productos de promoción
 
         - Productos:
             Propiedad "promociones: GetPromocionesDto[]"
                 Arreglo de promociones activas de cada producto.
+            Propiedad "precioFinal: number"
+                Para informar el precio después de aplicar una promoción.
+
+    *Falta:
+        Calcular el precioFinal
+        Que al comprar se genere la compra con el precio final
+        Validaciones
+        Permisos
+        Caso de que se busquen los productos de una promoción que se aplique a todos los productos.
+                Derivar a catálogo?
+        Confirmar código de cupón
 
