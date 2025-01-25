@@ -7,6 +7,7 @@ import { GetPromocionDto } from '../dto/get_promocion.dto';
 import { UpdatePromocionDto } from '../dto/update_promocion.dto';
 import { PromocionesService } from '../service/promociones.service';
 import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pipe';
+import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 
 @ApiTags('Promociones')
 @Controller('promociones')
@@ -46,8 +47,32 @@ export class PromocionesController {
         description: 'Cantidad de elementos por página',
     })
     @Get('productos/:idPromocion')
-    async findSelectedProducts(@Param('idPromocion', ValidarPromocionExistePipe) idPromocion: number, @Query() filtrosCatalogoDto: PaginacionDto): Promise<GetProductosPromocionDto> {
-        return await this.promocionesService.findSelectedProducts(+idPromocion, filtrosCatalogoDto)
+    async findSelectedProducts(
+        @Param('idPromocion', ValidarPromocionExistePipe) idPromocion: number,
+        @Query() filtrosCatalogoDto: PaginacionDto
+    ): Promise<GetProductosPromocionDto> {
+        return await this.promocionesService.findSelectedProducts(
+            idPromocion,
+            filtrosCatalogoDto
+        )
+    }
+
+    // Validar cupón
+    @ApiOperation({
+        summary: 'Validar código de cupón'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Comprueba si hay o no un cupón que coincida con el código ingresado',
+        type: GetCuponValidadoDto
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'Error al comprobar código'
+    })
+    @Get('coupon/:promoCode')
+    async validateCoupon(@Param('promoCode') code: string): Promise<GetCuponValidadoDto> {
+        return await this.promocionesService.validateCoupon(code)
     }
 
     // Obtener promoción por id
@@ -64,7 +89,9 @@ export class PromocionesController {
         description: 'No existe una promoción con ese id',
     })
     @Get(':idPromocion')
-    async findById(@Param('idPromocion', ValidarPromocionExistePipe) id: number): Promise<GetPromocionDto> {
+    async findById(
+        @Param('idPromocion', ValidarPromocionExistePipe) id: number
+    ): Promise<GetPromocionDto> {
         return await this.promocionesService.findById(+id)
     }
 
@@ -83,11 +110,13 @@ export class PromocionesController {
     })
     @ApiBody({ type: CreatePromocionDto })
     @Post()
-    async create(@Body() createPromocionDto: CreatePromocionDto): Promise<GetPromocionDto> {
+    async create(
+        @Body() createPromocionDto: CreatePromocionDto
+    ): Promise<GetPromocionDto> {
         return await this.promocionesService.create(createPromocionDto)
     }
 
-    // Modificar promocion
+    // Modificar promoción
     @ApiOperation({
         summary: 'Modificar una promoción'
     })
@@ -104,7 +133,10 @@ export class PromocionesController {
         type: UpdatePromocionDto
     })
     @Patch(':idPromocion')
-    async update(@Param('idPromocion', ValidarPromocionExistePipe) id: number, @Body() updatePromocionDto: UpdatePromocionDto): Promise<GetPromocionDto> {
+    async update(
+        @Param('idPromocion', ValidarPromocionExistePipe) id: number,
+        @Body() updatePromocionDto: UpdatePromocionDto
+    ): Promise<GetPromocionDto> {
         return await this.promocionesService.update(id, updatePromocionDto)
     }
 
@@ -122,8 +154,12 @@ export class PromocionesController {
     })
     @HttpCode(204)
     @Delete(':idPromocion')
-    async deleteById(@Param('idPromocion', ValidarPromocionExistePipe) id: number): Promise<void> {
+    async deleteById(
+        @Param('idPromocion', ValidarPromocionExistePipe) id: number
+    ): Promise<void> {
         return await this.promocionesService.deleteById(+id)
     }
+
+
 
 }

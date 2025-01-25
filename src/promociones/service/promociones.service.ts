@@ -5,13 +5,26 @@ import { Producto } from 'src/productos/entities/producto.entity';
 import { ProductoMapper } from 'src/productos/mapper/entity-to-dto-producto';
 import { ProductosService } from 'src/productos/service/productos.service';
 import { PROMOCIONES_RELATIONS } from 'src/promociones/shared/constant/promociones.relations';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Equal, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { CreatePromocionDto } from '../dto/create_promocion.dto';
 import { GetProductosPromocionDto } from '../dto/get_productos_en_promocion.dto';
 import { GetPromocionDto } from '../dto/get_promocion.dto';
 import { UpdatePromocionDto } from '../dto/update_promocion.dto';
 import { Promocion } from '../entities/promocion.entity';
 import { PromocionMapper } from '../mapper/promocion.mapper';
+import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
+
+// --Creación de datos iniciales
+// INSERT INTO tipos_promociones(tipo)
+// VALUES('TRADICIONAL'),
+//     ('CUPON');
+// INSERT INTO tipos_descuentos(tipo)
+// VALUES('PORCENTAJE'),
+//     ('FIJO');
+// INSERT INTO tipos_selecciones_productos(tipo)
+// VALUES('TODOS'),
+//     ('SELECCIONADOS');
+
 
 @Injectable()
 export class PromocionesService {
@@ -125,6 +138,30 @@ export class PromocionesService {
         }
     }
 
+    /**Valida que el código ingresado coincida con algún cupón activo. */
+    async validateCoupon(code: string): Promise<GetCuponValidadoDto> {
+        try {
+            const dateNow: Date = new Date()
+            const coupon: Promocion = await this.promocionesRepository.findOne({
+                where: {
+                    codigo: code,
+                    fechaInicio: LessThanOrEqual(dateNow),
+                    fechaTermino: MoreThanOrEqual(dateNow),
+                    habilitado: true,
+                    idTipoPromocion: 2
+                }
+            })
+            const validatedCoupon: GetCuponValidadoDto = new GetCuponValidadoDto()
+            validatedCoupon.idCupon = coupon ? coupon.id : undefined;
+            validatedCoupon.validado = coupon ? true : false;
+            validatedCoupon.codigoValidacion = coupon ? coupon.codigo : undefined;
+            return validatedCoupon;
+        }
+        catch (error) {
+            throw new BadRequestException('Error al validar cupón', { description: error.message })
+        }
+    }
+
     /**
      * CREACIÓN
      */
@@ -208,6 +245,7 @@ export class PromocionesService {
             throw new BadRequestException('Error al eliminar promoción', { description: error.message })
         }
     }
+
 }
 
 

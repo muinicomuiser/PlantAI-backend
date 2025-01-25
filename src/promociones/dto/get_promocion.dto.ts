@@ -7,6 +7,8 @@ export class GetPromocionDto {
     nombre: string;
     @ApiProperty()
     descripcion: string;
+    @ApiProperty()
+    codigo?: string;
 
     /**Si el tipoPromocion es "PORCENTAJE", valor será el porcentaje de descuento, y si es "FIJO", valor será el precio final del producto*/
     @ApiProperty()

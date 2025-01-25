@@ -11,6 +11,7 @@ export class PromocionMapper {
             nombre: promocion.nombre,
             descripcion: promocion.descripcion,
             valor: promocion.valor,
+            codigo: promocion.codigo ? promocion.codigo : undefined,
             tipoDescuento: promocion.tipoDescuento.tipo,
             tipoPromocion: promocion.tipoPromocion.tipo,
             tipoSeleccionProductos: promocion.tipoSeleccionProducto.tipo,
