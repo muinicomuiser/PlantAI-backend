@@ -223,7 +223,8 @@ Versión 1.12.3
     Agregados:
         - Módulo de Promociones
             CRUD
-            Obtener productos de promoción
+            Obtener productos seleccionados promoción
+            Validar cupón con código
 
         - Productos:
             Propiedad "promociones: GetPromocionesDto[]"
