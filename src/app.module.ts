@@ -15,7 +15,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { PromocionesModule } from './promociones/promociones.module';
-import { CatalogoModule } from './productos/catalogo.module';
 import { PromocionesProductosModule } from './promociones/promociones.productos.module';
 
 @Module({
@@ -45,7 +44,6 @@ import { PromocionesProductosModule } from './promociones/promociones.productos.
       serveRoot: `${process.env.RUTA_ESTATICOS}` || `/estaticos/`,
     }),
     ProductosModule,
-    CatalogoModule,
     CarroComprasModule,
     PedidosModule,
     UsuariosModule,

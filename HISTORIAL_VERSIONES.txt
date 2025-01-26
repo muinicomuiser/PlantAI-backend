@@ -218,7 +218,7 @@ Versión 1.12.3
                 Los productos solo se eliminan si nunca han sido comprado. Si se han comprado se les da una fecha de eliminación, para no rompper los registros de compras.
 
         - Catálogo:
-            Agregado el módulo Catálogo para permitir importaciones de servicios que estaban cruzadas, entre catálogo, promociones y productos
+            Agregado el módulo Catálogo para permitir importaciones de servicios que estaban cruzadas entre catálogo, promociones y productos
 
     Agregados:
         - Módulo de Promociones

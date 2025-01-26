@@ -9,7 +9,6 @@ import { EquipoModule } from 'src/commons/modelse3/equipo/equipo.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { IaconsultasModule } from 'src/iaconsultas/iaconsultas.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
-import { CatalogoModule } from 'src/productos/catalogo.module';
 import { PromocionesModule } from 'src/promociones/promociones.module';
 
 export function setupSwagger(app: INestApplication) {
@@ -33,7 +32,7 @@ export function setupSwagger(app: INestApplication) {
       '\n \nLa documentación de cada módulo está disponible en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
       '\n Módulo Pedidos: api/pedidos\n' +
       '\n Módulo Productos: api/productos\n' +
-      '\n Módulo Catalogo: api/catalogo\n' +
+      // '\n Módulo Catalogo: api/catalogo\n' +
       '\n Módulo Usuarios: api/usuarios\n' +
       '\n Módulo Equipo: api/equipo\n' +
       '\n Módulo Autenticación: api/aut\n' +
@@ -65,7 +64,6 @@ export function setupSwagger(app: INestApplication) {
     { module: CarroComprasModule, path: 'api/carro' },
     { module: PedidosModule, path: 'api/pedidos' },
     { module: ProductosModule, path: 'api/productos' },
-    { module: CatalogoModule, path: 'api/catalogo' },
     { module: UsuariosModule, path: 'api/usuarios' },
     { module: EquipoModule, path: 'api/equipo' },
     { module: AuthModule, path: 'api/aut' },
