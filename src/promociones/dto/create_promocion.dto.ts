@@ -69,6 +69,7 @@ export class CreatePromocionDto {
     @IsNotEmpty()
     fechaTermino: Date;
 
+    /**1: TRADICIONAL, 2: CUPON */
     @ApiProperty({
         description: 'Identificador del tipo de promoción',
         example: 1
@@ -88,6 +89,7 @@ export class CreatePromocionDto {
     @IsNotEmpty()
     idTipoDescuento: number;
 
+    /**1: TODOS, 2: SELECCIONADOS */
     @ApiProperty({
         description: 'Identificador del tipo de selección de productos para la promoción',
         example: 1

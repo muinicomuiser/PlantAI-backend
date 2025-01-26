@@ -22,12 +22,16 @@ export class Promocion {
     fechaInicio: Date;
     @Column({ name: 'fecha_termino' })
     fechaTermino: Date;
+
+    /**1: TRADICIONAL, 2: CUPON */
     @Column({ name: 'id_tipo_promocion' })
     idTipoPromocion: number;
 
     /**1: PORCENTAJE, 2: FIJO */
     @Column({ name: 'id_tipo_descuento' })
     idTipoDescuento: number;
+
+    /**1: TODOS, 2: SELECCIONADOS */
     @Column({ name: 'id_tipo_seleccion_productos' })
     idTipoSeleccionProductos: number;
 

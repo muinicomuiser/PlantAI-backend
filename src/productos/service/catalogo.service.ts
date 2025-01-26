@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 import { Repository } from 'typeorm';
 import {
   FiltrosCatalogoDto,
@@ -8,15 +9,14 @@ import {
 import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
 import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
-import { PromocionesService } from 'src/promociones/service/promociones.service';
 
 @Injectable()
 export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-    @Inject(PromocionesService)
-    private readonly promocionesService: PromocionesService
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService
   ) { }
 
   /**Retorna todos los productos */
@@ -111,7 +111,7 @@ export class CatalogoService {
       // Asignar promociones a cada producto
       await Promise.all(
         result.map(async (producto: Producto) => {
-          producto.promociones = await this.promocionesService.findActivesByProductId(producto.id)
+          producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
         })
       )
 
@@ -156,7 +156,7 @@ export class CatalogoService {
       // Asignar promociones a cada producto
       await Promise.all(
         result.map(async (producto: Producto) => {
-          producto.promociones = await this.promocionesService.findActivesByProductId(producto.id)
+          producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
         })
       )
 

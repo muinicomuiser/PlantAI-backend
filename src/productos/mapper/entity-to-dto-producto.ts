@@ -88,7 +88,7 @@ export class ProductoMapper {
       };
     }
     if (producto.promociones) {
-      productoDto.promociones = PromocionMapper.entitiesToPromocionProductoDtos(producto.promociones)
+      productoDto.promocionesDestacadas = PromocionMapper.entitiesToPromocionProductoDtos(producto.promociones);
     }
     return productoDto;
   }

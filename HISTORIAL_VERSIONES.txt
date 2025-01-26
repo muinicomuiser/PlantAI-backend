@@ -235,9 +235,6 @@ Versión 1.12.3
     *Falta:
         Calcular el precioFinal
         Que al comprar se genere la compra con el precio final
-        Validaciones
         Permisos
-        Caso de que se busquen los productos de una promoción que se aplique a todos los productos.
-                Derivar a catálogo?
         Documentar y describir
 

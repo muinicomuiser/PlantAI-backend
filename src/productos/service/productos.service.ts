@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException
 } from '@nestjs/common';
@@ -22,6 +23,8 @@ import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
 import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
 import { ImageService } from './imagen.service';
+import { Promocion } from 'src/promociones/entities/promocion.entity';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 
 @Injectable()
 export class ProductosService {
@@ -32,6 +35,8 @@ export class ProductosService {
     private readonly imagenProductoRepository: Repository<ImagenProducto>,
     @InjectRepository(ProductoPedido)
     private readonly productoPedidoRepository: Repository<ProductoPedido>,
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService,
     private readonly imageService: ImageService,
   ) { }
 
@@ -45,6 +50,9 @@ export class ProductosService {
     if (!producto) {
       throw new NotFoundException('No existe un producto con ese id.');
     }
+    // Obtener promociones destacadas
+    producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+    producto.promociones = this.filtrarPromocionesDestacadas(producto)
     return ProductoMapper.entityToDto(producto);
   }
 
@@ -417,5 +425,40 @@ export class ProductosService {
   /**
    * AUXILIARES
    */
+
+  /**Retorna un arreglo con todas las promociones tipo CUPON y la mejor promoción de tipo TRADICIONAL del producto.*/
+  private filtrarPromocionesDestacadas(producto: Producto): Promocion[] {
+    // Primero agregar todas las de tipo CUPON
+    const destacadas: Promocion[] = producto.promociones.filter(promocion => promocion.idTipoPromocion == 2);
+
+
+    // Filtrar promociones tradicionales según el mayor descuento o el precio menor
+    let tradicionales: Promocion[] = producto.promociones.filter(promocion => promocion.idTipoPromocion == 1)
+    if (tradicionales) {
+      let mejorPromocion: Promocion = tradicionales[1]
+      if (tradicionales.length > 1) {
+        let precioFinal: number = producto.precio;
+        producto.promociones.forEach(promocion => {
+          // Si es porcentaje
+          if (promocion.idTipoDescuento == 1) {
+            const precioDescuento: number = (1 - (promocion.valor / 100)) * producto.precio;
+            if (precioDescuento < precioFinal) {
+              mejorPromocion = promocion;
+              precioFinal = precioDescuento;
+            }
+          }
+          // Si es precio fijo
+          else if (promocion.idTipoDescuento == 2) {
+            if (promocion.valor < precioFinal) {
+              mejorPromocion = promocion;
+              precioFinal = promocion.valor;
+            }
+          }
+        })
+      }
+      destacadas.push(mejorPromocion);
+    }
+    return destacadas;
+  }
 
 }

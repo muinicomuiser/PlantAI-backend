@@ -132,8 +132,9 @@ export class GetProductoDto {
   })
   insumo?: GetInsumoDto;
 
+  /**Promociones que aplican el descuento mayor. */
   @ApiProperty({
     type: [GetPromocionProductoDto],
   })
-  promociones?: GetPromocionProductoDto[]
+  promocionesDestacadas?: GetPromocionProductoDto[]
 }

@@ -5,7 +5,7 @@ import { Producto } from 'src/productos/entities/producto.entity';
 import { ProductoMapper } from 'src/productos/mapper/entity-to-dto-producto';
 import { ProductosService } from 'src/productos/service/productos.service';
 import { PROMOCIONES_RELATIONS } from 'src/promociones/shared/constant/promociones.relations';
-import { DeepPartial, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { CreatePromocionDto } from '../dto/create_promocion.dto';
 import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 import { GetProductosPromocionDto } from '../dto/get_productos_en_promocion.dto';
@@ -66,32 +66,7 @@ export class PromocionesService {
         }
     }
 
-    /**Retorna un arreglo de promociones vigentes para un producto. */
-    async findActivesByProductId(idProduct: number): Promise<Promocion[]> {
-        try {
-            const dateNow: Date = new Date()
-            const promociones: Promocion[] = await this.promocionesRepository.find({
-                where: [{
-                    productos: {
-                        id: idProduct
-                    },
-                    fechaInicio: LessThanOrEqual(dateNow),
-                    fechaTermino: MoreThanOrEqual(dateNow),
-                    habilitado: true
-                }, {
-                    idTipoSeleccionProductos: 1,
-                    fechaInicio: LessThanOrEqual(dateNow),
-                    fechaTermino: MoreThanOrEqual(dateNow),
-                    habilitado: true
-                }],
-                relations: PROMOCIONES_RELATIONS
-            })
-            return promociones;
-        }
-        catch (error) {
-            throw new BadRequestException('Error al obtener promociones', { description: error.message })
-        }
-    }
+
 
     /**Retorna los productos de una promoción según su id, con paginación */
     async findSelectedProducts(id: number, paginationDto: PaginacionDto): Promise<GetProductosPromocionDto> {

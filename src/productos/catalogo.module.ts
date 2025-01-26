@@ -25,6 +25,7 @@ import { Iluminacion } from './entities/plantas/iluminacion.entity';
 import { Tamano } from './entities/plantas/tamano.entity';
 import { TipoRiego } from './entities/plantas/tipo_riego.entity';
 import { ToleranciaTemperatura } from './entities/plantas/tolerancia_temperatura.entity';
+import { PromocionesProductosModule } from 'src/promociones/promociones.productos.module';
 
 @Module({
   imports: [
@@ -51,7 +52,7 @@ import { ToleranciaTemperatura } from './entities/plantas/tolerancia_temperatura
       ImagenProducto,
       ProductoPedido
     ]),
-    PromocionesModule
+    PromocionesProductosModule
   ],
   controllers: [CatalogoController],
   providers: [CatalogoService],

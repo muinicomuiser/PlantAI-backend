@@ -16,6 +16,7 @@ import { IaconsultasModule } from './iaconsultas/iaconsultas.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { PromocionesModule } from './promociones/promociones.module';
 import { CatalogoModule } from './productos/catalogo.module';
+import { PromocionesProductosModule } from './promociones/promociones.productos.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { CatalogoModule } from './productos/catalogo.module';
     IaconsultasModule,
     ReviewsModule,
     PromocionesModule,
+    PromocionesProductosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

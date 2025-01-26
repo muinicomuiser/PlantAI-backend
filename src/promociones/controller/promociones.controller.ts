@@ -23,6 +23,8 @@ export class PromocionesController {
     ) { }
 
     // Obtener todas las promociones
+    // *(Falta) aplicar filtros y paginación: 
+    // filtrar por "habilitadas", "tipos", "fechas", "id producto"
     @ApiOperation({
         summary: 'Obtener todas las promociones activas',
         description: `Retorna todas las promociones habilitadas y para las que la fecha actual `
