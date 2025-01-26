@@ -112,6 +112,7 @@ export class CatalogoService {
       await Promise.all(
         result.map(async (producto: Producto) => {
           producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+          producto.promociones = this.promocionesProductosService.filtrarPromocionesDestacadas(producto.promociones, producto.precio)
         })
       )
 

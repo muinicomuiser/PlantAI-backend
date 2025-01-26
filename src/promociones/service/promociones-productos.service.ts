@@ -37,4 +37,39 @@ export class PromocionesProductosService {
             throw new BadRequestException('Error al obtener promociones', { description: error.message })
         }
     }
+
+    /**Retorna un arreglo con todas las promociones tipo CUPON y la mejor promoción de tipo TRADICIONAL del producto.*/
+    filtrarPromocionesDestacadas(promociones: Promocion[], precioProducto: number): Promocion[] {
+        // Primero agregar todas las de tipo CUPON
+        const destacadas: Promocion[] = promociones.filter(promocion => promocion.idTipoPromocion == 2);
+
+
+        // Filtrar promociones tradicionales según el mayor descuento o el precio menor
+        let tradicionales: Promocion[] = promociones.filter(promocion => promocion.idTipoPromocion == 1)
+        if (tradicionales) {
+            let mejorPromocion: Promocion = tradicionales[1]
+            if (tradicionales.length > 1) {
+                let precioFinal: number = precioProducto;
+                promociones.forEach(promocion => {
+                    // Si es porcentaje
+                    if (promocion.idTipoDescuento == 1) {
+                        const precioDescuento: number = (1 - (promocion.valor / 100)) * precioProducto;
+                        if (precioDescuento < precioFinal) {
+                            mejorPromocion = promocion;
+                            precioFinal = precioDescuento;
+                        }
+                    }
+                    // Si es precio fijo
+                    else if (promocion.idTipoDescuento == 2) {
+                        if (promocion.valor < precioFinal) {
+                            mejorPromocion = promocion;
+                            precioFinal = promocion.valor;
+                        }
+                    }
+                })
+            }
+            destacadas.push(mejorPromocion);
+        }
+        return destacadas;
+    }
 }
