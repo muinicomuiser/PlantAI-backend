@@ -24,6 +24,8 @@ export class Promocion {
     fechaTermino: Date;
     @Column({ name: 'id_tipo_promocion' })
     idTipoPromocion: number;
+
+    /**1: PORCENTAJE, 2: FIJO */
     @Column({ name: 'id_tipo_descuento' })
     idTipoDescuento: number;
     @Column({ name: 'id_tipo_seleccion_productos' })

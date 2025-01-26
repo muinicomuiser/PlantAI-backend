@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsDateString } from "class-validator";
 
 
 class ProductosPromocionModificados {
@@ -47,6 +46,7 @@ export class UpdatePromocionDto {
         required: false,
         maxLength: 20
     })
+    @Transform(({ value }) => value.trim().replaceAll(' ', ''), { toClassOnly: true })
     codigo?: string;
 
     @ApiProperty({
@@ -80,6 +80,7 @@ export class UpdatePromocionDto {
     })
     idTipoPromocion?: number;
 
+    /**1: PORCENTAJE, 2: FIJO */
     @ApiProperty({
         description: 'Identificador del tipo de descuento que aplica la promoción',
         example: 1,

@@ -1,19 +1,26 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginacionDto } from 'src/productos/dto/catalogo/paginacion.dto';
+import { ProductosService } from 'src/productos/service/productos.service';
 import { CreatePromocionDto } from '../dto/create_promocion.dto';
+import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 import { GetProductosPromocionDto } from '../dto/get_productos_en_promocion.dto';
 import { GetPromocionDto } from '../dto/get_promocion.dto';
 import { UpdatePromocionDto } from '../dto/update_promocion.dto';
-import { PromocionesService } from '../service/promociones.service';
-import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pipe';
-import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 import { AplanarCodigoCuponPipe } from '../pipe/aplanar-codigo-cupon.pipe';
+import { ProductosSeleccionadosPipe } from '../pipe/productos-seleccionados-existen.pipe';
+import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pipe';
+import { ValidarCrearPromocionPipe } from '../pipe/validar-crear-promocion.pipe';
+import { PromocionesService } from '../service/promociones.service';
+import { ValidarModificarPromocionPipe } from '../pipe/validar-modificar-promocion.pipe';
 
 @ApiTags('Promociones')
 @Controller('promociones')
 export class PromocionesController {
-    constructor(private readonly promocionesService: PromocionesService) { }
+    constructor(
+        private readonly promocionesService: PromocionesService,
+        @Inject(ProductosService) readonly productosService: ProductosService
+    ) { }
 
     // Obtener todas las promociones
     @ApiOperation({
@@ -36,7 +43,9 @@ export class PromocionesController {
         summary: 'Obtener los productos paginados de una promoción',
         description: `Retorna todos los productos seleccionados de una promoción `
             + `cuya propiedad "tipoSeleccionProductos" sea "SELECCIONADOS".\n`
-            + `Permite definir paginación.`
+            + `Permite definir paginación.\n`
+            + `Si el tipo de selección de la promoción es "TODOS", se responde con {todosSeleccionados: true} `
+            + `y significa que se pueden obtener los productos por medio de Catálogo.`
     })
     @ApiResponse({
         status: 200,
@@ -111,7 +120,8 @@ export class PromocionesController {
     @ApiOperation({
         summary: 'Crear promoción',
         description: `Propiedades: \n`
-            + `- codigo: Palabra requerida para activar un cupón (solo aplica a cupones)\n`
+            + `- codigo: Palabra requerida para activar un cupón (solo aplica a cupones). `
+            + `Se eliminan automáticamente todos los espacios.\n`
             + `- valor: Descuento o precio final del producto, dependiendo si la promoción es por porcentaje o precio fijo.\n`
             + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON -> TRADICIONAL para descuentos `
             + `que se aplican por defecto al producto, CUPON para descuentos que requieren `
@@ -132,9 +142,10 @@ export class PromocionesController {
         description: 'Error al crear promoción'
     })
     @ApiBody({ type: CreatePromocionDto })
+    @UsePipes()
     @Post()
     async create(
-        @Body() createPromocionDto: CreatePromocionDto
+        @Body(ValidarCrearPromocionPipe, ProductosSeleccionadosPipe) createPromocionDto: CreatePromocionDto
     ): Promise<GetPromocionDto> {
         return await this.promocionesService.create(createPromocionDto)
     }
@@ -143,7 +154,8 @@ export class PromocionesController {
     @ApiOperation({
         summary: 'Modificar una promoción',
         description: `Propiedades: \n`
-            + `- codigo: Palabra requerida para activar un cupón (solo aplica a cupones)\n`
+            + `- codigo: Palabra requerida para activar un cupón (solo aplica a cupones). `
+            + `Se eliminan automáticamente todos los espacios.\n`
             + `- valor: Descuento o precio final del producto, dependiendo si la promoción es por porcentaje o precio fijo.\n`
             + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON -> TRADICIONAL para descuentos `
             + `que se aplican por defecto al producto, CUPON para descuentos que requieren `
@@ -164,13 +176,17 @@ export class PromocionesController {
         status: 400,
         description: 'Error al modificar la promoción'
     })
+    @ApiResponse({
+        status: 404,
+        description: 'No existe la promoción'
+    })
     @ApiBody({
         type: UpdatePromocionDto
     })
     @Patch(':idPromocion')
     async update(
-        @Param('idPromocion', ValidarPromocionExistePipe) id: number,
-        @Body() updatePromocionDto: UpdatePromocionDto
+        @Param('idPromocion', ValidarPromocionExistePipe, ValidarModificarPromocionPipe) id: number,
+        @Body(ProductosSeleccionadosPipe) updatePromocionDto: UpdatePromocionDto
     ): Promise<GetPromocionDto> {
         return await this.promocionesService.update(id, updatePromocionDto)
     }

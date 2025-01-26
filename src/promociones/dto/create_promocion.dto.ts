@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsDateString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength } from "class-validator";
 
 export class CreatePromocionDto {
     @ApiProperty({
@@ -8,6 +8,9 @@ export class CreatePromocionDto {
         example: 'Cupón Cotiledón 2025',
         maxLength: 50
     })
+    @MaxLength(50)
+    @IsString()
+    @IsNotEmpty()
     nombre: string;
 
     @ApiProperty({
@@ -15,12 +18,18 @@ export class CreatePromocionDto {
         example: 'Cupón de descuento para los miembros del equipo Cotiledón',
         maxLength: 256
     })
+    @MaxLength(256)
+    @IsString()
+    @IsNotEmpty()
     descripcion: string;
 
     @ApiProperty({
         description: 'Valor del descuento. Porcentaje o precio final, dependiendo del tipo de descuento',
         example: 20
     })
+    @IsPositive()
+    @IsInt()
+    @IsNotEmpty()
     valor: number;
 
     @ApiProperty({
@@ -29,6 +38,11 @@ export class CreatePromocionDto {
         required: false,
         maxLength: 20
     })
+    @MaxLength(20)
+    @Transform(({ value }) => value.trim().replaceAll(' ', ''), { toClassOnly: true })
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
     codigo?: string;
 
     @ApiProperty({
@@ -44,6 +58,7 @@ export class CreatePromocionDto {
         example: '2025-01-01'
     })
     @Transform(({ value }) => new Date(value), { toClassOnly: true })
+    @IsNotEmpty()
     fechaInicio: Date;
 
     @ApiProperty({
@@ -51,24 +66,35 @@ export class CreatePromocionDto {
         example: '2026-01-01'
     })
     @Transform(({ value }) => new Date(value), { toClassOnly: true })
+    @IsNotEmpty()
     fechaTermino: Date;
 
     @ApiProperty({
         description: 'Identificador del tipo de promoción',
         example: 1
     })
+    @IsPositive()
+    @IsInt()
+    @IsNotEmpty()
     idTipoPromocion: number;
 
+    /**1: PORCENTAJE, 2: FIJO */
     @ApiProperty({
         description: 'Identificador del tipo de descuento que aplica la promoción',
         example: 1
     })
+    @IsPositive()
+    @IsInt()
+    @IsNotEmpty()
     idTipoDescuento: number;
 
     @ApiProperty({
         description: 'Identificador del tipo de selección de productos para la promoción',
         example: 1
     })
+    @IsPositive()
+    @IsInt()
+    @IsNotEmpty()
     idTipoSeleccionProductos: number;
 
     @ApiProperty({
@@ -76,6 +102,8 @@ export class CreatePromocionDto {
         example: [1, 2, 3],
         required: false
     })
-    idsProductos?: number[]
 
+    @IsNumber({ maxDecimalPlaces: 0 }, { each: true })
+    @IsOptional()
+    idsProductos?: number[];
 }

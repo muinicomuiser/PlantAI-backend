@@ -239,7 +239,5 @@ Versión 1.12.3
         Permisos
         Caso de que se busquen los productos de una promoción que se aplique a todos los productos.
                 Derivar a catálogo?
-        Confirmar código de cupón
-            Aplanar código de cupón de entrada, eliminar espacios intermedios. También al crear cupones
         Documentar y describir
 

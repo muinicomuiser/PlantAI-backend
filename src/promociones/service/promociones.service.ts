@@ -5,14 +5,14 @@ import { Producto } from 'src/productos/entities/producto.entity';
 import { ProductoMapper } from 'src/productos/mapper/entity-to-dto-producto';
 import { ProductosService } from 'src/productos/service/productos.service';
 import { PROMOCIONES_RELATIONS } from 'src/promociones/shared/constant/promociones.relations';
-import { Equal, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
+import { DeepPartial, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { CreatePromocionDto } from '../dto/create_promocion.dto';
+import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 import { GetProductosPromocionDto } from '../dto/get_productos_en_promocion.dto';
 import { GetPromocionDto } from '../dto/get_promocion.dto';
 import { UpdatePromocionDto } from '../dto/update_promocion.dto';
 import { Promocion } from '../entities/promocion.entity';
 import { PromocionMapper } from '../mapper/promocion.mapper';
-import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 
 // --Creación de datos iniciales
 // INSERT INTO tipos_promociones(tipo)
@@ -32,7 +32,7 @@ export class PromocionesService {
         @InjectRepository(Promocion)
         private readonly promocionesRepository: Repository<Promocion>,
         @Inject(ProductosService)
-        private readonly productosService: ProductosService
+        readonly productosService: ProductosService
     ) { }
 
     /**
@@ -96,6 +96,13 @@ export class PromocionesService {
     /**Retorna los productos de una promoción según su id, con paginación */
     async findSelectedProducts(id: number, paginationDto: PaginacionDto): Promise<GetProductosPromocionDto> {
         try {
+            const promocion: Promocion = await this.promocionesRepository.findOneBy({ id })
+            if (promocion.idTipoSeleccionProductos == 1) {
+                return {
+                    id,
+                    todosSeleccionados: true
+                }
+            }
             const pagination: PaginacionDto = {
                 page: paginationDto.page ? +paginationDto.page : 1,
                 pageSize: paginationDto.pageSize ? +paginationDto.pageSize : 10,
@@ -198,25 +205,46 @@ export class PromocionesService {
                 },
                 relations: ['productos']
             })
-            if (updatePromocionDto.productosModificados) {
-                if (updatePromocionDto.productosModificados.agregar) {
-                    const productosAgregados = updatePromocionDto.productosModificados.agregar.map(
-                        idProducto => {
-                            return { id: idProducto }
-                        }
-                    ) as Producto[]
-                    if (!promocion.productos) promocion.productos = []
-                    promocion.productos.push(...productosAgregados)
-                };
-                if (updatePromocionDto.productosModificados.remover) {
-                    promocion.productos = promocion.productos.filter(producto => {
-                        if (updatePromocionDto.productosModificados.remover.findIndex(id => id == producto.id) < 0) {
-                            return producto
-                        }
-                    })
-                };
+
+            // Comprobar que si el tipo de descuento es "PORCENTAJE", 
+            // el valor no sea mayor a 100%
+
+            const idTipo: number = updatePromocionDto.idTipoDescuento ? updatePromocionDto.idTipoDescuento : promocion.idTipoDescuento;
+            const valorPromocion: number = updatePromocionDto.valor != undefined ? updatePromocionDto.valor : promocion.valor;
+            if (idTipo == 1 && valorPromocion > 100) {
+                throw new BadRequestException('El porcentaje de descuento no puede ser mayor a 100')
             }
-            await this.promocionesRepository.save(Object.assign(promocion, updatePromocionDto))
+
+            // Si la promoción se aplica a todos los productos, no es necesario 
+            // mapear los productos añadidos o removidos de la promoción
+            if (updatePromocionDto.idTipoSeleccionProductos) {
+                if (updatePromocionDto.idTipoSeleccionProductos == 1) {
+                    await this.promocionesRepository.update(id, updatePromocionDto)
+                }
+            }
+
+            // Acá se modifican los productos seleccionados de la promoción
+            else {
+                if (updatePromocionDto.productosModificados) {
+                    if (updatePromocionDto.productosModificados.agregar) {
+                        const productosAgregados = updatePromocionDto.productosModificados.agregar.map(
+                            idProducto => {
+                                return { id: idProducto }
+                            }
+                        ) as Producto[]
+                        if (!promocion.productos) promocion.productos = []
+                        promocion.productos.push(...productosAgregados)
+                    };
+                    if (updatePromocionDto.productosModificados.remover) {
+                        promocion.productos = promocion.productos.filter(producto => {
+                            if (updatePromocionDto.productosModificados.remover.findIndex(id => id == producto.id) < 0) {
+                                return producto
+                            }
+                        })
+                    };
+                }
+                await this.promocionesRepository.save(Object.assign(promocion, updatePromocionDto))
+            }
             return this.findById(id)
         }
         catch (error) {
