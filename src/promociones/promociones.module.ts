@@ -8,6 +8,7 @@ import { TipoSeleccionProducto } from './entities/tipo_seleccion_producto.entity
 import { PromocionesService } from './service/promociones.service';
 import { ProductosModule } from 'src/productos/productos.module';
 import { PromocionesProductosModule } from './promociones.productos.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -20,7 +21,7 @@ import { PromocionesProductosModule } from './promociones.productos.module';
     PromocionesProductosModule
   ],
   controllers: [PromocionesController],
-  providers: [PromocionesService],
+  providers: [PromocionesService, JwtService],
   exports: [PromocionesService]
 })
 export class PromocionesModule { }

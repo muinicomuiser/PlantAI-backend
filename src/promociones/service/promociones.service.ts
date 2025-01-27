@@ -39,6 +39,8 @@ export class PromocionesService {
             throw new BadRequestException('Error al obtener promociones', { description: error.message })
         }
     }
+
+
     async findAllPaginated(filtrosPromocion: FiltrosPromocionesDto): Promise<GetPromocionesPaginadasDto> {
         try {
             const {
@@ -111,8 +113,6 @@ export class PromocionesService {
             throw new BadRequestException('Error al obtener promoción', { description: error.message })
         }
     }
-
-
 
     /**Retorna los productos de una promoción según su id, con paginación */
     async findSelectedProducts(id: number, paginationDto: PaginacionDto): Promise<GetProductosPromocionDto> {

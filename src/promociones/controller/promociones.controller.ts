@@ -1,19 +1,22 @@
-import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, Inject, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/jwt-auth.guard/roles.guard';
 import { PaginacionDto } from 'src/productos/dto/catalogo/paginacion.dto';
 import { ProductosService } from 'src/productos/service/productos.service';
 import { CreatePromocionDto } from '../dto/create_promocion.dto';
+import { FiltrosPromocionesDto, GetPromocionesPaginadasDto } from '../dto/filtros_promociones.dto';
 import { GetCuponValidadoDto } from '../dto/get_cupon_validado.dto';
 import { GetProductosPromocionDto } from '../dto/get_productos_en_promocion.dto';
 import { GetPromocionDto } from '../dto/get_promocion.dto';
 import { UpdatePromocionDto } from '../dto/update_promocion.dto';
 import { AplanarCodigoCuponPipe } from '../pipe/aplanar-codigo-cupon.pipe';
 import { ProductosSeleccionadosPipe } from '../pipe/productos-seleccionados-existen.pipe';
-import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pipe';
 import { ValidarCrearPromocionPipe } from '../pipe/validar-crear-promocion.pipe';
-import { PromocionesService } from '../service/promociones.service';
 import { ValidarModificarPromocionPipe } from '../pipe/validar-modificar-promocion.pipe';
-import { FiltrosPromocionesDto, GetPromocionesPaginadasDto } from '../dto/filtros_promociones.dto';
+import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pipe';
+import { PromocionesService } from '../service/promociones.service';
 
 @ApiTags('Promociones')
 @Controller('promociones')
@@ -47,14 +50,17 @@ export class PromocionesController {
         required: false,
         description: 'Cantidad de elementos por página',
     })
+    @ApiBearerAuth('access-token')
     @Get()
+    @Roles('Super Admin', 'Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async findAll(@Query() filtrosPromocion: FiltrosPromocionesDto): Promise<GetPromocionesPaginadasDto> {
         return await this.promocionesService.findAllPaginated(filtrosPromocion)
     }
 
     // Obtener productos por promoción
     @ApiOperation({
-        summary: 'Obtener los productos seleccinados de una promoción',
+        summary: 'Obtener los productos seleccionados de una promoción',
         description: `Retorna todos los productos seleccionados de una promoción `
             + `cuya propiedad "tipoSeleccionProductos" sea "SELECCIONADOS".\n`
             + `Permite definir paginación.\n`
@@ -123,7 +129,10 @@ export class PromocionesController {
         status: 404,
         description: 'No existe una promoción con ese id',
     })
+    @ApiBearerAuth('access-token')
     @Get(':idPromocion')
+    @Roles('Super Admin', 'Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async findById(
         @Param('idPromocion', ValidarPromocionExistePipe) id: number
     ): Promise<GetPromocionDto> {
@@ -156,8 +165,10 @@ export class PromocionesController {
         description: 'Error al crear promoción'
     })
     @ApiBody({ type: CreatePromocionDto })
-    @UsePipes()
+    @ApiBearerAuth('access-token')
     @Post()
+    @Roles('Super Admin', 'Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async create(
         @Body(ValidarCrearPromocionPipe, ProductosSeleccionadosPipe) createPromocionDto: CreatePromocionDto
     ): Promise<GetPromocionDto> {
@@ -197,7 +208,10 @@ export class PromocionesController {
     @ApiBody({
         type: UpdatePromocionDto
     })
+    @ApiBearerAuth('access-token')
     @Patch(':idPromocion')
+    @Roles('Super Admin', 'Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async update(
         @Param('idPromocion', ValidarPromocionExistePipe, ValidarModificarPromocionPipe) id: number,
         @Body(ProductosSeleccionadosPipe) updatePromocionDto: UpdatePromocionDto
@@ -218,7 +232,10 @@ export class PromocionesController {
         description: 'No existe una promoción con ese id'
     })
     @HttpCode(204)
+    @ApiBearerAuth('access-token')
     @Delete(':idPromocion')
+    @Roles('Super Admin', 'Admin')
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async deleteById(
         @Param('idPromocion', ValidarPromocionExistePipe) id: number
     ): Promise<void> {
