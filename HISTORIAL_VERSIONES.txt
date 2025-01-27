@@ -229,7 +229,5 @@ Versión 1.12.3
                 Arreglo de promociones activas de cada producto.
 
     *Falta:
-        Permisos
-        Documentar y describir
         Enums
 
