@@ -32,7 +32,7 @@ export class GetProductoDto {
   /**Es opcional, porque para el caso de cupones solo se le dará un valor cuando se active el cupón. 
    * Para el caso de las promociones tradicionales, el precio final se enviará siempre.
   */
-  @ApiProperty({ example: 11990, description: 'Precio del producto después de aplicar descuento' })
+  // @ApiProperty({ example: 11990, description: 'Precio del producto después de aplicar descuento' })
   precioFinal?: number;
 
   @ApiProperty({

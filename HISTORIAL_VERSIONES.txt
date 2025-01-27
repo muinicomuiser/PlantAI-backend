@@ -226,8 +226,6 @@ Versión 1.12.3
         - Productos:
             Propiedad "promociones: GetPromocionesDto[]"
                 Arreglo de promociones activas de cada producto.
-            Propiedad "precioFinal: number"
-                Para informar el precio después de aplicar una promoción.
 
     *Falta:
         Calcular el precioFinal

@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
 import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
@@ -23,8 +24,6 @@ import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
 import { PRODUCTO_RELATIONS } from '../shared/constants/producto-relaciones';
 import { ImageService } from './imagen.service';
-import { Promocion } from 'src/promociones/entities/promocion.entity';
-import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 
 @Injectable()
 export class ProductosService {

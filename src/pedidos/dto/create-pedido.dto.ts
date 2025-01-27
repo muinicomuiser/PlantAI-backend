@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, ValidateIf, ValidateNested } from 'class-validator';
 import { CreateDireccionEnvioDto } from './create-direccion-envio.dto';
 
 export class CreatePedidoDto {
@@ -56,6 +56,16 @@ export class CreatePedidoDto {
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   fechaEntrega: Date;
 
+  @ApiProperty({
+    description: 'Códigos validados durante la sesión de compra',
+    example: ['cotiledon2025'],
+    type: [String],
+    required: false
+  })
+  @MaxLength(20, { each: true })
+  @IsString({ each: true })
+  @IsOptional()
+  codigosCupones?: string[];
 
   /**Solo valida si el tipo de despacho es distinto a "Retiro" */
   @ValidateNested()
@@ -71,4 +81,6 @@ export class CreatePedidoDto {
   @ValidateIf((pedido) => pedido.idTipoDespacho != 1)
   @IsOptional()
   idxDireccion?: number
+
+
 }
