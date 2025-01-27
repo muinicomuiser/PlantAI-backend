@@ -13,18 +13,7 @@ import { GetPromocionDto } from '../dto/get_promocion.dto';
 import { UpdatePromocionDto } from '../dto/update_promocion.dto';
 import { Promocion } from '../entities/promocion.entity';
 import { PromocionMapper } from '../mapper/promocion.mapper';
-
-// --Creación de datos iniciales
-// INSERT INTO tipos_promociones(tipo)
-// VALUES('TRADICIONAL'),
-//     ('CUPON');
-// INSERT INTO tipos_descuentos(tipo)
-// VALUES('PORCENTAJE'),
-//     ('FIJO');
-// INSERT INTO tipos_selecciones_productos(tipo)
-// VALUES('TODOS'),
-//     ('SELECCIONADOS');
-
+import { FiltrosPromocionesDto, GetPromocionesPaginadasDto } from '../dto/filtros_promociones.dto';
 
 @Injectable()
 export class PromocionesService {
@@ -45,6 +34,63 @@ export class PromocionesService {
                 relations: PROMOCIONES_RELATIONS
             })
             return PromocionMapper.entitiesToDtos(promociones)
+        }
+        catch (error) {
+            throw new BadRequestException('Error al obtener promociones', { description: error.message })
+        }
+    }
+    async findAllPaginated(filtrosPromocion: FiltrosPromocionesDto): Promise<GetPromocionesPaginadasDto> {
+        try {
+            const {
+                page,
+                pageSize,
+                habilitado,
+                idTipoPromocion,
+                idTipoDescuento,
+                idTipoSeleccionProductos,
+                fechaInicio,
+                fechaTermino,
+            } = filtrosPromocion;
+            const limit = pageSize;
+            const offset = (page - 1) * limit;
+            const queryBuilder = this.promocionesRepository
+                .createQueryBuilder('promocion')
+                .innerJoinAndSelect('promocion.tipoPromocion', 'tipoPromocion')
+                .innerJoinAndSelect('promocion.tipoDescuento', 'tipoDescuento')
+                .innerJoinAndSelect('promocion.tipoSeleccionProducto', 'tipoSeleccionProducto')
+
+            if (habilitado != undefined) {
+                queryBuilder.andWhere('promocion.habilitado = :habilitado', {
+                    habilitado,
+                });
+            }
+            if (idTipoPromocion) {
+                queryBuilder.andWhere('promocion.idTipoPromocion = :idTipoPromocion', {
+                    idTipoPromocion,
+                });
+            }
+            if (idTipoDescuento) {
+                queryBuilder.andWhere('promocion.idTipoDescuento = :idTipoDescuento', {
+                    idTipoDescuento,
+                });
+            }
+            if (idTipoSeleccionProductos) {
+                queryBuilder.andWhere('promocion.idTipoSeleccionProductos = :idTipoSeleccionProductos', {
+                    idTipoSeleccionProductos,
+                });
+            }
+
+            if (fechaInicio) {
+                queryBuilder.andWhere('promocion.fechaInicio >= :fechaInicio', { fechaInicio });
+            }
+            if (fechaTermino) {
+                queryBuilder.andWhere('promocion.fechaTermino <= :fechaTermino', { fechaTermino });
+            }
+
+            queryBuilder.skip(offset).take(limit);
+
+            const [result, totalItems] = await queryBuilder.getManyAndCount();
+            return { data: PromocionMapper.entitiesToDtos(result), totalItems };
         }
         catch (error) {
             throw new BadRequestException('Error al obtener promociones', { description: error.message })

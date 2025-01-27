@@ -220,16 +220,16 @@ Versión 1.12.3
     Agregados:
         - Módulo de Promociones
             CRUD
-            Obtener productos seleccionados promoción
+            Obtener productos seleccionados de una promoción
             Validar cupón con código
+            Servicio: Filtro de promociones por producto y cálculo de precio final
 
         - Productos:
             Propiedad "promociones: GetPromocionesDto[]"
                 Arreglo de promociones activas de cada producto.
 
     *Falta:
-        Calcular el precioFinal
-        Que al comprar se genere la compra con el precio final
         Permisos
         Documentar y describir
+        Enums
 

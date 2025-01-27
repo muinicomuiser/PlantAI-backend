@@ -13,6 +13,7 @@ import { ValidarPromocionExistePipe } from '../pipe/validar-promocion-existe.pip
 import { ValidarCrearPromocionPipe } from '../pipe/validar-crear-promocion.pipe';
 import { PromocionesService } from '../service/promociones.service';
 import { ValidarModificarPromocionPipe } from '../pipe/validar-modificar-promocion.pipe';
+import { FiltrosPromocionesDto, GetPromocionesPaginadasDto } from '../dto/filtros_promociones.dto';
 
 @ApiTags('Promociones')
 @Controller('promociones')
@@ -22,31 +23,42 @@ export class PromocionesController {
         @Inject(ProductosService) readonly productosService: ProductosService
     ) { }
 
-    // Obtener todas las promociones
-    // *(Falta) aplicar filtros y paginación: 
-    // filtrar por "habilitadas", "tipos", "fechas", "id producto"
+    // Obtener todas las promociones filtradas
     @ApiOperation({
-        summary: 'Obtener todas las promociones activas',
-        description: `Retorna todas las promociones habilitadas y para las que la fecha actual `
-            + `esté entre la fecha de inicio y la de término de la promoción.`
+        summary: 'Obtener todas las promociones paginadas y filtradas',
+        description: `Retorna todas las promociones. Permite filtrar `
+            + `según tipo, rango de fechas y habilitadas/inhabilitadas.\n`
+            + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON \n  - "TRADICIONAL" para descuentos `
+            + `que se aplican por defecto al producto, "CUPON" para descuentos que requieren `
+            + `ingresar un código para activarlos.\n`
+            + `- idTipoDescuento: 1: PORCENTAJE, 2: FIJO \n  - "PORCENTAJE" cuando la propiedad `
+            + `"valor" define el porcentaje que se descuenta, "FIJO" cuando define el precio final del producto.\n`
+            + `- idTipoSeleccionProductos: 1: TODOS, 2: SELECCIONADOS \n  - "TODOS" si la promoción se `
+            + `aplica a todos los productos o "SELECCIONADOS" si solo aplica productos seleccionados.\n`
     })
     @ApiResponse({
         status: 200,
-        description: 'Retorna todas las promociones activas',
-        type: [GetPromocionDto]
+        description: 'Retorna todas las promociones paginadas filtradas',
+        type: GetPromocionesPaginadasDto
+    })
+    @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
+    @ApiQuery({
+        name: 'pageSize',
+        required: false,
+        description: 'Cantidad de elementos por página',
     })
     @Get()
-    async findAll(): Promise<GetPromocionDto[]> {
-        return await this.promocionesService.findAll()
+    async findAll(@Query() filtrosPromocion: FiltrosPromocionesDto): Promise<GetPromocionesPaginadasDto> {
+        return await this.promocionesService.findAllPaginated(filtrosPromocion)
     }
 
     // Obtener productos por promoción
     @ApiOperation({
-        summary: 'Obtener los productos paginados de una promoción',
+        summary: 'Obtener los productos seleccinados de una promoción',
         description: `Retorna todos los productos seleccionados de una promoción `
             + `cuya propiedad "tipoSeleccionProductos" sea "SELECCIONADOS".\n`
             + `Permite definir paginación.\n`
-            + `Si el tipo de selección de la promoción es "TODOS", se responde con {todosSeleccionados: true} `
+            + `\nSi el tipo de selección de la promoción es "TODOS", se responde con {todosSeleccionados: true} `
             + `y significa que se pueden obtener los productos por medio de Catálogo.`
     })
     @ApiResponse({
@@ -125,13 +137,13 @@ export class PromocionesController {
             + `- codigo: Palabra requerida para activar un cupón (solo aplica a cupones). `
             + `Se eliminan automáticamente todos los espacios.\n`
             + `- valor: Descuento o precio final del producto, dependiendo si la promoción es por porcentaje o precio fijo.\n`
-            + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON -> TRADICIONAL para descuentos `
-            + `que se aplican por defecto al producto, CUPON para descuentos que requieren `
+            + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON \n  - "TRADICIONAL" para descuentos `
+            + `que se aplican por defecto al producto, "CUPON" para descuentos que requieren `
             + `ingresar un código para activarlos.\n`
-            + `- idTipoDescuento: 1: PORCENTAJE, 2: FIJO -> PORCENTAJE cuando la propiedad `
-            + `"valor" define el porcentaje que se descuenta, FIJO cuando define el precio final del producto.\n`
-            + `- idTipoSeleccionProductos: 1: TODOS, 2: SELECCIONADOS -> Si la promoción se `
-            + `aplica a todos los productos o a productos seleccionados.\n`
+            + `- idTipoDescuento: 1: PORCENTAJE, 2: FIJO \n  - "PORCENTAJE" cuando la propiedad `
+            + `"valor" define el porcentaje que se descuenta, "FIJO" cuando define el precio final del producto.\n`
+            + `- idTipoSeleccionProductos: 1: TODOS, 2: SELECCIONADOS \n  - "TODOS" si la promoción se `
+            + `aplica a todos los productos o "SELECCIONADOS" si solo aplica productos seleccionados.\n`
             + `- idsProductos: Arreglo de id de los productos seleccinados de una promoción.\n`
     })
     @ApiResponse({
@@ -159,13 +171,13 @@ export class PromocionesController {
             + `- codigo: Palabra requerida para activar un cupón (solo aplica a cupones). `
             + `Se eliminan automáticamente todos los espacios.\n`
             + `- valor: Descuento o precio final del producto, dependiendo si la promoción es por porcentaje o precio fijo.\n`
-            + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON -> TRADICIONAL para descuentos `
-            + `que se aplican por defecto al producto, CUPON para descuentos que requieren `
+            + `- idTipoPromocion: 1: TRADICIONAL, 2: CUPON \n  - "TRADICIONAL" para descuentos `
+            + `que se aplican por defecto al producto, "CUPON" para descuentos que requieren `
             + `ingresar un código para activarlos.\n`
-            + `- idTipoDescuento: 1: PORCENTAJE, 2: FIJO -> PORCENTAJE cuando la propiedad `
-            + `"valor" define el porcentaje que se descuenta, FIJO cuando define el precio final del producto.\n`
-            + `- idTipoSeleccionProductos: 1: TODOS, 2: SELECCIONADOS -> Si la promoción se `
-            + `aplica a todos los productos o a productos seleccionados.\n`
+            + `- idTipoDescuento: 1: PORCENTAJE, 2: FIJO \n  - "PORCENTAJE" cuando la propiedad `
+            + `"valor" define el porcentaje que se descuenta, "FIJO" cuando define el precio final del producto.\n`
+            + `- idTipoSeleccionProductos: 1: TODOS, 2: SELECCIONADOS \n  - "TODOS" si la promoción se `
+            + `aplica a todos los productos o "SELECCIONADOS" si solo aplica productos seleccionados.\n`
             + `- productosModificados: Acciones sobre el conjunto de productos seleccionados de la promoción. `
             + `Permite agregar o remover productos asignados a una promoción.\n`
     })
@@ -212,7 +224,4 @@ export class PromocionesController {
     ): Promise<void> {
         return await this.promocionesService.deleteById(+id)
     }
-
-
-
 }
