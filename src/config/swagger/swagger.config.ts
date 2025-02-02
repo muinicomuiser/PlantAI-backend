@@ -9,6 +9,7 @@ import { EquipoModule } from 'src/commons/modelse3/equipo/equipo.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { IaconsultasModule } from 'src/iaconsultas/iaconsultas.module';
 import { ReviewsModule } from 'src/reviews/reviews.module';
+import { PromocionesModule } from 'src/promociones/promociones.module';
 
 export function setupSwagger(app: INestApplication) {
   const configService: ConfigService = app.get(ConfigService);
@@ -31,11 +32,13 @@ export function setupSwagger(app: INestApplication) {
       '\n \nLa documentación de cada módulo está disponible en las rutas siguientes: \n\n Módulo Carro de compras: api/carro\n' +
       '\n Módulo Pedidos: api/pedidos\n' +
       '\n Módulo Productos: api/productos\n' +
+      // '\n Módulo Catalogo: api/catalogo\n' +
       '\n Módulo Usuarios: api/usuarios\n' +
       '\n Módulo Equipo: api/equipo\n' +
       '\n Módulo Autenticación: api/aut\n' +
       '\n Módulo Consultas IA: api/iaconsultas\n' +
-      '\n Módulo Reviews: api/reviews',
+      '\n Módulo Reviews: api/reviews\n' +
+      '\n Módulo Promociones: api/promociones',
     )
     .setVersion(version)
     .setContact(authorName, authorUrl, authorEmail)
@@ -66,6 +69,7 @@ export function setupSwagger(app: INestApplication) {
     { module: AuthModule, path: 'api/aut' },
     { module: IaconsultasModule, path: 'api/iaconsultas' },
     { module: ReviewsModule, path: 'api/reviews' },
+    { module: PromocionesModule, path: 'api/promociones' },
   ];
 
   configs.forEach(({ module, path }) => {

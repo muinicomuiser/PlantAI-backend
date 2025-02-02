@@ -6,22 +6,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetCarroComprasDto } from 'src/carro-compras/dto/get-carro-compras.dto';
+import { GetCarroProductoDto } from 'src/carro-compras/dto/get-carro-producto.dto';
 import { CarroComprasService } from 'src/carro-compras/service/carro-compras.service';
+import { Producto } from 'src/productos/entities/producto.entity';
+import { GetCuponValidadoDto } from 'src/promociones/dto/get_cupon_validado.dto';
+import { Promocion } from 'src/promociones/entities/promocion.entity';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
+import { PromocionesService } from 'src/promociones/service/promociones.service';
+import { Direccion } from 'src/usuarios/entities/direccion.entity';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Repository } from 'typeorm';
+import { Logger } from 'winston';
 import { CreatePedidoDto } from '../dto/create-pedido.dto';
 import { GetPedidoDto } from '../dto/get-pedido.dto';
+import { DireccionEnvio } from '../entities/direccion-envio.entity';
 import { Pedido } from '../entities/pedido.entity';
 import { ProductoPedido } from '../entities/productos_pedido.entity';
 import { mapperPedido } from '../mapper/pedido.mapper';
 import { PEDIDOS_RELATIONS } from '../shared/constants/pedidos.constants';
-import { CreateDireccionEnvioDto } from '../dto/create-direccion-envio.dto';
-import { DireccionEnvio } from '../entities/direccion-envio.entity';
-import { Producto } from 'src/productos/entities/producto.entity';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { UsuariosService } from 'src/usuarios/service/usuarios.service';
-import { Direccion } from 'src/usuarios/entities/direccion.entity';
-import { GetCarroProductoDto } from 'src/carro-compras/dto/get-carro-producto.dto';
-import { Logger } from 'winston';
 
 @Injectable()
 export class PedidosService {
@@ -38,8 +40,12 @@ export class PedidosService {
     private usuarioRepository: Repository<Usuario>,
     @Inject(CarroComprasService)
     private readonly carroComprasService: CarroComprasService,
+    @Inject(PromocionesService)
+    private readonly promocionesService: PromocionesService,
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService,
     @Inject('winston') private readonly logger: Logger,
-  ) {}
+  ) { }
 
   async create(
     idUsuario: number,
@@ -69,16 +75,17 @@ export class PedidosService {
       const direccion: DireccionEnvio = createPedidoDto.direccionEnvio
         ? await this.guardarDireccion(createPedidoDto, pedidoGuardado.id)
         : await this.direccionRegistrada(
-            idUsuario,
-            createPedidoDto.idxDireccion,
-            pedidoGuardado.id,
-          );
+          idUsuario,
+          createPedidoDto.idxDireccion,
+          pedidoGuardado.id,
+        );
 
       // Registrar productos del pedido
       const productosPedido: ProductoPedido[] =
         await this.guardarProductosPedido(
           carroCerrado.carroProductos,
           pedidoGuardado.id,
+          createPedidoDto?.codigosCupones
         );
 
       // Crear carro nuevo activo al usuario
@@ -178,15 +185,25 @@ export class PedidosService {
   private async guardarProductosPedido(
     carroProductos: GetCarroProductoDto[],
     idPedido: number,
+    codigosCupones?: string[]
   ): Promise<ProductoPedido[]> {
     try {
-      const productosPedido: ProductoPedido[] = carroProductos.map(
+
+      const carroProductosConDescuentos: GetCarroProductoDto[] =
+        await this.aplicarPromociones(
+          carroProductos,
+          codigosCupones
+        )
+      const productosPedido: ProductoPedido[] = carroProductosConDescuentos.map(
         (carroProducto) => {
           const productoPedido: ProductoPedido = new ProductoPedido();
           productoPedido.cantidad = carroProducto.cantidadProducto;
           productoPedido.idPedido = idPedido;
           productoPedido.idProducto = carroProducto.producto.id;
-          productoPedido.precioCompraUnidad = carroProducto.producto.precio;
+          productoPedido.precioCompraUnidad =
+            carroProducto.producto.precioFinal != undefined
+              ? carroProducto.producto.precioFinal
+              : carroProducto.producto.precio;
           return productoPedido;
         },
       );
@@ -207,6 +224,48 @@ export class PedidosService {
     } catch (error) {
       throw new BadRequestException('Error al registrar productos del pedido');
     }
+  }
+
+  /**Ajusta el valor de cada producto, de un arreglo de GetCarroProducto, que tenga una promoción válida */
+  async aplicarPromociones(
+    carroProductos: GetCarroProductoDto[],
+    codigosCupones?: string[]
+  ): Promise<GetCarroProductoDto[]> {
+
+    // Buscar cupones validados
+    const cuponesValidados: GetCuponValidadoDto[] = []
+    if (codigosCupones) {
+      await Promise.all(
+        codigosCupones.map(async (codigo) => {
+          const cupon: GetCuponValidadoDto =
+            await this.promocionesService.validateCoupon(codigo);
+          if (cupon.validado) {
+            cuponesValidados.push(cupon)
+          }
+        }),
+      );
+    }
+    await Promise.all(
+      carroProductos.map(async (carroProducto) => {
+        let promociones: Promocion[] =
+          await this.promocionesProductosService.findActivesByProductId(
+            carroProducto.producto.id
+          );
+        const mejorPromocion: Promocion =
+          this.promocionesProductosService.obtenerMejorPromocion(
+            promociones,
+            carroProducto.producto.precio,
+            cuponesValidados
+          );
+        carroProducto.producto.precioFinal = mejorPromocion
+          ? this.promocionesProductosService.calcularPrecioFinal(
+            carroProducto.producto.precio,
+            mejorPromocion
+          )
+          : carroProducto.producto.precio;
+      })
+    )
+    return carroProductos;
   }
 
   /**Retorna todos los pedidos */

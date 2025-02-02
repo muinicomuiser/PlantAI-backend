@@ -1,15 +1,18 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
+import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
-import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
+import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
 import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { Accesorio } from '../entities/accesorios/accesorio.entity';
@@ -26,9 +29,13 @@ import { ImageService } from './imagen.service';
 export class ProductosService {
   constructor(
     @InjectRepository(Producto)
-    private readonly productoRepository: Repository<Producto>,
+    readonly productoRepository: Repository<Producto>,
     @InjectRepository(ImagenProducto)
     private readonly imagenProductoRepository: Repository<ImagenProducto>,
+    @InjectRepository(ProductoPedido)
+    private readonly productoPedidoRepository: Repository<ProductoPedido>,
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService,
     private readonly imageService: ImageService,
   ) { }
 
@@ -42,6 +49,9 @@ export class ProductosService {
     if (!producto) {
       throw new NotFoundException('No existe un producto con ese id.');
     }
+    // Obtener promociones destacadas
+    producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+    producto.promociones = this.promocionesProductosService.filtrarPromocionesDestacadas(producto.promociones, producto.precio)
     return ProductoMapper.entityToDto(producto);
   }
 
@@ -54,18 +64,19 @@ export class ProductosService {
         page: paginationDto.page ? +paginationDto.page : 1,
         pageSize: paginationDto.pageSize ? +paginationDto.pageSize : 10,
       };
-      const [result, totalItems] = await this.productoRepository.findAndCount({
+      let [result, totalItems] = await this.productoRepository.findAndCount({
         take: pagination.pageSize,
         skip: (pagination.page - 1) * pagination.pageSize,
         relations: PRODUCTO_RELATIONS,
       });
+
       return {
         totalItems,
         data: ProductoMapper.entitiesToDtos(result)
       };
     }
     catch (error) {
-      throw new BadRequestException('Error al obtener productos', { description: error.response })
+      throw new BadRequestException('Error al obtener productos', { description: error.message })
     }
   }
 
@@ -78,7 +89,8 @@ export class ProductosService {
       return ProductoMapper.entitiesToDtos(productos)
     }
     catch (error) {
-      throw new BadRequestException('Error al obtener productos', { description: error.response })
+
+      throw new BadRequestException('Error al obtener productos', { description: error.message })
     }
   }
 
@@ -92,7 +104,7 @@ export class ProductosService {
       return producto;
     }
     catch (error) {
-      throw new BadRequestException('Error al obtener producto', { description: error.response })
+      throw new BadRequestException('Error al obtener producto', { description: error.message })
     }
   }
 
@@ -157,7 +169,7 @@ export class ProductosService {
       );
       return await this.getById(nuevoProducto.id);
     } catch (error) {
-      throw new BadRequestException('Error al crear producto', { description: error.response });
+      throw new BadRequestException('Error al crear producto', { description: error.message });
     }
   }
 
@@ -216,7 +228,7 @@ export class ProductosService {
       return await this.getById(updateProducto.id);
     }
     catch (error) {
-      throw new BadRequestException('Error al actualizar producto', { description: error.response })
+      throw new BadRequestException('Error al actualizar producto', { description: error.message })
     }
   }
 
@@ -229,61 +241,91 @@ export class ProductosService {
     try {
       const producto = await this.getEntityById(idProducto, PRODUCTO_RELATIONS)
 
-      await this.productoRepository.manager.transaction(
-        async (transactionalEntityManager) => {
-          await transactionalEntityManager.delete(CarroProducto, {
-            idProducto: idProducto,
-          });
-          await transactionalEntityManager.delete('productos_etiquetas', {
-            id_producto: idProducto,
-          });
-          if (producto.planta) {
-            await transactionalEntityManager.delete(
-              Planta,
-              producto.planta.idProducto,
-            );
+      // Revisar si el producto ha sido comprado
+      const productoComprado: boolean = await this.productoPedidoRepository.existsBy({ idProducto: idProducto })
+
+      // Si fue comprado, se eliminan las imagenes y se hace un soft delete del producto
+      if (productoComprado) {
+        await this.productoRepository.manager.transaction(
+          async (transactionalEntityManager) => {
+            if (producto.imagenes) {
+              if (producto.imagenes.length > 0) {
+                await transactionalEntityManager.delete(
+                  ImagenProducto,
+                  producto.imagenes,
+                );
+              }
+            }
+            await transactionalEntityManager.softDelete(Producto, { id: producto.id })
+          })
+        if (producto.imagenes) {
+          if (producto.imagenes.length > 0) {
+            await Promise.all(producto.imagenes.map(async imagen => {
+              const rutaImage = this.staticToFilesPath(imagen.ruta)
+              await this.imageService.deleteImageFile(rutaImage);
+            }))
           }
-          if (producto.macetero) {
-            await transactionalEntityManager.delete(
-              Macetero,
-              producto.macetero.idProducto,
-            );
-          }
-          if (producto.insumo) {
-            await transactionalEntityManager.delete(
-              Insumo,
-              producto.insumo.idProducto,
-            );
-          }
-          if (producto.accesorio) {
-            await transactionalEntityManager.delete(
-              Accesorio,
-              producto.accesorio.idProducto,
-            );
-          }
-          if (producto.imagenes) {
-            if (producto.imagenes.length > 0) {
+        }
+      }
+
+      // Si no se ha comprado, se elimina el producto completo
+      else {
+        await this.productoRepository.manager.transaction(
+          async (transactionalEntityManager) => {
+            await transactionalEntityManager.delete(CarroProducto, {
+              idProducto: idProducto,
+            });
+            await transactionalEntityManager.delete('productos_etiquetas', {
+              id_producto: idProducto,
+            });
+            if (producto.planta) {
               await transactionalEntityManager.delete(
-                ImagenProducto,
-                producto.imagenes,
+                Planta,
+                producto.planta.idProducto,
               );
             }
+            if (producto.macetero) {
+              await transactionalEntityManager.delete(
+                Macetero,
+                producto.macetero.idProducto,
+              );
+            }
+            if (producto.insumo) {
+              await transactionalEntityManager.delete(
+                Insumo,
+                producto.insumo.idProducto,
+              );
+            }
+            if (producto.accesorio) {
+              await transactionalEntityManager.delete(
+                Accesorio,
+                producto.accesorio.idProducto,
+              );
+            }
+            if (producto.imagenes) {
+              if (producto.imagenes.length > 0) {
+                await transactionalEntityManager.delete(
+                  ImagenProducto,
+                  producto.imagenes,
+                );
+              }
+            }
+            await transactionalEntityManager.delete(Producto, idProducto);
+          },
+        );
+        if (producto.imagenes) {
+          if (producto.imagenes.length > 0) {
+            await Promise.all(producto.imagenes.map(async imagen => {
+              const rutaImage = this.staticToFilesPath(imagen.ruta)
+              await this.imageService.deleteImageFile(rutaImage);
+            }))
           }
-          await transactionalEntityManager.delete(Producto, idProducto);
-        },
-      );
-      if (producto.imagenes) {
-        if (producto.imagenes.length > 0) {
-          await Promise.all(producto.imagenes.map(async imagen => {
-            const rutaImage = this.rutaEstaticaAFisica(imagen.ruta)
-            await this.imageService.deleteImageFile(rutaImage);
-          }))
         }
       }
       return;
     }
     catch (error) {
-      throw new BadRequestException('Error al eliminar producto', { description: error.response })
+      throw new BadRequestException('Error al eliminar producto', { description: error.message })
     }
   }
 
@@ -306,7 +348,7 @@ export class ProductosService {
       return rutaImagen;
     }
     catch (error) {
-      throw new BadRequestException('Error al agregar la imagen', { description: error.response })
+      throw new BadRequestException('Error al agregar la imagen', { description: error.message })
     }
   }
 
@@ -358,24 +400,28 @@ export class ProductosService {
         throw new BadRequestException('Índice inválido');
       }
       const imagenEliminada: ImagenProducto = producto.imagenes[indiceImagen]
-      const rutaImage = this.rutaEstaticaAFisica(imagenEliminada.ruta)
+      const rutaImage = this.staticToFilesPath(imagenEliminada.ruta)
       await this.imageService.deleteImageFile(rutaImage);
       await this.imagenProductoRepository.remove(imagenEliminada)
     } catch (error) {
       throw new BadRequestException(
         'Error al eliminar la imagen',
-        error.response,
+        error.message,
       );
     }
     return;
   }
 
   /**Convierte un string de ruta estática a ruta física, de acuerdo a las variables respectivos de entorno. */
-  private rutaEstaticaAFisica(ruta: string): string {
+  private staticToFilesPath(ruta: string): string {
     const rutaImagen = ruta.replace(
       `${process.env.RUTA_ESTATICOS}`,
       `${process.env.RUTA_FISICA}/`,
     );
     return rutaImagen
   }
+
+  /**
+   * AUXILIARES
+   */
 }

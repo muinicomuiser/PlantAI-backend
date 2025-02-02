@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 import { Repository } from 'typeorm';
 import {
   FiltrosCatalogoDto,
@@ -14,6 +15,8 @@ export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService
   ) { }
 
   /**Retorna todos los productos */
@@ -105,6 +108,14 @@ export class CatalogoService {
       queryBuilder.skip(offset).take(limit);
 
       const [result, totalItems] = await queryBuilder.getManyAndCount();
+      // Asignar promociones a cada producto
+      await Promise.all(
+        result.map(async (producto: Producto) => {
+          producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+          producto.promociones = this.promocionesProductosService.filtrarPromocionesDestacadas(producto.promociones, producto.precio)
+        })
+      )
+
       return { data: ProductoMapper.entitiesToDtos(result), totalItems };
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -143,6 +154,13 @@ export class CatalogoService {
       queryBuilder.skip(offset).take(limit);
 
       const [result, totalItems] = await queryBuilder.getManyAndCount();
+      // Asignar promociones a cada producto
+      await Promise.all(
+        result.map(async (producto: Producto) => {
+          producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+        })
+      )
+
       return { data: ProductoMapper.entitiesToDtos(result), totalItems };
     } catch (error) {
       throw new BadRequestException(error.message);
