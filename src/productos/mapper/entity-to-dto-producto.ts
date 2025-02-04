@@ -1,3 +1,4 @@
+import { PromocionMapper } from 'src/promociones/mapper/promocion.mapper';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
@@ -85,6 +86,9 @@ export class ProductoMapper {
         tipoInsumo: producto.insumo.tipoInsumo.tipoInsumo,
         marca: producto.insumo.marca.nombre,
       };
+    }
+    if (producto.promociones) {
+      productoDto.promocionesDestacadas = PromocionMapper.entitiesToPromocionProductoDtos(producto.promociones);
     }
     return productoDto;
   }

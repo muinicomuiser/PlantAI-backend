@@ -16,7 +16,7 @@ import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 import { Rol } from '../entities/rol.entity';
 import { Usuario } from '../entities/usuario.entity';
 import { UsuarioMedioPago } from '../entities/usuarios_medio_pago.entity';
-import { toOutputUserDTO } from '../Mapper/entitty-to-dto-usuarios';
+import { toOutputUserDTO } from '../usuarios.mapper';
 import { GetPedidoUsuarioDto } from 'src/pedidos/dto/get-pedido.usuario.dto';
 import { CreateGuestUsuarioDto } from '../dto/create-usuario-invitado.dto';
 import * as bcrypt from 'bcryptjs';
@@ -54,7 +54,7 @@ export class UsuariosService {
     @Inject(CarroComprasService)
     private readonly carroComprasService: CarroComprasService,
     @Inject('winston') private readonly logger: Logger,
-  ) {}
+  ) { }
 
   /**Retorna todos los usuarios */
   async findAll(): Promise<OutputUserDTO[]> {

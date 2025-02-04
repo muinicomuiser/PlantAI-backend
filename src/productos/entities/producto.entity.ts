@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -16,6 +17,7 @@ import { Macetero } from './maceteros/macetero.entity';
 import { Accesorio } from './accesorios/accesorio.entity';
 import { Insumo } from './insumos/insumo.entity';
 import { ImagenProducto } from './imagenes.entity';
+import { Promocion } from 'src/promociones/entities/promocion.entity';
 
 @Entity({ name: 'productos' })
 export class Producto {
@@ -99,4 +101,18 @@ export class Producto {
   @OneToMany(() => ImagenProducto, (imagen: ImagenProducto) => imagen.producto)
   @JoinColumn({ name: 'imagenes_productos', referencedColumnName: 'id' })
   imagenes: ImagenProducto[];
+
+  /**Propiedad para el soft delete */
+  @DeleteDateColumn({ name: 'fecha_eliminacion' })
+  deletedAt?: Date;
+
+  /**Many to Many */
+  @ManyToMany(() => Promocion, (promocion: Promocion) => promocion.productos)
+  @JoinTable({
+    name: 'productos_promociones', // Nombre de la tabla intermedia
+    joinColumn: { name: 'id_producto', referencedColumnName: 'id' }, // Columna que referencia a la entidad actual (Producto)
+    inverseJoinColumn: { name: 'id_promocion', referencedColumnName: 'id' }, // Columna que referencia a la otra entidad (Promocion)
+  })
+  promociones: Promocion[];
+
 }

@@ -14,14 +14,7 @@ services:
     image: 'flyway/flyway:${VERSION_FLYWAY}'
     volumes:
       - ./sql:/flyway/sql
-    command:
-      [
-        '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false',
-        '-user=${DB_USERNAME}',
-        '-password=${DB_PASSWORD}',
-        '-connectRetries=60',
-        'migrate'
-      ]
+    command: [ '-url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false', '-user=${DB_USERNAME}', '-password=${DB_PASSWORD}', '-connectRetries=60', 'migrate' ]
 
   cotiledon-dev:
     image: 'node:${VERSION_NODE}'
