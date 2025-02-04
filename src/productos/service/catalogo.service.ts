@@ -1,26 +1,28 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 import { Repository } from 'typeorm';
 import {
   FiltrosCatalogoDto,
   SearchCatalogoDto,
 } from '../dto/catalogo/paginacion.dto';
+import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
 import { Producto } from '../entities/producto.entity';
 import { ProductoMapper } from '../mapper/entity-to-dto-producto';
-import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
-import { GetProductoDto } from '../dto/producto/get-producto.dto';
 
 @Injectable()
 export class CatalogoService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) {}
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService
+  ) { }
 
   /**Retorna todos los productos */
   async findAll(
     filtrosCatalogoDto: FiltrosCatalogoDto,
-  ): Promise<GetDataDto<GetProductoDto[]>> {
+  ): Promise<GetProductosPaginadosDto> {
     try {
       const {
         page,
@@ -106,11 +108,15 @@ export class CatalogoService {
       queryBuilder.skip(offset).take(limit);
 
       const [result, totalItems] = await queryBuilder.getManyAndCount();
-      const productos = result.map((producto) =>
-        ProductoMapper.entityToDto(producto),
-      );
+      // Asignar promociones a cada producto
+      await Promise.all(
+        result.map(async (producto: Producto) => {
+          producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+          producto.promociones = this.promocionesProductosService.filtrarPromocionesDestacadas(producto.promociones, producto.precio)
+        })
+      )
 
-      return { data: productos, totalItems };
+      return { data: ProductoMapper.entitiesToDtos(result), totalItems };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -120,7 +126,7 @@ export class CatalogoService {
 
   async findBySearch(
     searchCatalogoDto: SearchCatalogoDto,
-  ): Promise<GetDataDto<GetProductoDto[]>> {
+  ): Promise<GetProductosPaginadosDto> {
     try {
       const { page, pageSize, search } = searchCatalogoDto;
       const limit = pageSize;
@@ -148,11 +154,14 @@ export class CatalogoService {
       queryBuilder.skip(offset).take(limit);
 
       const [result, totalItems] = await queryBuilder.getManyAndCount();
-      const productos = result.map((producto) =>
-        ProductoMapper.entityToDto(producto),
-      );
+      // Asignar promociones a cada producto
+      await Promise.all(
+        result.map(async (producto: Producto) => {
+          producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+        })
+      )
 
-      return { data: productos, totalItems };
+      return { data: ProductoMapper.entitiesToDtos(result), totalItems };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

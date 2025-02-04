@@ -1,14 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
+import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
 import { Producto } from 'src/productos/entities/producto.entity';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { Repository } from 'typeorm';
 import { CreateReviewDto } from '../dto/create-review.dto';
 import { OutputReviewDto } from '../dto/OutputReviewDto';
 import { Review } from '../entities/review.entity';
-import { ReviewMapper } from '../mapper/reviews-mapper';
-import { JwtUser } from 'src/auth/guards/jwt-auth.guard/roles.guard';
-import { GetDataDto } from 'src/commons/dto/respuesta.data.dto';
+import { ReviewMapper } from '../mapper/reviews.mapper';
 
 @Injectable()
 export class ReviewsService {
@@ -17,8 +16,6 @@ export class ReviewsService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-    @InjectRepository(Usuario)
-    private readonly usuarioRepository: Repository<Usuario>,
   ) { }
   async createReview(
     user: JwtUser,

@@ -1,15 +1,18 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarroProducto } from 'src/carro-compras/entities/carro_producto.entity';
+import { ProductoPedido } from 'src/pedidos/entities/productos_pedido.entity';
+import { PromocionesProductosService } from 'src/promociones/service/promociones-productos.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { PaginacionDto } from '../dto/catalogo/paginacion.dto';
 import { CreateProductoDto } from '../dto/producto/create-producto.dto';
-import { GetProductosAdminDto } from '../dto/producto/get-paginacion-admin.dto';
 import { GetProductoDto } from '../dto/producto/get-producto.dto';
+import { GetProductosPaginadosDto } from '../dto/producto/get-productos-paginados-dto';
 import { UpdateProductImageDto } from '../dto/producto/update-product-image.dto';
 import { UpdateProductoDto } from '../dto/producto/update-producto.dto';
 import { Accesorio } from '../entities/accesorios/accesorio.entity';
@@ -26,46 +29,91 @@ import { ImageService } from './imagen.service';
 export class ProductosService {
   constructor(
     @InjectRepository(Producto)
-    private readonly productoRepository: Repository<Producto>,
+    readonly productoRepository: Repository<Producto>,
     @InjectRepository(ImagenProducto)
     private readonly imagenProductoRepository: Repository<ImagenProducto>,
-    @InjectRepository(CarroProducto)
-    private readonly carroProductoRepository: Repository<CarroProducto>,
+    @InjectRepository(ProductoPedido)
+    private readonly productoPedidoRepository: Repository<ProductoPedido>,
+    @Inject(PromocionesProductosService)
+    private readonly promocionesProductosService: PromocionesProductosService,
     private readonly imageService: ImageService,
   ) { }
 
+  /**
+   * BÚSQUEDA
+   */
+
   /**Retorna el producto cuyo id coincida con el ingresado.*/
   async getById(id: number): Promise<GetProductoDto> {
-    const producto = await this.productoRepository.findOne({
-      where: { id: id },
-      relations: PRODUCTO_RELATIONS,
-    });
+    const producto = await this.getEntityById(id, PRODUCTO_RELATIONS)
     if (!producto) {
       throw new NotFoundException('No existe un producto con ese id.');
     }
+    // Obtener promociones destacadas
+    producto.promociones = await this.promocionesProductosService.findActivesByProductId(producto.id)
+    producto.promociones = this.promocionesProductosService.filtrarPromocionesDestacadas(producto.promociones, producto.precio)
     return ProductoMapper.entityToDto(producto);
   }
 
-  /**Retorna el conjunto de productos que coincida con los filtros.*/
-  getByFilters() {
-    return { mensaje: 'endpoint en desarrollo' };
+  /**Retorna todos los productos registrados, con paginación. Para endpoints de Gestión de Productos (Admins) */
+  async findAllPaginated(
+    paginationDto: PaginacionDto,
+  ): Promise<GetProductosPaginadosDto> {
+    try {
+      const pagination: PaginacionDto = {
+        page: paginationDto.page ? +paginationDto.page : 1,
+        pageSize: paginationDto.pageSize ? +paginationDto.pageSize : 10,
+      };
+      let [result, totalItems] = await this.productoRepository.findAndCount({
+        take: pagination.pageSize,
+        skip: (pagination.page - 1) * pagination.pageSize,
+        relations: PRODUCTO_RELATIONS,
+      });
+
+      return {
+        totalItems,
+        data: ProductoMapper.entitiesToDtos(result)
+      };
+    }
+    catch (error) {
+      throw new BadRequestException('Error al obtener productos', { description: error.message })
+    }
   }
 
   /**Retorna todos los productos registrados.*/
   async getAll(): Promise<GetProductoDto[]> {
-    const productos = await this.productoRepository.find({
-      relations: PRODUCTO_RELATIONS,
-    });
-    return productos.map((producto) => ProductoMapper.entityToDto(producto));
+    try {
+      const productos = await this.productoRepository.find({
+        relations: PRODUCTO_RELATIONS,
+      });
+      return ProductoMapper.entitiesToDtos(productos)
+    }
+    catch (error) {
+
+      throw new BadRequestException('Error al obtener productos', { description: error.message })
+    }
   }
 
-  // Crear producto
-  async create(createProductoDto: CreateProductoDto): Promise<GetProductoDto> {
-    let imagenNueva: string = null;
-    if (createProductoDto.imagen) {
-      imagenNueva = createProductoDto.imagen;
-      createProductoDto.imagen = null;
+  /**Retorna una entidad Producto por id. Método auxiliar. */
+  private async getEntityById(idProducto: number, relaciones: string[]): Promise<Producto> {
+    try {
+      const producto = await this.productoRepository.findOne({
+        where: { id: idProducto },
+        relations: relaciones,
+      });
+      return producto;
     }
+    catch (error) {
+      throw new BadRequestException('Error al obtener producto', { description: error.message })
+    }
+  }
+
+  /**
+   * CREACIÓN
+   */
+
+  /**Crea un producto nuevo. */
+  async create(createProductoDto: CreateProductoDto): Promise<GetProductoDto> {
     try {
       const nuevoProducto = await this.productoRepository.manager.transaction(
         async (transactionalEM) => {
@@ -108,170 +156,200 @@ export class ProductosService {
             accesorio.idProducto = productoId;
             productoGuardado.accesorio = await transactionalEM.save(accesorio);
           }
+          if (createProductoDto.imagen) {
+            const rutaImagen: string = await this.imageService.addImage(
+              createProductoDto.imagen
+            );
+            const nuevaImagen: ImagenProducto = new ImagenProducto(productoId, rutaImagen)
+            const imagenGuardada: ImagenProducto = await transactionalEM.save(nuevaImagen)
+            productoGuardado.imagenes = [imagenGuardada]
+          }
           return productoGuardado;
         },
       );
-
-      if (imagenNueva) {
-        const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto();
-        imagenBase64.base64Content = imagenNueva;
-        const rutaImagen: string = await this.addProductImage(
-          imagenBase64,
-          nuevoProducto.id,
-        );
-        const nuevaImagen: ImagenProducto = new ImagenProducto(nuevoProducto.id, rutaImagen)
-        if (nuevoProducto.imagenes) {
-          nuevoProducto.imagenes.push(nuevaImagen);
-        }
-        else {
-          nuevoProducto.imagenes = [nuevaImagen]
-        }
-      } else {
-        nuevoProducto.imagenes = null;
-      }
       return await this.getById(nuevoProducto.id);
     } catch (error) {
-      throw new BadRequestException('Error al crear producto');
+      throw new BadRequestException('Error al crear producto', { description: error.message });
     }
   }
 
+  /**
+   * ACTUALIZACIÓN
+   */
+
+  /**Actualiza un producto segpun su id. */
   async update(
     id: number,
     updateProductoDto: UpdateProductoDto,
   ): Promise<GetProductoDto> {
-    await this.getById(id);
-    // if (updateProductoDto.imagen) {
-    //   const imagenBase64: UpdateProductImageDto = new UpdateProductImageDto();
-    //   imagenBase64.base64Content = updateProductoDto.imagen;
-    //   updateProductoDto.imagen = await this.updateProductImage(
-    //     imagenBase64,
-    //     id,
-    //   );
-    // }
-    const updateProducto = await this.productoRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        const producto = await transactionalEntityManager.findOne(Producto, {
-          where: { id: id },
-          relations: PRODUCTO_RELATIONS,
-        });
-        transactionalEntityManager.merge(
-          Producto,
-          producto,
-          updateProductoDto as DeepPartial<Producto>,
-        );
-        if (updateProductoDto.planta) {
-          await transactionalEntityManager.update(
-            Planta,
-            producto.planta.idProducto,
-            updateProductoDto.planta as Planta,
-          );
-        }
-        if (updateProductoDto.macetero) {
-          transactionalEntityManager.update(
-            Macetero,
-            producto.macetero.idProducto,
-            updateProductoDto.macetero as Macetero,
-          );
-        }
-        if (updateProductoDto.insumo) {
-          transactionalEntityManager.update(
-            Insumo,
-            producto.insumo.idProducto,
-            updateProductoDto.insumo as Insumo,
-          );
-        }
-        if (updateProductoDto.accesorio) {
-          transactionalEntityManager.update(
-            Accesorio,
-            producto.accesorio.idProducto,
-            updateProductoDto.accesorio as Accesorio,
-          );
-        }
-        return await transactionalEntityManager.save(producto);
-      },
-    );
-
-    return await this.getById(updateProducto.id);
-  }
-
-  /**Elimina un producto según su id */
-  async deleteOne(idProducto: number): Promise<GetProductoDto> {
     try {
-
-      const producto = await this.productoRepository.findOne({
-        where: { id: idProducto },
-        relations: PRODUCTO_RELATIONS,
-      });
-      await this.productoRepository.manager.transaction(
+      const updateProducto = await this.productoRepository.manager.transaction(
         async (transactionalEntityManager) => {
-          await transactionalEntityManager.delete(CarroProducto, {
-            idProducto: idProducto,
+          const producto = await transactionalEntityManager.findOne(Producto, {
+            where: { id: id },
+            relations: PRODUCTO_RELATIONS,
           });
-          await transactionalEntityManager.delete('productos_etiquetas', {
-            id_producto: idProducto,
-          });
-          if (producto.planta) {
-            await transactionalEntityManager.delete(
+          transactionalEntityManager.merge(
+            Producto,
+            producto,
+            updateProductoDto as DeepPartial<Producto>,
+          );
+          if (updateProductoDto.planta) {
+            await transactionalEntityManager.update(
               Planta,
               producto.planta.idProducto,
+              updateProductoDto.planta as Planta,
             );
           }
-          if (producto.macetero) {
-            await transactionalEntityManager.delete(
+          if (updateProductoDto.macetero) {
+            transactionalEntityManager.update(
               Macetero,
               producto.macetero.idProducto,
+              updateProductoDto.macetero as Macetero,
             );
           }
-          if (producto.insumo) {
-            await transactionalEntityManager.delete(
+          if (updateProductoDto.insumo) {
+            transactionalEntityManager.update(
               Insumo,
               producto.insumo.idProducto,
+              updateProductoDto.insumo as Insumo,
             );
           }
-          if (producto.accesorio) {
-            await transactionalEntityManager.delete(
+          if (updateProductoDto.accesorio) {
+            transactionalEntityManager.update(
               Accesorio,
               producto.accesorio.idProducto,
+              updateProductoDto.accesorio as Accesorio,
             );
           }
-          if (producto.imagenes) {
-            if (producto.imagenes.length > 0) {
-              await transactionalEntityManager.delete(
-                ImagenProducto,
-                producto.imagenes,
-              );
-            }
-          }
-          await transactionalEntityManager.delete(Producto, idProducto);
+          return await transactionalEntityManager.save(producto);
         },
       );
-      if (producto.imagenes) {
-        if (producto.imagenes.length > 0) {
-          await Promise.all(producto.imagenes.map(async imagen => {
-            const rutaImage = this.reemplazarRutaEstaticoAFisico(imagen.ruta)
-            await this.imageService.deleteImage(rutaImage);
-          }))
-        }
-      }
-      return ProductoMapper.entityToDto(producto);
+      return await this.getById(updateProducto.id);
     }
     catch (error) {
-      throw new BadRequestException('Error al eliminar producto')
+      throw new BadRequestException('Error al actualizar producto', { description: error.message })
     }
   }
+
+  /**
+   * ELIMINACIÓN
+   */
+
+  /**Elimina un producto según su id. */
+  async deleteOne(idProducto: number): Promise<void> {
+    try {
+      const producto = await this.getEntityById(idProducto, PRODUCTO_RELATIONS)
+
+      // Revisar si el producto ha sido comprado
+      const productoComprado: boolean = await this.productoPedidoRepository.existsBy({ idProducto: idProducto })
+
+      // Si fue comprado, se eliminan las imagenes y se hace un soft delete del producto
+      if (productoComprado) {
+        await this.productoRepository.manager.transaction(
+          async (transactionalEntityManager) => {
+            if (producto.imagenes) {
+              if (producto.imagenes.length > 0) {
+                await transactionalEntityManager.delete(
+                  ImagenProducto,
+                  producto.imagenes,
+                );
+              }
+            }
+            await transactionalEntityManager.softDelete(Producto, { id: producto.id })
+          })
+        if (producto.imagenes) {
+          if (producto.imagenes.length > 0) {
+            await Promise.all(producto.imagenes.map(async imagen => {
+              const rutaImage = this.staticToFilesPath(imagen.ruta)
+              await this.imageService.deleteImageFile(rutaImage);
+            }))
+          }
+        }
+      }
+
+      // Si no se ha comprado, se elimina el producto completo
+      else {
+        await this.productoRepository.manager.transaction(
+          async (transactionalEntityManager) => {
+            await transactionalEntityManager.delete(CarroProducto, {
+              idProducto: idProducto,
+            });
+            await transactionalEntityManager.delete('productos_etiquetas', {
+              id_producto: idProducto,
+            });
+            if (producto.planta) {
+              await transactionalEntityManager.delete(
+                Planta,
+                producto.planta.idProducto,
+              );
+            }
+            if (producto.macetero) {
+              await transactionalEntityManager.delete(
+                Macetero,
+                producto.macetero.idProducto,
+              );
+            }
+            if (producto.insumo) {
+              await transactionalEntityManager.delete(
+                Insumo,
+                producto.insumo.idProducto,
+              );
+            }
+            if (producto.accesorio) {
+              await transactionalEntityManager.delete(
+                Accesorio,
+                producto.accesorio.idProducto,
+              );
+            }
+            if (producto.imagenes) {
+              if (producto.imagenes.length > 0) {
+                await transactionalEntityManager.delete(
+                  ImagenProducto,
+                  producto.imagenes,
+                );
+              }
+            }
+            await transactionalEntityManager.delete(Producto, idProducto);
+          },
+        );
+        if (producto.imagenes) {
+          if (producto.imagenes.length > 0) {
+            await Promise.all(producto.imagenes.map(async imagen => {
+              const rutaImage = this.staticToFilesPath(imagen.ruta)
+              await this.imageService.deleteImageFile(rutaImage);
+            }))
+          }
+        }
+      }
+      return;
+    }
+    catch (error) {
+      throw new BadRequestException('Error al eliminar producto', { description: error.message })
+    }
+  }
+
+  /**
+   * MÉTODOS DE IMÁGENES
+   */
 
   /**Subir una imagen en Base64; guardar ruta en DB y SV estáticos*/
   async addProductImage(
     base64Content: UpdateProductImageDto,
     idProducto: number,
-  ) {
-    const rutaImagen = await this.imageService.addImage(
-      base64Content.base64Content,
-    );
-    const nuevaImagen: ImagenProducto = new ImagenProducto(idProducto, rutaImagen)
-    await this.imagenProductoRepository.save(nuevaImagen)
+  ): Promise<string> {
+    try {
+      const rutaImagen = await this.imageService.addImage(
+        base64Content.base64Content,
+      );
+      const nuevaImagen: ImagenProducto = new ImagenProducto(idProducto, rutaImagen)
+      await this.imagenProductoRepository.save(nuevaImagen)
 
-    return rutaImagen;
+      return rutaImagen;
+    }
+    catch (error) {
+      throw new BadRequestException('Error al agregar la imagen', { description: error.message })
+    }
   }
 
   //********************************UPDATE*********************************** */
@@ -313,30 +391,29 @@ export class ProductosService {
   //   }
   // }
 
-  /**Elimina una imagen de un producto en Base64; borra la ruta de DB y el archivo de la ruta de estáticos*/
-  async deleteProductImage(idProducto: number, indiceImagen: number) {
+  /**Elimina una imagen de un producto en Base64. Borra la imagen en la posición de índice del arreglo de imágenes, borra la ruta de DB y el archivo. */
+  async deleteProductImage(idProducto: number, indiceImagen: number): Promise<void> {
     try {
-      const producto = await this.productoRepository.findOne({
-        where: { id: idProducto },
-        relations: PRODUCTO_RELATIONS,
-      });
+      const producto = await this.getEntityById(idProducto, ['imagenes'])
+
       if (producto.imagenes.length < indiceImagen + 1 || indiceImagen < 0) {
         throw new BadRequestException('Índice inválido');
       }
       const imagenEliminada: ImagenProducto = producto.imagenes[indiceImagen]
-      const rutaImage = this.reemplazarRutaEstaticoAFisico(imagenEliminada.ruta)
-      await this.imageService.deleteImage(rutaImage);
+      const rutaImage = this.staticToFilesPath(imagenEliminada.ruta)
+      await this.imageService.deleteImageFile(rutaImage);
       await this.imagenProductoRepository.remove(imagenEliminada)
     } catch (error) {
       throw new BadRequestException(
-        error.message,
         'Error al eliminar la imagen',
+        error.message,
       );
     }
-    return true;
+    return;
   }
 
-  private reemplazarRutaEstaticoAFisico(ruta: string): string {
+  /**Convierte un string de ruta estática a ruta física, de acuerdo a las variables respectivos de entorno. */
+  private staticToFilesPath(ruta: string): string {
     const rutaImagen = ruta.replace(
       `${process.env.RUTA_ESTATICOS}`,
       `${process.env.RUTA_FISICA}/`,
@@ -344,22 +421,7 @@ export class ProductosService {
     return rutaImagen
   }
 
-  /**Retorna todos los productos */
-  async findAllPaginated(
-    paginacionDto: PaginacionDto,
-  ): Promise<GetProductosAdminDto> {
-    const { page, pageSize } = paginacionDto;
-    const limit = pageSize;
-    const offset = (page - 1) * limit;
-    const [result, totalItems] = await this.productoRepository.findAndCount({
-      take: limit,
-      skip: offset,
-      relations: PRODUCTO_RELATIONS,
-    });
-    const productos = result.map((producto) =>
-      ProductoMapper.entityToDto(producto),
-    );
-
-    return { data: productos, totalItems };
-  }
+  /**
+   * AUXILIARES
+   */
 }

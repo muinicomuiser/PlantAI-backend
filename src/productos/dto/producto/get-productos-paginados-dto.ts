@@ -3,11 +3,11 @@ import { GetProductoDto } from './get-producto.dto';
 
 
 
-export class GetProductosAdminDto {
-
-    @ApiProperty({ type: [GetProductoDto] })
-    data: GetProductoDto[]
+export class GetProductosPaginadosDto {
 
     @ApiProperty()
     totalItems: number
+
+    @ApiProperty({ type: [GetProductoDto] })
+    data: GetProductoDto[]
 }

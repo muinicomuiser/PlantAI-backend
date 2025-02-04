@@ -12,6 +12,9 @@ import { DireccionEnvio } from './entities/direccion-envio.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { JwtService } from '@nestjs/jwt';
 import { LoggingModule } from 'src/logger/logger.module';
+import { PromocionesModule } from 'src/promociones/promociones.module';
+import { ProductosModule } from 'src/productos/productos.module';
+import { PromocionesProductosModule } from 'src/promociones/promociones.productos.module';
 
 @Module({
   imports: [
@@ -27,8 +30,10 @@ import { LoggingModule } from 'src/logger/logger.module';
     ]),
     CarroComprasModule,
     LoggingModule,
+    PromocionesModule,
+    PromocionesProductosModule
   ],
   controllers: [PedidosController],
   providers: [PedidosService, JwtService],
 })
-export class PedidosModule {}
+export class PedidosModule { }

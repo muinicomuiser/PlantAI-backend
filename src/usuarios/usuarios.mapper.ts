@@ -1,5 +1,5 @@
-import { Usuario } from '../entities/usuario.entity';
-import { OutputUserDTO } from '../dto/output-userDTO';
+import { Usuario } from './entities/usuario.entity';
+import { OutputUserDTO } from './dto/output-userDTO';
 
 export function toOutputUserDTO(usuario: Usuario): OutputUserDTO {
   return {
@@ -15,12 +15,12 @@ export function toOutputUserDTO(usuario: Usuario): OutputUserDTO {
     rol: usuario.rol.nombre,
     direcciones: usuario.direccion
       ? usuario.direccion.map((dir) => {
-          const direccionCompleta = `${dir.calle} ${dir.numero}, ${dir.comuna}`;
-          if (dir.departamento) {
-            return `${direccionCompleta}, Depto ${dir.departamento} (${dir.referencia || 'Sin referencia'})`;
-          }
-          return `${direccionCompleta} (${dir.referencia || 'Sin referencia'})`;
-        })
+        const direccionCompleta = `${dir.calle} ${dir.numero}, ${dir.comuna}`;
+        if (dir.departamento) {
+          return `${direccionCompleta}, Depto ${dir.departamento} (${dir.referencia || 'Sin referencia'})`;
+        }
+        return `${direccionCompleta} (${dir.referencia || 'Sin referencia'})`;
+      })
       : [],
   };
 }
